@@ -1,0 +1,28 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+const { title, slug, excerpt, coverImage, publishedAt } = post.data;
+---
+
+<article class="post-card">
+  <a href={`/${slug}/`}>
+    {coverImage && <img src={coverImage} alt="" />}
+    <h3>{title}</h3>
+  </a>
+  {excerpt && <p>{excerpt}</p>}
+  <time datetime={publishedAt.toISOString()}>
+    {publishedAt.toLocaleDateString('it-IT')}
+  </time>
+</article>
+
+<style>
+  .post-card img {
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+  }
+</style>

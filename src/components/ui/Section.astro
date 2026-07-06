@@ -1,0 +1,17 @@
+---
+interface Props {
+  as?: 'section' | 'div';
+}
+
+const { as: Tag = 'section' } = Astro.props;
+---
+
+<Tag class="section container">
+  <slot />
+</Tag>
+
+<style>
+  .section {
+    padding-block: var(--space-md);
+  }
+</style>

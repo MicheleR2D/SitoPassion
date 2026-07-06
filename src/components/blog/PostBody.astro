@@ -1,0 +1,32 @@
+---
+// Unico posto dove servono regole tipografiche per il markdown/mdx renderizzato
+// (contenuto lungo: h2-h6, liste, blockquote, immagini, tabelle, iframe embed).
+---
+
+<div class="post-body">
+  <slot />
+</div>
+
+<style>
+  .post-body :global(img) {
+    max-width: 100%;
+  }
+  .post-body :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .post-body :global(th),
+  .post-body :global(td) {
+    border: 1px solid var(--color-border);
+    padding: var(--space-xs);
+  }
+  .post-body :global(iframe) {
+    max-width: 100%;
+  }
+  .post-body :global(blockquote) {
+    border-left: 2px solid var(--color-border);
+    margin-inline-start: 0;
+    padding-inline-start: var(--space-sm);
+    color: var(--color-muted);
+  }
+</style>

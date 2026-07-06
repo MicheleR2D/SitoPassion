@@ -1,0 +1,23 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  noindex?: boolean;
+}
+
+const { title, description, ogImage, noindex = false } = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+---
+
+<title>{title} | Passion Fitness</title>
+{description && <meta name="description" content={description} />}
+<link rel="canonical" href={canonicalURL} />
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content={title} />
+{description && <meta property="og:description" content={description} />}
+<meta property="og:url" content={canonicalURL} />
+{ogImage && <meta property="og:image" content={new URL(ogImage, Astro.site)} />}
+<meta name="twitter:card" content="summary_large_image" />

@@ -1,0 +1,23 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostList from '../../components/blog/PostList.astro';
+
+export async function getStaticPaths({ paginate }) {
+  const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+    (a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf()
+  );
+  return paginate(posts, { pageSize: 12 });
+}
+
+const { page } = Astro.props;
+---
+
+<BaseLayout title="Blog" description="Articoli e consigli su fitness, allenamento e benessere.">
+  <h1>Blog</h1>
+  <PostList posts={page.data} />
+  <nav class="pagination">
+    {page.url.prev && <a href={page.url.prev}>&laquo; Precedenti</a>}
+    {page.url.next && <a href={page.url.next}>Successivi &raquo;</a>}
+  </nav>
+</BaseLayout>

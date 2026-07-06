@@ -1,0 +1,33 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import Hero from '../components/ui/Hero.astro';
+import PostBody from '../components/blog/PostBody.astro';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+const { title, coverImage, excerpt, categories, tags, publishedAt, seo } = post.data;
+---
+
+<BaseLayout
+  title={seo?.title || title}
+  description={seo?.description || excerpt}
+  ogImage={seo?.ogImage || coverImage}
+>
+  <Hero title={title} image={coverImage} />
+  <p class="post-meta">
+    <time datetime={publishedAt.toISOString()}>{publishedAt.toLocaleDateString('it-IT')}</time>
+    {categories.length > 0 && <span> · {categories.join(', ')}</span>}
+  </p>
+  <PostBody>
+    <slot />
+  </PostBody>
+  {tags.length > 0 && (
+    <ul class="post-tags">
+      {tags.map((tag) => <li>{tag}</li>)}
+    </ul>
+  )}
+</BaseLayout>

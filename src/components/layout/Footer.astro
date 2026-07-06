@@ -1,0 +1,48 @@
+---
+import { getEntry } from 'astro:content';
+
+const footer = await getEntry('footerSettings', 'footer');
+const site = await getEntry('siteSettings', 'site');
+const data = footer?.data;
+const socials = site?.data.socials ?? {};
+---
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    {data?.footerText && <p>{data.footerText}</p>}
+    {data?.address && <p>{data.address}</p>}
+    <p>
+      {data?.phone && <a href={`tel:+39${data.phone}`}>{data.phone}</a>}
+      {data?.email && <a href={`mailto:${data.email}`}>{data.email}</a>}
+    </p>
+    {data?.openingHours && data.openingHours.length > 0 && (
+      <ul class="site-footer__hours">
+        {data.openingHours.map((h) => (
+          <li>{h.day}: {h.hours}</li>
+        ))}
+      </ul>
+    )}
+    {Object.keys(socials).length > 0 && (
+      <ul class="site-footer__socials">
+        {Object.entries(socials).map(([name, url]) => (
+          <li><a href={url}>{name}</a></li>
+        ))}
+      </ul>
+    )}
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: var(--space-lg);
+    padding-block: var(--space-md);
+    border-top: 1px solid var(--color-border);
+  }
+  .site-footer ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+  }
+</style>

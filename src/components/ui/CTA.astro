@@ -1,0 +1,23 @@
+---
+import Button from './Button.astro';
+
+interface Props {
+  heading: string;
+  buttonLabel: string;
+  buttonHref: string;
+}
+
+const { heading, buttonLabel, buttonHref } = Astro.props;
+---
+
+<div class="cta">
+  <p class="cta__heading">{heading}</p>
+  <Button href={buttonHref}>{buttonLabel}</Button>
+</div>
+
+<style>
+  .cta {
+    text-align: center;
+    padding-block: var(--space-md);
+  }
+</style>

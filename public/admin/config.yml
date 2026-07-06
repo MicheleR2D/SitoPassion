@@ -1,0 +1,152 @@
+# Config Decap CMS - tenere sincronizzato con src/content.config.ts (stessi campi/tipi,
+# altrimenti il CMS scrive frontmatter che gli schema Zod rifiutano in build).
+#
+# Backend: da scegliere in base a dove verra' fatto il deploy (non ancora deciso).
+# - "github": funziona con qualsiasi host (Netlify, Vercel, Cloudflare Pages...), ma richiede
+#   un piccolo proxy OAuth (es. https://github.com/decaporg/decap-cms-oauth-provider di test
+#   in locale, o un provider OAuth self-hosted in produzione).
+# - "git-gateway": piu' semplice per un cliente non tecnico (login email/password via Netlify
+#   Identity, nessuna app OAuth da configurare), ma richiede hosting su Netlify.
+backend:
+  name: github
+  repo: OWNER/REPO # TODO: sostituire con il repo reale prima del primo deploy
+  branch: main
+
+media_folder: "public/images/uploads"
+public_folder: "/images/uploads"
+
+publish_mode: editorial_workflow
+locale: "it"
+
+collections:
+  - name: "pages"
+    label: "Pagine"
+    folder: "src/content/pages"
+    create: false # sitemap fissa (16 pagine con route dedicata): niente creazioni libere
+    delete: false
+    slug: "{{fields.slug}}"
+    extension: "mdx"
+    format: "frontmatter"
+    fields:
+      - { label: "Titolo", name: "title", widget: "string" }
+      - { label: "Slug (URL)", name: "slug", widget: "string", hint: "Non modificare senza aggiornare anche i redirect" }
+      - { label: "Ordine menu", name: "order", widget: "number", required: false }
+      - { label: "Immagine hero", name: "heroImage", widget: "image", required: false }
+      - label: "SEO"
+        name: "seo"
+        widget: "object"
+        required: false
+        fields:
+          - { label: "Titolo SEO", name: "title", widget: "string", required: false }
+          - { label: "Meta description", name: "description", widget: "text", required: false }
+          - { label: "Immagine social (OG)", name: "ogImage", widget: "image", required: false }
+          - { label: "Nascondi dai motori di ricerca", name: "noindex", widget: "boolean", default: false }
+      - { label: "ID pagina WordPress (storico)", name: "wpId", widget: "number", required: false }
+      - { label: "Data pubblicazione", name: "publishedAt", widget: "datetime", required: false }
+      - { label: "Data aggiornamento", name: "updatedAt", widget: "datetime", required: false }
+      - { label: "Bozza", name: "draft", widget: "boolean", default: false }
+      - { label: "Contenuto", name: "body", widget: "markdown" }
+
+  - name: "blog"
+    label: "Blog"
+    folder: "src/content/blog"
+    create: true
+    slug: "{{fields.slug}}"
+    extension: "mdx"
+    format: "frontmatter"
+    fields:
+      - { label: "Titolo", name: "title", widget: "string" }
+      - { label: "Slug (URL)", name: "slug", widget: "string" }
+      - { label: "Estratto", name: "excerpt", widget: "text", required: false }
+      - { label: "Immagine copertina", name: "coverImage", widget: "image", required: false }
+      - { label: "Categorie", name: "categories", widget: "list", required: false }
+      - { label: "Tag", name: "tags", widget: "list", required: false }
+      - { label: "Autore", name: "author", widget: "string", default: "Passion Fitness" }
+      - { label: "Data pubblicazione", name: "publishedAt", widget: "datetime" }
+      - { label: "Data aggiornamento", name: "updatedAt", widget: "datetime", required: false }
+      - label: "SEO"
+        name: "seo"
+        widget: "object"
+        required: false
+        fields:
+          - { label: "Titolo SEO", name: "title", widget: "string", required: false }
+          - { label: "Meta description", name: "description", widget: "text", required: false }
+          - { label: "Immagine social (OG)", name: "ogImage", widget: "image", required: false }
+          - { label: "Nascondi dai motori di ricerca", name: "noindex", widget: "boolean", default: false }
+      - { label: "ID post WordPress (storico)", name: "wpId", widget: "number", required: false }
+      - { label: "Bozza", name: "draft", widget: "boolean", default: false }
+      - { label: "Contenuto", name: "body", widget: "markdown" }
+
+  - name: "team"
+    label: "Team"
+    folder: "src/content/team"
+    create: true
+    delete: true
+    slug: "{{slug}}"
+    extension: "mdx"
+    format: "frontmatter"
+    fields:
+      - { label: "Nome", name: "name", widget: "string" }
+      - { label: "Ruolo", name: "role", widget: "string" }
+      - { label: "Foto", name: "photo", widget: "image", required: false }
+      - { label: "Ordine", name: "order", widget: "number", default: 0 }
+      - label: "Social"
+        name: "socials"
+        widget: "object"
+        required: false
+        fields:
+          - { label: "Instagram", name: "instagram", widget: "string", required: false }
+          - { label: "Facebook", name: "facebook", widget: "string", required: false }
+      - { label: "Attivo", name: "active", widget: "boolean", default: true }
+      - { label: "Bio", name: "bio", widget: "markdown", required: false }
+
+  - name: "services"
+    label: "Corsi / Servizi"
+    folder: "src/content/services"
+    create: true
+    delete: true
+    slug: "{{slug}}"
+    extension: "mdx"
+    format: "frontmatter"
+    fields:
+      - { label: "Titolo", name: "title", widget: "string" }
+      - label: "Categoria"
+        name: "category"
+        widget: "select"
+        required: false
+        options: ["fitness", "personal-training", "pilates", "crossfit", "hyrox", "sala-pesi"]
+      - { label: "Icona", name: "icon", widget: "string", required: false }
+      - { label: "Ordine", name: "order", widget: "number", default: 0 }
+      - { label: "Pagina collegata (slug)", name: "linkedPage", widget: "string", required: false }
+      - { label: "Contenuto", name: "body", widget: "markdown", required: false }
+
+  - name: "settings"
+    label: "Impostazioni globali"
+    files:
+      - name: "footer"
+        label: "Footer"
+        file: "src/content/settings/footer.json"
+        fields:
+          - { label: "Testo footer", name: "footerText", widget: "text", required: false }
+          - { label: "Indirizzo", name: "address", widget: "string", required: false }
+          - { label: "Telefono", name: "phone", widget: "string", required: false }
+          - { label: "Email", name: "email", widget: "string", required: false }
+          - label: "Orari corsi"
+            name: "openingHours"
+            widget: "list"
+            required: false
+            fields:
+              - { label: "Giorno", name: "day", widget: "string" }
+              - { label: "Orario", name: "hours", widget: "string" }
+      - name: "site"
+        label: "Sito (generale)"
+        file: "src/content/settings/site.json"
+        fields:
+          - { label: "Nome sito", name: "siteName", widget: "string", required: false }
+          - label: "Social"
+            name: "socials"
+            widget: "object"
+            required: false
+            fields:
+              - { label: "Instagram", name: "instagram", widget: "string", required: false }
+              - { label: "Facebook", name: "facebook", widget: "string", required: false }

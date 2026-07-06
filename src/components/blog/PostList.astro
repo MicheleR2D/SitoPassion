@@ -1,0 +1,15 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import CardGrid from '../ui/CardGrid.astro';
+import PostCard from './PostCard.astro';
+
+interface Props {
+  posts: CollectionEntry<'blog'>[];
+}
+
+const { posts } = Astro.props;
+---
+
+<CardGrid>
+  {posts.map((post) => <PostCard post={post} />)}
+</CardGrid>

@@ -1,0 +1,16 @@
+---
+// Wrapper neutro per griglie di card (corsi, team...): popolato quando quelle collection
+// avranno contenuti reali.
+---
+
+<div class="card-grid">
+  <slot />
+</div>
+
+<style>
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: var(--space-sm);
+  }
+</style>

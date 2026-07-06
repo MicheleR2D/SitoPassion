@@ -1,0 +1,25 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import Hero from '../components/ui/Hero.astro';
+import PostBody from '../components/blog/PostBody.astro';
+
+interface Props {
+  page: CollectionEntry<'pages'>;
+}
+
+const { page } = Astro.props;
+const { title, heroImage, seo } = page.data;
+---
+
+<BaseLayout
+  title={seo?.title || title}
+  description={seo?.description}
+  ogImage={seo?.ogImage}
+  noindex={seo?.noindex}
+>
+  <Hero title={title} image={heroImage} />
+  <PostBody>
+    <slot />
+  </PostBody>
+</BaseLayout>
