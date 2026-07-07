@@ -1,9 +1,5 @@
 ---
 import Nav from './Nav.astro';
-
-// Nessun file "logo*" tra quelli migrati e' affidabile come logo definitivo (13 candidati
-// trovati, tra bozze del tema demo e test) - wordmark testuale provvisorio, facile da
-// sostituire con un <img> quando il logo reale sara' confermato.
 ---
 
 <div class="announce">
@@ -12,7 +8,9 @@ import Nav from './Nav.astro';
 
 <header class="site-header">
   <div class="container site-header__inner">
-    <a href="/" class="wordmark">PASSION<span>FITNESS</span></a>
+    <a href="/" class="brand">
+      <img src="/images/logo-passion-mark.png" alt="Passion Fitness Club" width="1409" height="592" />
+    </a>
 
     <input type="checkbox" id="nav-toggle" class="nav-toggle-input" />
     <label for="nav-toggle" class="nav-toggle" aria-label="Apri il menu">
@@ -56,16 +54,14 @@ import Nav from './Nav.astro';
     padding-block: var(--space-xs);
   }
 
-  .wordmark {
-    font-family: var(--font-display);
-    text-transform: uppercase;
-    font-size: 1.4rem;
-    letter-spacing: -0.01em;
-    color: var(--text-on-dark);
-    white-space: nowrap;
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
   }
-  .wordmark span {
-    color: var(--color-red);
+  .brand img {
+    height: 2.75rem;
+    width: auto;
   }
 
   .prova-gratis {
