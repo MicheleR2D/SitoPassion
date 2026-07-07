@@ -11,6 +11,34 @@ const PROVA_URL =
   'https://automazione.n8ndevelop.it/form/8ce36c5e-0cc4-4813-9a0f-2da2a7605fb0?source=SitoWeb&medium=Btn_Home';
 const ABBONAMENTI_URL = 'https://passion.perfectgym.com/clientportal2/#/Registration';
 
+const QUICKLINKS = [
+  {
+    eyebrow: 'Prova Passion',
+    title: "Scegli l'attività che preferisci",
+    body: 'Corsi Fitness, Pilates Reformer e Personal Training.',
+    href: PROVA_URL,
+    cta: 'Richiedi il pass',
+    image: '/images/uploads/2024/11/MRZ01857-scaled.jpeg',
+    featured: true,
+  },
+  {
+    eyebrow: 'Planning Corsi',
+    title: 'Tante attività tra cui scegliere',
+    body: 'Corsi Rebalance, Energy, Reformer, Reformer Plus.',
+    href: '/orari-corsi/',
+    cta: 'Orari e planning corsi',
+    image: '/images/uploads/2025/01/corso-di-step-min-1168x600-1.jpg',
+  },
+  {
+    eyebrow: 'Abbonamenti',
+    title: 'Scegli la soluzione migliore',
+    body: "Percorsi specifici per chi vuole costruirsi una sana abitudine all'allenamento.",
+    href: ABBONAMENTI_URL,
+    cta: 'Scopri gli abbonamenti',
+    image: '/images/uploads/2024/10/Palestra-11920x.jpg',
+  },
+];
+
 const PROGRAMMI = [
   {
     title: 'Sala Pesi',
@@ -103,24 +131,34 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
 
   <Section tone="blush" class="quicklinks-section">
     <div class="quicklinks">
-      <article>
-        <p class="eyebrow">Planning Corsi</p>
-        <h3>Tante attività tra cui scegliere</h3>
-        <p>Corsi Rebalance, Energy, Reformer, Reformer Plus.</p>
-        <a class="quicklinks__link" href="/orari-corsi/">Orari e planning corsi →</a>
-      </article>
-      <article>
-        <p class="eyebrow">Abbonamenti</p>
-        <h3>Scegli la soluzione migliore</h3>
-        <p>Percorsi specifici per chi vuole costruirsi una sana abitudine all'allenamento.</p>
-        <a class="quicklinks__link" href={ABBONAMENTI_URL}>Scopri gli abbonamenti →</a>
-      </article>
-      <article>
-        <p class="eyebrow">Prova Passion</p>
-        <h3>Scegli l'attività che preferisci</h3>
-        <p>Corsi Fitness, Pilates Reformer e Personal Training.</p>
-        <a class="quicklinks__link" href={PROVA_URL}>Richiedi il pass →</a>
-      </article>
+      {QUICKLINKS.filter((item) => item.featured).map((item) => (
+        <article class="quicklinks__card quicklinks__card--featured">
+          <div class="quicklinks__media">
+            <img src={item.image} alt="" />
+          </div>
+          <div class="quicklinks__body">
+            <p class="eyebrow">{item.eyebrow}</p>
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
+            <a class="quicklinks__link" href={item.href}>{item.cta} →</a>
+          </div>
+        </article>
+      ))}
+      <div class="quicklinks__row">
+        {QUICKLINKS.filter((item) => !item.featured).map((item) => (
+          <article class="quicklinks__card">
+            <div class="quicklinks__media">
+              <img src={item.image} alt="" />
+            </div>
+            <div class="quicklinks__body">
+              <p class="eyebrow">{item.eyebrow}</p>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+              <a class="quicklinks__link" href={item.href}>{item.cta} →</a>
+            </div>
+          </article>
+        ))}
+      </div>
     </div>
   </Section>
 
@@ -223,25 +261,64 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     display: flex;
     align-items: center;
     overflow-y: auto;
+    padding-block: var(--space-md);
   }
   :global(.quicklinks-section > .container) {
     width: 100%;
   }
   .quicklinks {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    display: flex;
+    flex-direction: column;
     gap: var(--space-md);
     width: 100%;
+  }
+  .quicklinks__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+  }
+  .quicklinks__card {
+    background: var(--bg-dark-surface);
+    border: 1px solid var(--border-on-dark);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .quicklinks__card--featured {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    align-items: stretch;
+  }
+  .quicklinks__media {
+    background: var(--color-black);
+    overflow: hidden;
+    min-height: 8rem;
+    max-height: 10rem;
+  }
+  .quicklinks__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .quicklinks__body {
+    padding: var(--space-md);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-2xs);
   }
   .quicklinks .eyebrow {
     color: var(--color-red);
   }
-  .quicklinks h3 {
+  .quicklinks__card h3 {
+    color: var(--text-on-dark);
     margin-top: var(--space-3xs);
   }
-  .quicklinks p:not(.eyebrow) {
+  .quicklinks__card p:not(.eyebrow) {
     margin-top: var(--space-2xs);
-    color: var(--text-on-light-muted);
+    color: var(--text-on-dark-muted);
     font-size: 0.92rem;
   }
   .quicklinks__link {
@@ -252,6 +329,12 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--color-red);
+  }
+  @media (max-width: 760px) {
+    .quicklinks__card--featured,
+    .quicklinks__row {
+      grid-template-columns: 1fr;
+    }
   }
 
   .programmi-section {
