@@ -260,7 +260,7 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     height: 100vh;
     display: flex;
     align-items: center;
-    overflow-y: auto;
+    overflow: hidden;
     padding-block: var(--space-md);
   }
   :global(.quicklinks-section > .container) {
@@ -278,12 +278,15 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     gap: var(--space-md);
   }
   .quicklinks__card {
-    background: var(--bg-dark-surface);
+    background: var(--accent);
     border: 1px solid var(--border-on-dark);
     border-radius: 12px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
+  }
+  .quicklinks .quicklinks__card .eyebrow {
+    color: var(--color-white);
   }
   .quicklinks__card--featured {
     display: grid;
@@ -313,12 +316,12 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     color: var(--color-red);
   }
   .quicklinks__card h3 {
-    color: var(--text-on-dark);
+    color: var(--color-white);
     margin-top: var(--space-3xs);
   }
   .quicklinks__card p:not(.eyebrow) {
     margin-top: var(--space-2xs);
-    color: var(--text-on-dark-muted);
+    color: var(--color-white);
     font-size: 0.92rem;
   }
   .quicklinks__link {
@@ -329,6 +332,9 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--color-red);
+  }
+  .quicklinks__card .quicklinks__link {
+    color: var(--color-white);
   }
   @media (max-width: 760px) {
     .quicklinks__card--featured,
