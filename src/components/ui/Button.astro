@@ -1,7 +1,7 @@
 ---
 interface Props {
   href: string;
-  variant?: "primary" | "ghost-dark" | "ghost-light";
+  variant?: "primary" | "white" | "ghost-dark" | "ghost-light";
   arrow?: boolean;
 }
 
@@ -48,6 +48,19 @@ const { href, variant = "primary", arrow = true } = Astro.props;
     background: var(--accent);
     color: var(--color-white);
     border-color: var(--accent-hover);
+  }
+
+  .button--white {
+    background: transparent;
+    color: var(--color-white);
+    border-width: 4px;
+    border-color: var(--color-white);
+    border-radius: 12px;
+  }
+  .button--white:hover {
+    background: var(--color-white);
+    color: var(--text-on-light);
+    border-color: var(--color-white);
   }
 
   .button--ghost-dark {
