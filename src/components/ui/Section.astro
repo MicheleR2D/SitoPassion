@@ -2,12 +2,13 @@
 interface Props {
   as?: "section" | "div";
   tone?: "light" | "blush" | "dark" | "red";
+  class?: string;
 }
 
-const { as: Tag = "section", tone = "light" } = Astro.props;
+const { as: Tag = "section", tone = "light", class: className } = Astro.props;
 ---
 
-<Tag class={`section section--${tone}`}>
+<Tag class={`section section--${tone} ${className ?? ""}`}>
   <div class="container">
     <slot />
   </div>

@@ -101,7 +101,7 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     </div>
   </Hero>
 
-  <Section tone="blush">
+  <Section tone="blush" class="quicklinks-section">
     <div class="quicklinks">
       <article>
         <p class="eyebrow">Planning Corsi</p>
@@ -218,10 +218,20 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     margin-top: var(--space-2xs);
   }
 
+  :global(.quicklinks-section) {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    overflow-y: auto;
+  }
+  :global(.quicklinks-section > .container) {
+    width: 100%;
+  }
   .quicklinks {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
     gap: var(--space-md);
+    width: 100%;
   }
   .quicklinks .eyebrow {
     color: var(--color-red);
