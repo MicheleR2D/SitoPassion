@@ -125,6 +125,10 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
   </Section>
 
   <section class="programmi-section">
+    <div class="programmi-split" aria-hidden="true">
+      <span class="programmi-split__layer programmi-split__layer--top">PROGRAMMI</span>
+      <span class="programmi-split__layer programmi-split__layer--bottom">PROGRAMMI</span>
+    </div>
     <div class="container">
       <h2 class="programmi-title">Programmi Passion Fitness</h2>
     </div>
@@ -245,8 +249,38 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
   }
 
   .programmi-section {
+    position: relative;
     background: var(--accent);
     padding-top: var(--space-lg);
+  }
+  .programmi-split {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    z-index: 5;
+    text-align: center;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .programmi-split__layer {
+    display: block;
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-size: clamp(3rem, 10vw, 9rem);
+    line-height: 1;
+  }
+  .programmi-split__layer--top {
+    position: absolute;
+    inset: 0;
+    color: var(--color-red);
+    clip-path: inset(0 0 50% 0);
+  }
+  .programmi-split__layer--bottom {
+    position: relative;
+    color: var(--color-white);
+    clip-path: inset(50% 0 0 0);
   }
   .programmi-title {
     color: var(--color-white);
