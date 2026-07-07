@@ -262,6 +262,9 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     grid-template-columns: 3fr 1fr;
     min-height: 100vh;
   }
+  .programma:nth-child(even) {
+    grid-template-columns: 1fr 3fr;
+  }
   .programma:nth-child(even) .programma__media {
     order: 2;
   }
@@ -297,9 +300,11 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
   }
   @media (max-width: 760px) {
     .programma,
-    .programma:nth-child(even) .programma__media {
+    .programma:nth-child(even) {
       grid-template-columns: 1fr;
       grid-template-rows: 3fr 1fr;
+    }
+    .programma:nth-child(even) .programma__media {
       order: 0;
     }
   }
