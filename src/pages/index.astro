@@ -126,8 +126,7 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
 
   <section class="programmi-section" aria-label="Programmi Passion Fitness">
     <div class="container programmi-split" aria-hidden="true">
-      <span class="programmi-split__layer programmi-split__layer--top">programmi</span>
-      <span class="programmi-split__layer programmi-split__layer--bottom">programmi</span>
+      <span class="programmi-split__layer">programmi</span>
     </div>
     <div class="programmi">
       {PROGRAMMI.map((p) => (
@@ -269,14 +268,7 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     text-transform: lowercase;
     font-size: 1em;
     line-height: 1;
-  }
-  .programmi-split__layer--top {
-    color: var(--color-red);
-    clip-path: inset(0 0 50% 0);
-  }
-  .programmi-split__layer--bottom {
-    color: var(--color-white);
-    clip-path: inset(50% 0 0 0);
+    color: var(--color-black);
   }
   .programmi {
     display: flex;
