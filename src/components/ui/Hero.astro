@@ -2,19 +2,34 @@
 interface Props {
   title: string;
   image?: string;
+  video?: string;
+  videoEndBuffer?: number;
   eyebrow?: string;
 }
 
-const { title, image, eyebrow } = Astro.props;
+const { title, image, video, videoEndBuffer = 3, eyebrow } = Astro.props;
 ---
 
 <div class="hero">
-  {image && (
+  {video && (
+    <div class="hero-media">
+      <video
+        class="hero-media__video"
+        src={video}
+        poster={image}
+        data-end-buffer={videoEndBuffer}
+        autoplay
+        muted
+        playsinline
+      />
+    </div>
+  )}
+  {!video && image && (
     <div class="hero-photo">
       <img src={image} alt="" />
     </div>
   )}
-  <div class="container hero-inner" class:list={{ "hero-inner--with-photo": image }}>
+  <div class="container hero-inner" class:list={{ "hero-inner--with-photo": image || video }}>
     <div class="hero-copy">
       {eyebrow && <p class="eyebrow hero-eyebrow">{eyebrow}</p>}
       <h1>{title}</h1>
@@ -25,15 +40,28 @@ const { title, image, eyebrow } = Astro.props;
   </div>
 </div>
 
+{video && (
+  <script>
+    document.querySelectorAll('.hero-media__video').forEach((videoEl) => {
+      const endBuffer = Number(videoEl.dataset.endBuffer ?? '3');
+      videoEl.addEventListener('timeupdate', () => {
+        if (videoEl.duration && videoEl.currentTime >= videoEl.duration - endBuffer) {
+          videoEl.currentTime = 0;
+        }
+      });
+    });
+  </script>
+)}
+
 <style>
   .hero {
     position: relative;
     background: var(--bg-dark);
     overflow: hidden;
     margin-top: calc(-1 * var(--header-height));
-    height: clamp(28rem, 100vh, 40rem);
+    height: 100vh;
   }
-  .hero:not(:has(.hero-photo)) {
+  .hero:not(:has(.hero-photo, .hero-media)) {
     height: auto;
   }
 
@@ -86,8 +114,28 @@ const { title, image, eyebrow } = Astro.props;
     background: linear-gradient(200deg, rgba(227, 3, 45, 0.45) 0%, rgba(0, 0, 0, 0.1) 45%, transparent 70%);
   }
 
+  .hero-media {
+    position: absolute;
+    inset: 0;
+    background: var(--color-black);
+    overflow: hidden;
+  }
+  .hero-media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(100deg, rgba(0, 0, 0, 0.82) 0%, rgba(0, 0, 0, 0.55) 32%, rgba(227, 3, 45, 0.2) 58%, rgba(0, 0, 0, 0.45) 100%);
+  }
+  .hero-media__video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
   @media (max-width: 860px) {
-    .hero {
+    .hero:has(.hero-photo) {
       height: auto;
     }
     .hero-photo {
@@ -96,7 +144,7 @@ const { title, image, eyebrow } = Astro.props;
       height: 18rem;
       clip-path: none;
     }
-    .hero-inner--with-photo {
+    .hero:has(.hero-photo) .hero-inner--with-photo {
       padding-top: 0;
     }
     .hero-inner--with-photo .hero-copy {
