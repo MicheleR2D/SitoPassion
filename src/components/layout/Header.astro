@@ -23,11 +23,29 @@ import Nav from './Nav.astro';
   </div>
 </header>
 
+<script>
+  const header = document.querySelector('.site-header');
+  const updateHeaderState = () => {
+    header?.classList.toggle('is-scrolled', window.scrollY > 40);
+  };
+  updateHeaderState();
+  window.addEventListener('scroll', updateHeaderState, { passive: true });
+</script>
+
 <style>
   .site-header {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline: 0;
+    z-index: 100;
+    background: transparent;
+    border-bottom: 1px solid transparent;
+    transition: background-color 0.25s ease, border-color 0.25s ease;
+  }
+  .site-header.is-scrolled,
+  .site-header:has(.nav-toggle-input:checked) {
     background: var(--bg-dark);
-    border-bottom: 1px solid var(--border-on-dark);
-    position: relative;
+    border-bottom-color: var(--border-on-dark);
   }
   .site-header__inner {
     display: flex;
@@ -106,7 +124,8 @@ import Nav from './Nav.astro';
       transition: max-height 0.2s ease;
     }
     .nav-toggle-input:checked ~ .nav-panel {
-      max-height: 30rem;
+      max-height: calc(100vh - var(--header-height));
+      overflow-y: auto;
     }
     .nav-panel :global(.site-nav > ul) {
       flex-direction: column;

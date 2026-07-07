@@ -27,6 +27,7 @@
   --font-body: -apple-system, "Helvetica Neue", Arial, sans-serif;
 
   --container-max-width: 76rem;
+  --header-height: 4.5rem;
   --space-3xs: 0.25rem;
   --space-2xs: 0.5rem;
   --space-xs: 0.75rem;
@@ -56,6 +57,10 @@ body {
 img, video {
   max-width: 100%;
   display: block;
+}
+
+main {
+  padding-top: var(--header-height);
 }
 
 a {
