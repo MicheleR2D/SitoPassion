@@ -125,9 +125,9 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
   </Section>
 
   <section class="programmi-section">
-    <div class="programmi-split" aria-hidden="true">
-      <span class="programmi-split__layer programmi-split__layer--top">PROGRAMMI</span>
-      <span class="programmi-split__layer programmi-split__layer--bottom">PROGRAMMI</span>
+    <div class="container programmi-split" aria-hidden="true">
+      <span class="programmi-split__layer programmi-split__layer--top">programmi</span>
+      <span class="programmi-split__layer programmi-split__layer--bottom">programmi</span>
     </div>
     <div class="container">
       <h2 class="programmi-title">Programmi Passion Fitness</h2>
@@ -260,15 +260,14 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     right: 0;
     transform: translateY(-50%);
     z-index: 5;
-    text-align: center;
     pointer-events: none;
-    overflow: hidden;
   }
   .programmi-split__layer {
     display: block;
+    width: fit-content;
     font-family: var(--font-display);
-    text-transform: uppercase;
-    font-size: clamp(3rem, 10vw, 9rem);
+    text-transform: lowercase;
+    font-size: clamp(1.1rem, 1.8vw, 1.5rem);
     line-height: 1;
   }
   .programmi-split__layer--top {
