@@ -1,16 +1,31 @@
 ---
-// Wrapper neutro per griglie di card (corsi, team...): popolato quando quelle collection
-// avranno contenuti reali.
+interface Props {
+  variant?: "grid" | "rail";
+}
+
+const { variant = "grid" } = Astro.props;
 ---
 
-<div class="card-grid">
+<div class={`card-grid card-grid--${variant}`}>
   <slot />
 </div>
 
 <style>
-  .card-grid {
+  .card-grid--grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
     gap: var(--space-sm);
+  }
+  .card-grid--rail {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(16rem, 1fr);
+    gap: var(--space-sm);
+    overflow-x: auto;
+    padding-bottom: var(--space-2xs);
+    scroll-snap-type: x mandatory;
+  }
+  .card-grid--rail > :global(*) {
+    scroll-snap-align: start;
   }
 </style>

@@ -1,20 +1,65 @@
 ---
 interface Props {
   href: string;
+  variant?: "primary" | "ghost-dark" | "ghost-light";
+  arrow?: boolean;
 }
 
-const { href } = Astro.props;
+const { href, variant = "primary", arrow = true } = Astro.props;
 ---
 
-<a href={href} class="button">
+<a href={href} class={`button button--${variant}`}>
   <slot />
+  {arrow && <span class="button__arrow" aria-hidden="true">→</span>}
 </a>
 
 <style>
   .button {
-    display: inline-block;
-    padding: var(--space-xs) var(--space-sm);
-    border: 1px solid var(--color-primary);
-    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 0.82rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.95rem 1.6rem;
+    border: 1.5px solid transparent;
+    transition: transform 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+  }
+  .button:hover {
+    transform: translateY(-2px);
+  }
+  .button__arrow {
+    transition: transform 0.15s ease;
+  }
+  .button:hover .button__arrow {
+    transform: translateX(3px);
+  }
+
+  .button--primary {
+    background: var(--accent);
+    color: var(--color-white);
+  }
+  .button--primary:hover {
+    background: var(--accent-hover);
+  }
+
+  .button--ghost-dark {
+    background: transparent;
+    color: var(--text-on-dark);
+    border-color: var(--border-on-dark);
+  }
+  .button--ghost-dark:hover {
+    border-color: var(--color-white);
+  }
+
+  .button--ghost-light {
+    background: transparent;
+    color: var(--text-on-light);
+    border-color: var(--border-on-light);
+  }
+  .button--ghost-light:hover {
+    border-color: var(--color-charcoal);
   }
 </style>

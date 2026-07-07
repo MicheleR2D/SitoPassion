@@ -5,10 +5,10 @@ import { NAV_ITEMS } from '../../data/nav.ts';
 <nav class="site-nav">
   <ul>
     {NAV_ITEMS.map((item) => (
-      <li>
+      <li class:list={["site-nav__item", { "has-children": item.children }]}>
         <a href={item.href}>{item.label}</a>
         {item.children && (
-          <ul>
+          <ul class="site-nav__dropdown">
             {item.children.map((child) => (
               <li><a href={child.href}>{child.label}</a></li>
             ))}
@@ -20,18 +20,72 @@ import { NAV_ITEMS } from '../../data/nav.ts';
 </nav>
 
 <style>
-  .site-nav ul {
+  .site-nav > ul {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-sm);
+    gap: var(--space-md);
     list-style: none;
     margin: 0;
     padding: 0;
   }
-  .site-nav li {
+  .site-nav__item {
     position: relative;
   }
-  .site-nav li ul {
-    display: none;
+  .site-nav__item > a {
+    display: inline-block;
+    padding-block: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-on-dark);
+    border-bottom: 2px solid transparent;
+  }
+  .site-nav__item > a:hover {
+    border-color: var(--color-red);
+  }
+  .site-nav__item.has-children > a::after {
+    content: "";
+    display: inline-block;
+    margin-left: 0.4rem;
+    border: 4px solid transparent;
+    border-top-color: currentColor;
+    vertical-align: middle;
+  }
+
+  .site-nav__dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 13rem;
+    margin: 0;
+    padding: 0.5rem 0;
+    list-style: none;
+    background: var(--bg-dark-surface);
+    border: 1px solid var(--border-on-dark);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition: opacity 0.12s ease, transform 0.12s ease;
+    z-index: 20;
+  }
+  .site-nav__item.has-children:hover .site-nav__dropdown,
+  .site-nav__item.has-children:focus-within .site-nav__dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  .site-nav__dropdown a {
+    display: block;
+    padding: 0.55rem 1rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    color: var(--text-on-dark);
+  }
+  .site-nav__dropdown a:hover {
+    background: var(--bg-dark);
+    color: var(--color-red);
   }
 </style>

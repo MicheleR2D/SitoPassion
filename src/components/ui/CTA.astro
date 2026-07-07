@@ -5,19 +5,40 @@ interface Props {
   heading: string;
   buttonLabel: string;
   buttonHref: string;
+  tone?: "dark" | "light";
 }
 
-const { heading, buttonLabel, buttonHref } = Astro.props;
+const { heading, buttonLabel, buttonHref, tone = "dark" } = Astro.props;
 ---
 
-<div class="cta">
-  <p class="cta__heading">{heading}</p>
-  <Button href={buttonHref}>{buttonLabel}</Button>
+<div class={`cta cta--${tone}`}>
+  <div class="container cta__inner">
+    <h2>{heading}</h2>
+    <Button href={buttonHref} variant="primary">{buttonLabel}</Button>
+  </div>
 </div>
 
 <style>
   .cta {
+    padding-block: var(--space-lg);
+  }
+  .cta--dark {
+    background: var(--bg-dark);
+  }
+  .cta--dark h2 {
+    color: var(--text-on-dark);
+  }
+  .cta--light {
+    background: var(--bg-light-soft);
+  }
+  .cta--light h2 {
+    color: var(--text-on-light);
+  }
+  .cta__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-md);
     text-align: center;
-    padding-block: var(--space-md);
   }
 </style>

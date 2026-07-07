@@ -2,22 +2,85 @@
 interface Props {
   title: string;
   image?: string;
+  eyebrow?: string;
 }
 
-const { title, image } = Astro.props;
+const { title, image, eyebrow } = Astro.props;
 ---
 
 <div class="hero">
-  {image && <img src={image} alt="" class="hero__image" />}
-  <h1 class="hero__title">{title}</h1>
+  <div class="hero-grid">
+    <div class="hero-copy">
+      {eyebrow && <p class="eyebrow hero-eyebrow">{eyebrow}</p>}
+      <h1>{title}</h1>
+      <div class="hero-extra">
+        <slot />
+      </div>
+    </div>
+    {image && (
+      <div class="hero-photo">
+        <img src={image} alt="" />
+      </div>
+    )}
+  </div>
 </div>
 
 <style>
   .hero {
-    position: relative;
+    background: var(--bg-dark);
+    overflow: hidden;
   }
-  .hero__image {
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    align-items: stretch;
+    min-height: 26rem;
+  }
+  .hero-grid:not(:has(.hero-photo)) {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+  .hero-copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-sm);
+    padding: clamp(2rem, 5vw, 4rem) clamp(1.25rem, 4vw, 2.5rem);
+  }
+  .hero-eyebrow {
+    color: var(--color-red);
+  }
+  .hero h1 {
+    color: var(--text-on-dark);
+  }
+  .hero-extra {
+    color: var(--text-on-dark-muted);
+  }
+  .hero-photo {
+    position: relative;
+    background: var(--color-black);
+    clip-path: polygon(12% 0, 100% 0, 100% 100%, 0% 100%);
+  }
+  .hero-photo img {
     width: 100%;
+    height: 100%;
     object-fit: cover;
+  }
+  .hero-photo::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(200deg, rgba(204, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.1) 45%, transparent 70%);
+  }
+  @media (max-width: 860px) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+      min-height: auto;
+    }
+    .hero-photo {
+      clip-path: none;
+      height: 18rem;
+      order: -1;
+    }
   }
 </style>

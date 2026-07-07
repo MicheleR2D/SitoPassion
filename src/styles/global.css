@@ -1,21 +1,39 @@
-/* Reset minimale + variabili. Nessun colore/font definitivo: la veste grafica arriva dopo,
-   in questa fase i template usano solo classi "logiche" (struttura), non decorative. */
+/* Sistema di design Passion Fitness. Palette fissata dal cliente (non negoziabile):
+   #CC0000 rosso, #FEEDED rosa chiaro, #1B1B1B antracite, #FFFFFF, #000000. */
 
 :root {
-  --color-bg: #ffffff;
-  --color-text: #111111;
-  --color-primary: #111111;
-  --color-muted: #666666;
-  --color-border: #dddddd;
+  --color-black: #000000;
+  --color-charcoal: #1b1b1b;
+  --color-red: #cc0000;
+  --color-red-hover: #e50000;
+  --color-white: #ffffff;
+  --color-blush: #feeded;
 
-  --font-body: system-ui, sans-serif;
-  --font-heading: system-ui, sans-serif;
+  /* ruoli semantici, cosi' i componenti non referenziano mai i colori grezzi */
+  --bg-dark: var(--color-black);
+  --bg-dark-surface: var(--color-charcoal);
+  --bg-light: var(--color-white);
+  --bg-light-soft: var(--color-blush);
+  --text-on-dark: var(--color-white);
+  --text-on-dark-muted: #b8b0af;
+  --text-on-light: var(--color-charcoal);
+  --text-on-light-muted: #6b6260;
+  --accent: var(--color-red);
+  --accent-hover: var(--color-red-hover);
+  --border-on-dark: rgba(255, 255, 255, 0.14);
+  --border-on-light: rgba(27, 27, 27, 0.12);
 
-  --container-max-width: 72rem;
-  --space-xs: 0.5rem;
-  --space-sm: 1rem;
+  --font-display: Impact, "Arial Narrow", "Franklin Gothic Bold", sans-serif;
+  --font-body: -apple-system, "Helvetica Neue", Arial, sans-serif;
+
+  --container-max-width: 76rem;
+  --space-3xs: 0.25rem;
+  --space-2xs: 0.5rem;
+  --space-xs: 0.75rem;
+  --space-sm: 1.25rem;
   --space-md: 2rem;
-  --space-lg: 4rem;
+  --space-lg: 3.5rem;
+  --space-xl: 6rem;
 }
 
 *, *::before, *::after {
@@ -29,9 +47,10 @@ html {
 body {
   margin: 0;
   font-family: var(--font-body);
-  color: var(--color-text);
-  background: var(--color-bg);
-  line-height: 1.5;
+  color: var(--text-on-light);
+  background: var(--bg-light);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
 }
 
 img, video {
@@ -41,10 +60,39 @@ img, video {
 
 a {
   color: inherit;
+  text-decoration: none;
+}
+a:focus-visible, button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 0.96;
+  margin: 0;
+  text-wrap: balance;
+}
+
+h1 { font-size: clamp(2.6rem, 6vw, 5rem); }
+h2 { font-size: clamp(2rem, 4.2vw, 3.2rem); }
+h3 { font-size: clamp(1.35rem, 2.4vw, 1.8rem); }
+
+p { margin: 0; }
+
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 .container {
   max-width: var(--container-max-width);
   margin-inline: auto;
-  padding-inline: var(--space-sm);
+  padding-inline: clamp(1.25rem, 4vw, 2.5rem);
 }

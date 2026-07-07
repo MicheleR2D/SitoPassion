@@ -1,17 +1,36 @@
 ---
 interface Props {
-  as?: 'section' | 'div';
+  as?: "section" | "div";
+  tone?: "light" | "blush" | "dark" | "red";
 }
 
-const { as: Tag = 'section' } = Astro.props;
+const { as: Tag = "section", tone = "light" } = Astro.props;
 ---
 
-<Tag class="section container">
-  <slot />
+<Tag class={`section section--${tone}`}>
+  <div class="container">
+    <slot />
+  </div>
 </Tag>
 
 <style>
   .section {
-    padding-block: var(--space-md);
+    padding-block: var(--space-lg);
+  }
+  .section--light {
+    background: var(--bg-light);
+    color: var(--text-on-light);
+  }
+  .section--blush {
+    background: var(--bg-light-soft);
+    color: var(--text-on-light);
+  }
+  .section--dark {
+    background: var(--bg-dark);
+    color: var(--text-on-dark);
+  }
+  .section--red {
+    background: var(--accent);
+    color: var(--color-white);
   }
 </style>

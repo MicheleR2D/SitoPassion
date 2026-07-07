@@ -1,11 +1,382 @@
 ---
-import { getEntry, render } from 'astro:content';
-import PageLayout from '../layouts/PageLayout.astro';
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/ui/Hero.astro';
+import Section from '../components/ui/Section.astro';
+import Button from '../components/ui/Button.astro';
+import CTA from '../components/ui/CTA.astro';
+import PostList from '../components/blog/PostList.astro';
 
-const page = await getEntry('pages', 'home');
-const { Content } = await render(page);
+const PROVA_URL =
+  'https://automazione.n8ndevelop.it/form/8ce36c5e-0cc4-4813-9a0f-2da2a7605fb0?source=SitoWeb&medium=Btn_Home';
+const ABBONAMENTI_URL = 'https://passion.perfectgym.com/clientportal2/#/Registration';
+
+const PROGRAMMI = [
+  {
+    title: 'Sala Pesi',
+    kicker: '1000 mq di sala pesi attrezzata',
+    body: "Passion Fitness è costantemente aggiornata sulle ultime innovazioni nel mondo delle attrezzature per il massimo coinvolgimento muscolare. Macchinari Technogym e Panatta di ultima generazione, progettati per un allenamento all'avanguardia.",
+    video: '/videos/2024/11/Sala-Pesi_Passion-Fitness.mp4',
+    href: '/palestra/sala-pesi/',
+    cta: 'Accedi alla Sala Pesi',
+  },
+  {
+    title: 'Corsi Fitness',
+    kicker: "Le sale più grandi della Tuscolana",
+    body: '2 sale dedicate, corsi dalle 7:00 alle 21:30: +120h di lezioni Rebalance (Pilates, Pilates Barre, Posturale, Yoga) e +130h di lezioni Energy (Pump, Met-Con, Prepugilistica, Funzionale, Booty Pump).',
+    video: '/videos/2025/02/Metcon-2.mp4',
+    href: '/palestra/corsi-fitness/',
+    cta: 'Accedi ai Corsi Fitness',
+  },
+  {
+    title: 'I Love My Trainer',
+    kicker: 'Un personal trainer per i tuoi obiettivi',
+    body: "Con la formula I Love My Trainer, acquistando lezioni individuali con uno dei nostri PT, avrai in omaggio l'abbonamento in palestra. A partire da 65€/mese.",
+    video: '/videos/2024/11/I-love-my-trainer-2.mp4',
+    href: '/i-love-my-trainer/',
+    cta: 'Accedi al Personal Training',
+  },
+  {
+    title: 'Studio Pilates Reformer',
+    kicker: "Vivi l'esperienza reformer",
+    body: 'Studio Reformer per costruire basi solide, Studio Reformer+ per classi intermedie e avanzate, Studio Reformer Individuale per un percorso su misura con un trainer dedicato.',
+    video: '/videos/2024/10/reformer_senza_testi.mp4',
+    href: '/pilates-reformer/',
+    cta: 'Accedi al Reformer',
+  },
+];
+
+const FAQ = [
+  {
+    q: 'Quali sono gli orari di apertura della palestra?',
+    a: 'Passion Fitness Tuscolana è aperta tutti i giorni, dalle 5 alle 24.',
+  },
+  {
+    q: 'Verrò seguito/a dai personal trainer in sala pesi?',
+    a: "Di più! Con la formula I Love My Trainer acquisti direttamente le lezioni individuali, a partire da 65€/mese, con un Personal Trainer che si dedicherà unicamente a te.",
+  },
+  {
+    q: 'Posso acquistare online gli abbonamenti?',
+    a: 'Sì, accedendo alla sezione degli abbonamenti online puoi iscriverti scegliendo la tipologia di abbonamento desiderato.',
+  },
+];
+
+const TESTIMONIANZE = [
+  {
+    quote:
+      'Ho frequentato questa palestra per sei mesi con un personal trainer e mi sono trovata molto bene. Ho partecipato anche ai corsi organizzati durante la settimana, in particolare Pilates Barre con Luca, e sono rimasta molto soddisfatta.',
+    author: 'Elnaz Yousefi',
+  },
+  {
+    quote:
+      "Dopo svariate esperienze in altre palestre l'unica cosa che mi era rimasta era la frustrazione di non aver ottenuto risultati. Ho dovuto ricredermi: sono stata ascoltata e guidata verso i miei obiettivi, oggi sono seguita a 360 gradi da tutto il personale.",
+    author: 'Francesca Amadei',
+  },
+  {
+    quote:
+      'Soluzioni di allenamento variegate, dal classico abbonamento in sala pesi a lezioni di Pilates, yoga, metabolico. Presente anche il Pilates Reformer per completare un allenamento a 360 gradi. Insegnanti tutti preparati e alla mano.',
+    author: 'Giorgia Armagno',
+  },
+];
+
+const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf())
+  .slice(0, 4);
 ---
 
-<PageLayout page={page}>
-  <Content />
-</PageLayout>
+<BaseLayout
+  title="Passion Fitness | Palestre Roma"
+  description="Passion Fitness | Palestre Roma | Passion Fitness Tuscolana"
+>
+  <Hero title="PASSION FITNESS" eyebrow="Palestra di quartiere — Roma Tuscolana" image="/images/uploads/2024/11/MRZ08075.jpeg">
+    <p>La palestra più grande delle zone Tuscolana, Cinecittà, Don Bosco e San Policarpo. Un luogo dove persone diverse, con obiettivi unici, trovano il proprio percorso ideale per sentirsi meglio, insieme.</p>
+    <div class="hero-ctas">
+      <Button href={PROVA_URL} variant="primary">Prova Passion Fitness</Button>
+      <Button href="/orari-corsi/" variant="ghost-dark">Scopri i Corsi</Button>
+    </div>
+  </Hero>
+
+  <Section tone="blush">
+    <div class="quicklinks">
+      <article>
+        <p class="eyebrow">Planning Corsi</p>
+        <h3>Tante attività tra cui scegliere</h3>
+        <p>Corsi Rebalance, Energy, Reformer, Reformer Plus.</p>
+        <a class="quicklinks__link" href="/orari-corsi/">Orari e planning corsi →</a>
+      </article>
+      <article>
+        <p class="eyebrow">Abbonamenti</p>
+        <h3>Scegli la soluzione migliore</h3>
+        <p>Percorsi specifici per chi vuole costruirsi una sana abitudine all'allenamento.</p>
+        <a class="quicklinks__link" href={ABBONAMENTI_URL}>Scopri gli abbonamenti →</a>
+      </article>
+      <article>
+        <p class="eyebrow">Prova Passion</p>
+        <h3>Scegli l'attività che preferisci</h3>
+        <p>Corsi Fitness, Pilates Reformer e Personal Training.</p>
+        <a class="quicklinks__link" href={PROVA_URL}>Richiedi il pass →</a>
+      </article>
+    </div>
+  </Section>
+
+  <Section tone="dark">
+    <h2 class="programmi-title">I nostri programmi</h2>
+    <div class="programmi">
+      {PROGRAMMI.map((p) => (
+        <article class="programma">
+          <div class="programma__media">
+            <video src={p.video} autoplay muted loop playsinline></video>
+          </div>
+          <div class="programma__copy">
+            <p class="eyebrow programma__kicker">{p.kicker}</p>
+            <h3>{p.title}</h3>
+            <p>{p.body}</p>
+            <Button href={p.href} variant="ghost-dark">{p.cta}</Button>
+          </div>
+        </article>
+      ))}
+    </div>
+  </Section>
+
+  <Section tone="blush">
+    <div class="perche">
+      <div class="perche__copy">
+        <h2>Perché scegliere noi?</h2>
+        <p>Con 30 anni di esperienza e gli insegnamenti appresi dai nostri errori, abbiamo imparato a mettere al centro la persona prima dell'allenamento. Ti dedichiamo tutta l'attenzione che meriti, allenandoci al tuo fianco finché non acquisirai piena sicurezza in te.</p>
+      </div>
+      <div class="faq">
+        {FAQ.map((item) => (
+          <details class="faq__item">
+            <summary>{item.q}</summary>
+            <p>{item.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </Section>
+
+  <Section tone="red">
+    <div class="stats">
+      <div class="stat">
+        <span class="stat__num">30+</span>
+        <span class="stat__label">Anni nel settore</span>
+      </div>
+      <div class="stat">
+        <span class="stat__num">2000</span>
+        <span class="stat__label">m² dedicati al fitness</span>
+      </div>
+      <div class="stat">
+        <span class="stat__num">1000</span>
+        <span class="stat__label">mq di sala pesi</span>
+      </div>
+      <div class="stat">
+        <span class="stat__num">2+2</span>
+        <span class="stat__label">Sale fitness e studi reformer</span>
+      </div>
+    </div>
+  </Section>
+
+  <Section tone="light">
+    <h2>Cosa dicono di noi</h2>
+    <div class="testimonials">
+      {TESTIMONIANZE.map((t) => (
+        <figure class="testimonial">
+          <blockquote>"{t.quote}"</blockquote>
+          <figcaption>{t.author} <span>— Recensione Google</span></figcaption>
+        </figure>
+      ))}
+    </div>
+  </Section>
+
+  <Section tone="blush">
+    <div class="section-head">
+      <h2>Il blog di Passion</h2>
+      <a class="quicklinks__link" href="/blog/">Scopri tutti gli articoli →</a>
+    </div>
+    <PostList posts={latestPosts} />
+  </Section>
+
+  <CTA
+    heading="Pronto a iniziare?"
+    buttonLabel="Prova Passion Fitness"
+    buttonHref={PROVA_URL}
+    tone="dark"
+  />
+</BaseLayout>
+
+<style>
+  .hero-ctas {
+    display: flex;
+    gap: var(--space-xs);
+    flex-wrap: wrap;
+    margin-top: var(--space-2xs);
+  }
+
+  .quicklinks {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: var(--space-md);
+  }
+  .quicklinks .eyebrow {
+    color: var(--color-red);
+  }
+  .quicklinks h3 {
+    margin-top: var(--space-3xs);
+  }
+  .quicklinks p:not(.eyebrow) {
+    margin-top: var(--space-2xs);
+    color: var(--text-on-light-muted);
+    font-size: 0.92rem;
+  }
+  .quicklinks__link {
+    display: inline-block;
+    margin-top: var(--space-xs);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-red);
+  }
+
+  .programmi-title {
+    color: var(--text-on-dark);
+    margin-bottom: var(--space-md);
+  }
+  .programmi {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+  .programma {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+    align-items: center;
+    border-top: 1px solid var(--border-on-dark);
+    padding-top: var(--space-md);
+  }
+  .programma:nth-child(even) .programma__media {
+    order: 2;
+  }
+  .programma__media {
+    aspect-ratio: 16 / 10;
+    background: var(--color-black);
+    overflow: hidden;
+  }
+  .programma__media video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .programma__kicker {
+    color: var(--color-red);
+  }
+  .programma__copy h3 {
+    color: var(--text-on-dark);
+    margin-top: var(--space-3xs);
+  }
+  .programma__copy p:not(.eyebrow) {
+    color: var(--text-on-dark-muted);
+    margin-block: var(--space-2xs) var(--space-sm);
+  }
+  @media (max-width: 760px) {
+    .programma,
+    .programma:nth-child(even) .programma__media {
+      grid-template-columns: 1fr;
+      order: 0;
+    }
+  }
+
+  .perche {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-lg);
+  }
+  .perche__copy p {
+    margin-top: var(--space-sm);
+    color: var(--text-on-light-muted);
+  }
+  .faq {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+  }
+  .faq__item {
+    background: var(--color-white);
+    border: 1px solid var(--border-on-light);
+    padding: var(--space-sm);
+  }
+  .faq__item summary {
+    cursor: pointer;
+    font-weight: 700;
+  }
+  .faq__item p {
+    margin-top: var(--space-2xs);
+    color: var(--text-on-light-muted);
+  }
+  @media (max-width: 760px) {
+    .perche {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    gap: var(--space-md);
+  }
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+  }
+  .stat__num {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 4vw, 3rem);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat__label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.9;
+  }
+
+  .testimonials {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: var(--space-md);
+    margin-top: var(--space-md);
+  }
+  .testimonial {
+    margin: 0;
+    padding: var(--space-sm);
+    border: 1px solid var(--border-on-light);
+    border-top: 3px solid var(--color-red);
+  }
+  .testimonial blockquote {
+    margin: 0;
+    font-size: 0.92rem;
+    line-height: 1.55;
+  }
+  .testimonial figcaption {
+    margin-top: var(--space-sm);
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+  .testimonial figcaption span {
+    font-weight: 400;
+    color: var(--text-on-light-muted);
+  }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-md);
+  }
+</style>
