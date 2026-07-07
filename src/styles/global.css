@@ -1,11 +1,11 @@
 /* Sistema di design Passion Fitness. Palette fissata dal cliente (non negoziabile):
-   #CC0000 rosso, #FEEDED rosa chiaro, #1B1B1B antracite, #FFFFFF, #000000. */
+   #E3032D rosso (colore reale del logo), #FEEDED rosa chiaro, #1B1B1B antracite, #FFFFFF, #000000. */
 
 :root {
   --color-black: #000000;
   --color-charcoal: #1b1b1b;
-  --color-red: #cc0000;
-  --color-red-hover: #e50000;
+  --color-red: #e3032d;
+  --color-red-hover: #fc0332;
   --color-white: #ffffff;
   --color-blush: #feeded;
 
