@@ -261,23 +261,23 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     transform: translateY(-50%);
     z-index: 5;
     pointer-events: none;
+    font-size: clamp(2rem, 4.2vw, 3.2rem);
+    line-height: 1;
+    height: 1em;
   }
   .programmi-split__layer {
-    display: block;
-    width: fit-content;
+    position: absolute;
+    inset: 0;
     font-family: var(--font-display);
     text-transform: lowercase;
-    font-size: clamp(1.1rem, 1.8vw, 1.5rem);
+    font-size: 1em;
     line-height: 1;
   }
   .programmi-split__layer--top {
-    position: absolute;
-    inset: 0;
     color: var(--color-red);
     clip-path: inset(0 0 50% 0);
   }
   .programmi-split__layer--bottom {
-    position: relative;
     color: var(--color-white);
     clip-path: inset(50% 0 0 0);
   }
