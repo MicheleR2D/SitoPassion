@@ -13,21 +13,13 @@ const ABBONAMENTI_URL = 'https://passion.perfectgym.com/clientportal2/#/Registra
 
 const QUICKLINKS = [
   {
-    eyebrow: 'Prova Passion',
-    title: "Scegli l'attività che preferisci",
-    body: 'Corsi Fitness, Pilates Reformer e Personal Training.',
-    href: PROVA_URL,
-    cta: 'Richiedi il pass',
-    image: '/images/uploads/2024/11/MRZ01857-scaled.jpeg',
-    featured: true,
-  },
-  {
     eyebrow: 'Planning Corsi',
     title: 'Tante attività tra cui scegliere',
     body: 'Corsi Rebalance, Energy, Reformer, Reformer Plus.',
     href: '/orari-corsi/',
     cta: 'Orari e planning corsi',
-    image: '/images/uploads/2025/01/corso-di-step-min-1168x600-1.jpg',
+    icon: 'calendar',
+    tone: 'light',
   },
   {
     eyebrow: 'Abbonamenti',
@@ -35,9 +27,28 @@ const QUICKLINKS = [
     body: "Percorsi specifici per chi vuole costruirsi una sana abitudine all'allenamento.",
     href: ABBONAMENTI_URL,
     cta: 'Scopri gli abbonamenti',
-    image: '/images/uploads/2024/10/Palestra-11920x.jpg',
+    icon: 'dumbbell',
+    tone: 'dark',
+  },
+  {
+    eyebrow: 'Prova Passion',
+    title: "Scegli l'attività che preferisci",
+    body: 'Corsi Fitness, Pilates Reformer e Personal Training.',
+    href: PROVA_URL,
+    cta: 'Scopri le attività',
+    icon: 'heart-arm',
+    tone: 'light',
   },
 ];
+
+const QUICKLINK_ICONS = {
+  calendar:
+    '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="8" width="30" height="34" rx="3"/><rect x="17" y="4" width="14" height="8" rx="2"/><line x1="15" y1="21" x2="33" y2="21"/><line x1="15" y1="28" x2="33" y2="28"/><line x1="15" y1="35" x2="25" y2="35"/></svg>',
+  dumbbell:
+    '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="20" r="5"/><circle cx="15" cy="28" r="4"/><line x1="15" y1="24" x2="31" y2="12"/><circle cx="35" cy="16" r="4"/><circle cx="40" cy="22" r="3"/></svg>',
+  'heart-arm':
+    '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 36c0-11 6-21 17-23-2 6 0 11 6 11"/><path d="M29 11c2-3 6-3 8 0 2-3 6-3 8 0 0 4-4 8-8 10-4-2-8-6-8-10Z"/></svg>',
+};
 
 const PROGRAMMI = [
   {
@@ -131,34 +142,15 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
 
   <Section tone="blush" class="quicklinks-section">
     <div class="quicklinks">
-      {QUICKLINKS.filter((item) => item.featured).map((item) => (
-        <article class="quicklinks__card quicklinks__card--featured">
-          <div class="quicklinks__media">
-            <img src={item.image} alt="" />
-          </div>
-          <div class="quicklinks__body">
-            <p class="eyebrow">{item.eyebrow}</p>
-            <h3>{item.title}</h3>
-            <p>{item.body}</p>
-            <a class="quicklinks__link" href={item.href}>{item.cta} →</a>
-          </div>
+      {QUICKLINKS.map((item) => (
+        <article class={`quicklinks__card quicklinks__card--${item.tone}`}>
+          <div class="quicklinks__icon" set:html={QUICKLINK_ICONS[item.icon]} />
+          <p class="eyebrow"><span class="quicklinks__bullet" aria-hidden="true"></span>{item.eyebrow}</p>
+          <h3>{item.title}</h3>
+          <p>{item.body}</p>
+          <a class="quicklinks__cta" href={item.href}>{item.cta}</a>
         </article>
       ))}
-      <div class="quicklinks__row">
-        {QUICKLINKS.filter((item) => !item.featured).map((item) => (
-          <article class="quicklinks__card">
-            <div class="quicklinks__media">
-              <img src={item.image} alt="" />
-            </div>
-            <div class="quicklinks__body">
-              <p class="eyebrow">{item.eyebrow}</p>
-              <h3>{item.title}</h3>
-              <p>{item.body}</p>
-              <a class="quicklinks__link" href={item.href}>{item.cta} →</a>
-            </div>
-          </article>
-        ))}
-      </div>
     </div>
   </Section>
 
@@ -267,78 +259,88 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     width: 100%;
   }
   .quicklinks {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
-    width: 100%;
-  }
-  .quicklinks__row {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-md);
+    grid-template-columns: repeat(3, 1fr);
+    width: 100%;
   }
   .quicklinks__card {
-    background: var(--accent);
-    border: 1px solid var(--border-on-dark);
-    border-radius: 12px;
-    overflow: hidden;
+    padding: var(--space-lg) var(--space-md);
     display: flex;
     flex-direction: column;
-  }
-  .quicklinks .quicklinks__card .eyebrow {
-    color: var(--color-white);
-  }
-  .quicklinks__card--featured {
-    display: grid;
-    grid-template-columns: 1.1fr 1fr;
-    align-items: stretch;
-  }
-  .quicklinks__media {
-    background: var(--color-black);
-    overflow: hidden;
-    min-height: 8rem;
-    max-height: 10rem;
-  }
-  .quicklinks__media img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-  .quicklinks__body {
-    padding: var(--space-md);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
     gap: var(--space-2xs);
   }
-  .quicklinks .eyebrow {
+  .quicklinks__card--light {
+    background: var(--color-white);
+  }
+  .quicklinks__card--dark {
+    background: var(--bg-dark);
+  }
+  .quicklinks__icon {
+    width: 3.25rem;
+    height: 3.25rem;
+    margin-bottom: var(--space-sm);
+  }
+  .quicklinks__card--light .quicklinks__icon {
     color: var(--color-red);
   }
-  .quicklinks__card h3 {
+  .quicklinks__card--dark .quicklinks__icon {
     color: var(--color-white);
-    margin-top: var(--space-3xs);
   }
-  .quicklinks__card p:not(.eyebrow) {
-    margin-top: var(--space-2xs);
+  .quicklinks__icon svg {
+    width: 100%;
+    height: 100%;
+  }
+  .quicklinks .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-red);
+  }
+  .quicklinks__bullet {
+    width: 0.45rem;
+    height: 0.45rem;
+    background: var(--color-red);
+    flex-shrink: 0;
+  }
+  .quicklinks__card--light h3 {
+    color: var(--text-on-light);
+  }
+  .quicklinks__card--dark h3 {
     color: var(--color-white);
-    font-size: 0.92rem;
+  }
+  .quicklinks__card--light p:not(.eyebrow) {
+    color: var(--text-on-light-muted);
+  }
+  .quicklinks__card--dark p:not(.eyebrow) {
+    color: var(--text-on-dark-muted);
+  }
+  .quicklinks__cta {
+    display: inline-block;
+    width: fit-content;
+    margin-top: var(--space-sm);
+    padding: 0.85rem 1.5rem;
+    background: var(--color-red);
+    color: var(--color-white);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-radius: 8px;
+    transition: background-color 0.15s ease;
+  }
+  .quicklinks__cta:hover {
+    background: var(--color-red-hover);
   }
   .quicklinks__link {
     display: inline-block;
-    margin-top: var(--space-xs);
     font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--color-red);
   }
-  .quicklinks__card .quicklinks__link {
-    color: var(--color-white);
-  }
   @media (max-width: 760px) {
-    .quicklinks__card--featured,
-    .quicklinks__row {
+    .quicklinks {
       grid-template-columns: 1fr;
     }
   }
