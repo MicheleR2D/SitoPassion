@@ -64,6 +64,20 @@ const { title, image, video, videoEndBuffer = 3, eyebrow } = Astro.props;
   .hero:not(:has(.hero-photo, .hero-media)) {
     height: auto;
   }
+  .hero:has(.hero-media) {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+  }
+  .hero:has(.hero-media) .hero-inner {
+    grid-column: 2;
+    background: var(--accent);
+  }
+  .hero:has(.hero-media) .hero-eyebrow {
+    color: var(--color-white);
+  }
+  .hero:has(.hero-media) .hero-extra {
+    color: var(--color-white);
+  }
 
   .hero-inner {
     position: relative;
@@ -115,16 +129,10 @@ const { title, image, video, videoEndBuffer = 3, eyebrow } = Astro.props;
   }
 
   .hero-media {
-    position: absolute;
-    inset: 0;
+    position: relative;
+    height: 100%;
     background: var(--color-black);
     overflow: hidden;
-  }
-  .hero-media::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(100deg, rgba(0, 0, 0, 0.82) 0%, rgba(0, 0, 0, 0.55) 32%, rgba(227, 3, 45, 0.2) 58%, rgba(0, 0, 0, 0.45) 100%);
   }
   .hero-media__video {
     position: absolute;
