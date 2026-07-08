@@ -357,7 +357,6 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
   .programmi-section {
     position: relative;
     background: var(--accent);
-    padding-top: var(--space-sm);
   }
   .programmi-split {
     position: relative;
@@ -365,7 +364,7 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     display: flex;
     align-items: flex-start;
     flex-wrap: wrap;
-    gap: var(--space-md) var(--space-lg);
+    gap: var(--space-md) var(--space-sm);
     margin-bottom: var(--space-md);
   }
   .programmi-split__badge {
@@ -383,21 +382,25 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
   .programmi-split__nav {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-xs) var(--space-md);
-    padding-top: 0.3em;
+    align-items: flex-start;
+    gap: var(--space-xs) var(--space-sm);
   }
   .programmi-split__nav-link {
+    display: inline-block;
+    background: var(--color-red);
     color: var(--color-white);
     font-size: clamp(0.85rem, 1.1vw, 1rem);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    border-bottom: 2px solid transparent;
-    transition: border-color 0.15s ease;
+    padding: 0.5em 0.9em;
+    border-radius: 8px;
+    transform: translateY(-50%);
+    transition: background-color 0.15s ease, color 0.15s ease;
   }
   .programmi-split__nav-link:hover {
-    border-color: var(--color-white);
+    background: var(--bg-light-soft);
+    color: var(--color-red);
   }
   .programmi {
     display: flex;
