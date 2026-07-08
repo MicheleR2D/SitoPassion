@@ -103,7 +103,13 @@ const { title, image, video, videoEndBuffer = 3, eyebrow } = Astro.props;
     color: var(--text-on-dark);
   }
   .hero-extra {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
     color: var(--text-on-dark-muted);
+  }
+  .hero-extra p {
+    line-height: 1.9;
   }
 
   .hero-photo {

@@ -32,5 +32,4 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Orari Corsi", href: "/orari-corsi/" },
   { label: "Abbonamenti", href: "/abbonamenti/" },
   { label: "Blog", href: "/blog/" },
-  { label: "Contatti", href: "/contatti/" },
 ];
