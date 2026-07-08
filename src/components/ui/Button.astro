@@ -51,16 +51,16 @@ const { href, variant = "primary", arrow = true } = Astro.props;
   }
 
   .button--white {
-    background: transparent;
-    color: var(--color-white);
+    background: var(--color-white);
+    color: var(--text-on-light);
     border-width: 4px;
     border-color: var(--color-white);
     border-radius: 12px;
   }
   .button--white:hover {
-    background: var(--color-white);
-    color: var(--text-on-light);
-    border-color: var(--color-white);
+    background: var(--color-black);
+    color: var(--color-white);
+    border-color: var(--color-black);
   }
 
   .button--ghost-dark {
