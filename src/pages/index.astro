@@ -242,10 +242,19 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
       if (window.ResizeObserver) {
         const observer = new ResizeObserver(() => update());
         observer.observe(document.body);
-      } else {
-        setTimeout(update, 300);
-        setTimeout(update, 1000);
       }
+
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(update);
+      }
+
+      // Belt-and-suspenders: the very first synchronous measurement can run
+      // before the grid CSS has actually been applied (module scripts fire at
+      // DOMContentLoaded, not after stylesheets/fonts/video metadata settle),
+      // and load/resize/ResizeObserver don't reliably fire again afterwards
+      // on a static page. Re-measure a few more times to guarantee at least
+      // one accurate pass regardless of exactly when layout settles.
+      [50, 150, 300, 600, 1200, 2500].forEach((delay) => setTimeout(update, delay));
     }
 
     initProgrammiConnectors();
