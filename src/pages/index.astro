@@ -13,31 +13,28 @@ const ABBONAMENTI_URL = 'https://passion.perfectgym.com/clientportal2/#/Registra
 
 const QUICKLINKS = [
   {
-    eyebrow: 'Planning Corsi',
-    title: 'Tante attività tra cui scegliere',
-    body: 'Corsi Rebalance, Energy, Reformer, Reformer Plus.',
+    title: 'Planning',
+    body: "Oltre 250 lezioni al mese tra Rebalance, Energy, Pilates e Reformer, distribuite su più sale e studi dedicati. Consulta gli orari aggiornati in tempo reale e organizza la tua settimana di allenamento in pochi secondi.",
     href: '/orari-corsi/',
-    cta: 'Orari e planning corsi',
+    cta: 'Scopri il planning',
     icon: 'calendar',
-    tone: 'light',
+    image: '/images/uploads/2025/01/corso-di-step-min-1168x600-1.jpg',
   },
   {
-    eyebrow: 'Abbonamenti',
-    title: 'Scegli la soluzione migliore',
-    body: "Percorsi specifici per chi vuole costruirsi una sana abitudine all'allenamento.",
+    title: 'Abbonamenti',
+    body: 'Dalla sala pesi in accesso libero ai pacchetti di Personal Training, fino alle formule Open pensate per chi si allena senza vincoli di orario. Scegli la soluzione più adatta al tuo obiettivo e al tuo budget.',
     href: ABBONAMENTI_URL,
     cta: 'Scopri gli abbonamenti',
     icon: 'dumbbell',
-    tone: 'dark',
+    image: '/images/uploads/2024/10/Palestra-11920x.jpg',
   },
   {
-    eyebrow: 'Prova Passion',
-    title: "Scegli l'attività che preferisci",
-    body: 'Corsi Fitness, Pilates Reformer e Personal Training.',
+    title: 'Prova Open',
+    body: "Vieni a scoprire di persona sala pesi, corsi fitness e studi Reformer con un accesso gratuito e senza impegno. Il nostro staff ti guida nella scelta del percorso più adatto a te fin dal primo allenamento.",
     href: PROVA_URL,
-    cta: 'Scopri le attività',
+    cta: 'Prova gratis',
     icon: 'heart-arm',
-    tone: 'light',
+    image: '/images/uploads/2024/11/MRZ01857-scaled.jpeg',
   },
 ];
 
@@ -144,19 +141,22 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     </div>
   </Hero>
 
-  <Section tone="blush" class="quicklinks-section">
+  <section class="quicklinks-section">
     <div class="quicklinks">
       {QUICKLINKS.map((item) => (
-        <article class={`quicklinks__card quicklinks__card--${item.tone}`}>
-          <div class="quicklinks__icon" set:html={QUICKLINK_ICONS[item.icon]} />
-          <p class="eyebrow"><span class="quicklinks__bullet" aria-hidden="true"></span>{item.eyebrow}</p>
-          <h3>{item.title}</h3>
-          <p>{item.body}</p>
-          <a class="quicklinks__cta" href={item.href}>{item.cta}</a>
+        <article class="quicklinks__card">
+          <div class="quicklinks__bg" style={`background-image: url(${item.image})`}></div>
+          <div class="quicklinks__overlay"></div>
+          <div class="quicklinks__content">
+            <div class="quicklinks__icon" set:html={QUICKLINK_ICONS[item.icon]} />
+            <h3>{item.title}</h3>
+            <p class="quicklinks__body">{item.body}</p>
+            <a class="quicklinks__cta" href={item.href}>{item.cta}</a>
+          </div>
         </article>
       ))}
     </div>
-  </Section>
+  </section>
 
   <section class="programmi-section" aria-label="Programmi Passion Fitness">
     <svg class="programmi-connectors" aria-hidden="true" preserveAspectRatio="none">
@@ -326,88 +326,102 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     margin-top: var(--space-2xs);
   }
 
-  :global(.quicklinks-section) {
+  .quicklinks-section {
     height: 100vh;
-    display: flex;
-    align-items: center;
-    overflow: hidden;
-    padding-block: var(--space-md);
-  }
-  :global(.quicklinks-section > .container) {
-    width: 100%;
+    border-top: 6px solid var(--color-red);
   }
   .quicklinks {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    width: 100%;
+    height: 100%;
   }
   .quicklinks__card {
-    padding: var(--space-lg) var(--space-md);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .quicklinks__bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+  }
+  .quicklinks__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    transition: background-color 0.3s ease;
+  }
+  .quicklinks__card:hover .quicklinks__overlay {
+    background: var(--accent);
+  }
+  .quicklinks__content {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    text-align: center;
     gap: var(--space-2xs);
-  }
-  .quicklinks__card--light {
-    background: var(--color-white);
-  }
-  .quicklinks__card--dark {
-    background: var(--bg-dark);
+    padding: var(--space-lg) var(--space-md);
+    max-width: 26rem;
   }
   .quicklinks__icon {
     width: 3.25rem;
     height: 3.25rem;
-    margin-bottom: var(--space-sm);
-  }
-  .quicklinks__card--light .quicklinks__icon {
-    color: var(--color-red);
-  }
-  .quicklinks__card--dark .quicklinks__icon {
     color: var(--color-white);
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: opacity 0.25s ease, max-height 0.25s ease, margin-bottom 0.25s ease;
+  }
+  .quicklinks__card:hover .quicklinks__icon {
+    opacity: 1;
+    max-height: 4rem;
+    margin-bottom: var(--space-2xs);
   }
   .quicklinks__icon svg {
     width: 100%;
     height: 100%;
   }
-  .quicklinks .eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--color-red);
-  }
-  .quicklinks__bullet {
-    width: 0.45rem;
-    height: 0.45rem;
-    background: var(--color-red);
-    flex-shrink: 0;
-  }
-  .quicklinks__card--light h3 {
-    color: var(--text-on-light);
-  }
-  .quicklinks__card--dark h3 {
+  .quicklinks__content h3 {
     color: var(--color-white);
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
   }
-  .quicklinks__card--light p:not(.eyebrow) {
-    color: var(--text-on-light-muted);
-  }
-  .quicklinks__card--dark p:not(.eyebrow) {
+  .quicklinks__body {
     color: var(--text-on-dark-muted);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    opacity: 0;
+    max-height: 0;
+    margin: 0;
+    overflow: hidden;
+    transition: opacity 0.25s ease, max-height 0.25s ease, margin-block 0.25s ease;
+  }
+  .quicklinks__card:hover .quicklinks__body {
+    opacity: 1;
+    max-height: 12rem;
+    margin-block: var(--space-2xs);
   }
   .quicklinks__cta {
     display: inline-block;
     width: fit-content;
     margin-top: var(--space-sm);
     padding: 0.85rem 1.5rem;
-    background: var(--color-red);
-    color: var(--color-white);
+    background: var(--color-white);
+    color: var(--text-on-light);
     font-size: 0.8rem;
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
     border-radius: 8px;
-    transition: background-color 0.15s ease;
+    transition: background-color 0.15s ease, color 0.15s ease;
   }
   .quicklinks__cta:hover {
-    background: var(--color-red-hover);
+    background: var(--color-black);
+    color: var(--color-white);
   }
   .quicklinks__link {
     display: inline-block;
@@ -418,8 +432,14 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     color: var(--color-red);
   }
   @media (max-width: 760px) {
+    .quicklinks-section {
+      height: auto;
+    }
     .quicklinks {
       grid-template-columns: 1fr;
+    }
+    .quicklinks__card {
+      min-height: 24rem;
     }
   }
 
