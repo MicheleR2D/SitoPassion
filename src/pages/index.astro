@@ -182,7 +182,7 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
             <div class="programma__text">
               <h3>{p.title}</h3>
               <p>{p.body}</p>
-              <Button href={p.href} variant="white">{p.cta}</Button>
+              <Button href={p.href} variant="invert-red">{p.cta}</Button>
             </div>
           </div>
         </article>
@@ -327,7 +327,7 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
 
   .quicklinks-section {
     height: 100vh;
-    border-top: 6px solid var(--color-red);
+    border-top: 6px solid var(--color-black);
   }
   .quicklinks {
     display: grid;
@@ -445,6 +445,7 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
   .programmi-section {
     position: relative;
     background: var(--accent);
+    border-top: 6px solid var(--color-black);
   }
   .programmi-connectors {
     position: absolute;
@@ -454,7 +455,7 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
   }
   .programmi-connectors__path {
     fill: none;
-    stroke: var(--color-white);
+    stroke: var(--color-black);
     stroke-width: 2px;
   }
   .programmi-split {
@@ -487,7 +488,7 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
   }
   .programmi-split__nav-link {
     display: inline-block;
-    background: var(--color-red);
+    background: var(--color-black);
     color: var(--color-white);
     font-size: clamp(0.85rem, 1.1vw, 1rem);
     font-weight: 700;
@@ -499,8 +500,8 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     transition: background-color 0.15s ease, color 0.15s ease;
   }
   .programmi-split__nav-link:hover {
-    background: var(--bg-light-soft);
-    color: var(--color-red);
+    background: var(--color-white);
+    color: var(--color-black);
   }
   .programmi {
     display: flex;
@@ -544,7 +545,7 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-2xs);
-    border: 2px solid var(--color-white);
+    border: 2px solid var(--color-black);
     border-radius: 12px;
     padding: var(--space-md);
   }
@@ -552,7 +553,7 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     margin-top: var(--space-xs);
   }
   .programma__text h3 {
-    color: var(--color-white);
+    color: var(--color-black);
     font-size: clamp(2.2rem, 4.5vw, 3.8rem);
   }
   .programma__text p {
