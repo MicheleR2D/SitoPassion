@@ -448,9 +448,9 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     margin-bottom: var(--space-md);
   }
   .programmi-split__badge {
-    position: relative;
     display: inline-block;
     background: var(--color-red);
+    border: 2px solid var(--color-white);
     color: var(--color-white);
     font-family: var(--font-display);
     text-transform: lowercase;
@@ -459,15 +459,6 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     padding: 0.15em 0.4em;
     border-radius: 12px;
     transform: translateY(-50%);
-  }
-  .programmi-split__badge::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border: 2px solid var(--color-white);
-    border-radius: 12px;
-    clip-path: inset(50% 0 0 0);
-    pointer-events: none;
   }
   .programmi-split__nav {
     display: flex;
