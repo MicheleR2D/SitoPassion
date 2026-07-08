@@ -52,6 +52,7 @@ const QUICKLINK_ICONS = {
 
 const PROGRAMMI = [
   {
+    id: 'sala-pesi',
     title: 'Sala Pesi',
     kicker: '1000 mq di sala pesi attrezzata',
     body: "Passion Fitness è costantemente aggiornata sulle ultime innovazioni nel mondo delle attrezzature per il massimo coinvolgimento muscolare. Macchinari Technogym e Panatta di ultima generazione, progettati per un allenamento all'avanguardia.",
@@ -60,6 +61,7 @@ const PROGRAMMI = [
     cta: 'Accedi alla Sala Pesi',
   },
   {
+    id: 'corsi-fitness',
     title: 'Corsi Fitness',
     kicker: "Le sale più grandi della Tuscolana",
     body: '2 sale dedicate, corsi dalle 7:00 alle 21:30: +120h di lezioni Rebalance (Pilates, Pilates Barre, Posturale, Yoga) e +130h di lezioni Energy (Pump, Met-Con, Prepugilistica, Funzionale, Booty Pump).',
@@ -68,6 +70,7 @@ const PROGRAMMI = [
     cta: 'Accedi ai Corsi Fitness',
   },
   {
+    id: 'i-love-my-trainer',
     title: 'I Love My Trainer',
     kicker: 'Un personal trainer per i tuoi obiettivi',
     body: "Con la formula I Love My Trainer, acquistando lezioni individuali con uno dei nostri PT, avrai in omaggio l'abbonamento in palestra. A partire da 65€/mese.",
@@ -76,6 +79,7 @@ const PROGRAMMI = [
     cta: 'Accedi al Personal Training',
   },
   {
+    id: 'pilates-reformer',
     title: 'Studio Pilates Reformer',
     kicker: "Vivi l'esperienza reformer",
     body: 'Studio Reformer per costruire basi solide, Studio Reformer+ per classi intermedie e avanzate, Studio Reformer Individuale per un percorso su misura con un trainer dedicato.',
@@ -155,12 +159,17 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
   </Section>
 
   <section class="programmi-section" aria-label="Programmi Passion Fitness">
-    <div class="container programmi-split" aria-hidden="true">
-      <span class="programmi-split__layer">programmi</span>
+    <div class="container programmi-split">
+      <span class="programmi-split__badge">programmi</span>
+      <nav class="programmi-split__nav" aria-label="Vai al programma">
+        {PROGRAMMI.map((p) => (
+          <a class="programmi-split__nav-link" href={`#${p.id}`}>{p.title}</a>
+        ))}
+      </nav>
     </div>
     <div class="programmi">
       {PROGRAMMI.map((p) => (
-        <article class="programma">
+        <article class="programma" id={p.id}>
           <div class="programma__media">
             <video src={p.video} autoplay muted loop playsinline></video>
           </div>
@@ -351,25 +360,40 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     padding-top: var(--space-lg);
   }
   .programmi-split {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    transform: translateY(-50%);
-    z-index: 5;
-    pointer-events: none;
-    font-size: clamp(2rem, 4.2vw, 3.2rem);
-    line-height: 1;
-    height: 1em;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-md) var(--space-lg);
+    margin-bottom: var(--space-lg);
   }
-  .programmi-split__layer {
-    position: absolute;
-    inset: 0;
+  .programmi-split__badge {
+    display: inline-block;
+    background: var(--color-red);
+    border: 2px solid var(--color-white);
+    color: var(--color-white);
     font-family: var(--font-display);
     text-transform: lowercase;
-    font-size: 1em;
+    font-size: clamp(2rem, 4.2vw, 3.2rem);
     line-height: 1;
-    color: var(--color-black);
+    padding: 0.3em 0.6em;
+    border-radius: 12px;
+  }
+  .programmi-split__nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-md);
+  }
+  .programmi-split__nav-link {
+    color: var(--color-white);
+    font-size: clamp(0.85rem, 1.1vw, 1rem);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.15s ease;
+  }
+  .programmi-split__nav-link:hover {
+    border-color: var(--color-white);
   }
   .programmi {
     display: flex;
