@@ -221,11 +221,10 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
           const toRect = toEl.getBoundingClientRect();
           const boundaryRect = toArticle.getBoundingClientRect();
 
-          const overshoot = 4;
           const x1 = fromRect.left + fromRect.width / 2 - sectionRect.left;
-          const y1 = fromRect.bottom - sectionRect.top - overshoot;
+          const y1 = fromRect.bottom - sectionRect.top;
           const x2 = toRect.left + toRect.width / 2 - sectionRect.left;
-          const y2 = toRect.top - sectionRect.top + overshoot;
+          const y2 = toRect.top - sectionRect.top;
           const yMid = boundaryRect.top - sectionRect.top;
 
           const dir = x2 >= x1 ? 1 : -1;
@@ -461,7 +460,8 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
   .programmi-connectors__path {
     fill: none;
     stroke: var(--color-black);
-    stroke-width: 6px;
+    stroke-width: 2px;
+    stroke-linecap: square;
   }
   .programmi-split {
     position: relative;
@@ -474,9 +474,9 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
   }
   .programmi-split__badge {
     display: inline-block;
-    background: var(--color-red);
-    border: 6px solid var(--color-black);
-    color: var(--color-white);
+    background: var(--bg-light-soft);
+    border: 2px solid var(--color-black);
+    color: var(--color-black);
     font-family: var(--font-display);
     text-transform: lowercase;
     font-size: clamp(2rem, 4.2vw, 3.2rem);
@@ -550,7 +550,7 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-2xs);
-    background: var(--color-white);
+    background: var(--bg-light-soft);
     border: 2px solid var(--color-black);
     border-radius: 12px;
     padding: var(--space-md);
