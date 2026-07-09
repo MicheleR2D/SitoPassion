@@ -121,9 +121,19 @@ import Nav from './Nav.astro';
   @media (max-width: 900px) {
     .site-header__inner {
       flex-wrap: wrap;
+      padding-block: var(--space-2xs);
+      row-gap: 0;
+    }
+    .brand img {
+      height: 2.1rem;
     }
     .prova-gratis {
-      display: none;
+      position: static;
+      transform: none;
+      margin-left: auto;
+      font-size: 0.68rem;
+      padding: 0.5rem 0.85rem;
+      border-width: 2px;
     }
     .nav-toggle {
       display: flex;
