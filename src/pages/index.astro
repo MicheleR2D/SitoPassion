@@ -179,11 +179,18 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
             <video src={p.video} autoplay muted loop playsinline></video>
           </div>
           <div class="programma__copy">
-            <div class="programma__text">
-              <h3>{p.title}</h3>
-              <p>{p.body}</p>
-              <Button href={p.href} variant="invert-red">{p.cta}</Button>
-            </div>
+            <details class="programma__text" open>
+              <summary class="programma__summary">
+                <h3>{p.title}</h3>
+                <span class="programma__toggle-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </span>
+              </summary>
+              <div class="programma__details">
+                <p>{p.body}</p>
+                <Button href={p.href} variant="invert-red">{p.cta}</Button>
+              </div>
+            </details>
           </div>
         </article>
       ))}
@@ -191,6 +198,36 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
   </section>
 
   <script>
+    // The <details> markup always renders `open` (desktop stays expanded via
+    // pointer-events:none, no CSS fight over the [open] state). On mobile we
+    // want it collapsed by default, so close it here in JS instead - but
+    // only after it has actually laid out at least once while open. Closing
+    // an accordion that has never been open collapses its content to a
+    // 0-width box in current Chromium (a <details>/[open] sizing bug), so
+    // the forced layout read (offsetHeight) before flipping `open` matters.
+    function initProgrammiAccordion() {
+      const detailsEls = document.querySelectorAll('.programma__text');
+      const mobileQuery = window.matchMedia('(max-width: 760px)');
+
+      function applyState() {
+        detailsEls.forEach((el) => {
+          if (mobileQuery.matches) {
+            if (el.open) {
+              void el.offsetHeight;
+              el.open = false;
+            }
+          } else {
+            el.open = true;
+          }
+        });
+      }
+
+      applyState();
+      mobileQuery.addEventListener('change', applyState);
+    }
+
+    initProgrammiAccordion();
+
     function initProgrammiConnectors() {
       const section = document.querySelector('.programmi-section');
       const svg = document.querySelector('.programmi-connectors');
@@ -198,11 +235,34 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
 
       const paths = svg.querySelectorAll('.programmi-connectors__path');
       const radius = 10;
+      const mobileQuery = window.matchMedia('(max-width: 760px)');
 
       function resolveEl(id) {
         if (id === 'badge') return document.getElementById('badge');
         const article = document.getElementById(id);
         return article ? article.querySelector('.programma__text') : null;
+      }
+
+      // On mobile the video is shrunk to 7/8 width, leaving a 1/8 red sliver on
+      // one side (left/right alternating like the desktop rows) with the
+      // accordion overlapping the corner. The connector must only ever cross
+      // that red sliver, never the video, so anchor to the sliver's horizontal
+      // center instead of the accordion box's own center.
+      function anchorX(id, rect, sectionRect) {
+        const centerX = rect.left + rect.width / 2 - sectionRect.left;
+        if (!mobileQuery.matches || id === 'badge') return centerX;
+
+        const article = document.getElementById(id);
+        const media = article ? article.querySelector('.programma__media') : null;
+        if (!media) return centerX;
+
+        const mediaRect = media.getBoundingClientRect();
+        const rightGap = sectionRect.right - mediaRect.right;
+        const leftGap = mediaRect.left - sectionRect.left;
+        if (rightGap >= leftGap) {
+          return mediaRect.right - sectionRect.left + rightGap / 2;
+        }
+        return mediaRect.left - sectionRect.left - leftGap / 2;
       }
 
       function update() {
@@ -221,9 +281,9 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
           const toRect = toEl.getBoundingClientRect();
           const boundaryRect = toArticle.getBoundingClientRect();
 
-          const x1 = fromRect.left + fromRect.width / 2 - sectionRect.left;
+          const x1 = anchorX(path.dataset.from, fromRect, sectionRect);
           const y1 = fromRect.bottom - sectionRect.top;
-          const x2 = toRect.left + toRect.width / 2 - sectionRect.left;
+          const x2 = anchorX(path.dataset.to, toRect, sectionRect);
           const y2 = toRect.top - sectionRect.top;
           const yMid = boundaryRect.top - sectionRect.top;
 
@@ -569,14 +629,35 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     border-radius: 12px;
     padding: var(--space-md);
   }
-  .programma__text :global(.button) {
-    margin-top: var(--space-xs);
+  .programma__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    width: 100%;
+    list-style: none;
+    cursor: default;
+    /* Desktop is always-expanded and non-interactive; the accordion only
+       applies on mobile (re-enabled there). Locking via pointer-events,
+       rather than fighting the native [open] state with CSS, sidesteps a
+       Chromium <details> sizing bug where overriding display on the content
+       while [open] is absent collapses it to a 0-width box. */
+    pointer-events: none;
   }
-  .programma__text h3 {
+  .programma__summary::-webkit-details-marker {
+    display: none;
+  }
+  .programma__summary h3 {
     color: var(--color-black);
     font-size: clamp(2.2rem, 4.5vw, 3.8rem);
   }
-  .programma__text p {
+  .programma__toggle-icon {
+    display: none;
+  }
+  .programma__details :global(.button) {
+    margin-top: var(--space-xs);
+  }
+  .programma__details p {
     color: var(--color-red);
     font-size: clamp(1.05rem, 1.6vw, 1.3rem);
     margin-top: var(--space-2xs);
@@ -584,11 +665,59 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
   @media (max-width: 760px) {
     .programma,
     .programma:nth-child(even) {
-      grid-template-columns: 1fr;
-      grid-template-rows: 5fr 3fr;
+      display: block;
+      position: relative;
+      height: auto;
+      grid-template-columns: none;
+    }
+    .programma__media {
+      order: 0;
+      width: 87.5%;
+      aspect-ratio: 3 / 4;
+      padding-block: var(--space-sm);
+      margin-left: 0;
+      margin-right: auto;
     }
     .programma:nth-child(even) .programma__media {
-      order: 0;
+      margin-left: auto;
+      margin-right: 0;
+    }
+    .programma__copy {
+      position: absolute;
+      inset: 0;
+      display: block;
+      padding: 0;
+      overflow: visible;
+    }
+    .programma__text {
+      position: absolute;
+      top: var(--space-sm);
+      right: 0;
+      left: auto;
+      max-width: 78%;
+      padding: var(--space-sm);
+    }
+    .programma:nth-child(even) .programma__text {
+      right: auto;
+      left: 0;
+    }
+    .programma__summary {
+      cursor: pointer;
+      pointer-events: auto;
+    }
+    .programma__summary h3 {
+      font-size: clamp(1.4rem, 6vw, 1.9rem);
+    }
+    .programma__toggle-icon {
+      display: inline-flex;
+      flex-shrink: 0;
+      width: 1.3rem;
+      height: 1.3rem;
+      color: var(--color-black);
+      transition: transform 0.2s ease;
+    }
+    .programma__text[open] .programma__toggle-icon {
+      transform: rotate(180deg);
     }
   }
 
