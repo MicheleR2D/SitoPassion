@@ -55,7 +55,7 @@ const PROGRAMMI = [
     body: "Passion Fitness è costantemente aggiornata sulle ultime innovazioni nel mondo delle attrezzature per il massimo coinvolgimento muscolare. Macchinari Technogym e Panatta di ultima generazione, progettati per un allenamento all'avanguardia.",
     video: '/videos/2024/11/Sala-Pesi_Passion-Fitness.mp4',
     href: '/palestra/sala-pesi/',
-    cta: 'Accedi alla Sala Pesi',
+    cta: 'Vai alla Sala Pesi',
   },
   {
     id: 'corsi-fitness',
@@ -64,7 +64,7 @@ const PROGRAMMI = [
     body: '2 sale dedicate, corsi dalle 7:00 alle 21:30: +120h di lezioni Rebalance (Pilates, Pilates Barre, Posturale, Yoga) e +130h di lezioni Energy (Pump, Met-Con, Prepugilistica, Funzionale, Booty Pump).',
     video: '/videos/2025/02/Metcon-2.mp4',
     href: '/palestra/corsi-fitness/',
-    cta: 'Accedi ai Corsi Fitness',
+    cta: 'Vai ai Corsi Fitness',
   },
   {
     id: 'i-love-my-trainer',
@@ -73,16 +73,16 @@ const PROGRAMMI = [
     body: "Con la formula I Love My Trainer, acquistando lezioni individuali con uno dei nostri PT, avrai in omaggio l'abbonamento in palestra. A partire da 65€/mese.",
     video: '/videos/2024/11/I-love-my-trainer-2.mp4',
     href: '/i-love-my-trainer/',
-    cta: 'Accedi al Personal Training',
+    cta: 'Vai al Personal Training',
   },
   {
     id: 'pilates-reformer',
-    title: 'Studio Pilates Reformer',
+    title: 'Reformer',
     kicker: "Vivi l'esperienza reformer",
     body: 'Studio Reformer per costruire basi solide, Studio Reformer+ per classi intermedie e avanzate, Studio Reformer Individuale per un percorso su misura con un trainer dedicato.',
     video: '/videos/2024/10/reformer_senza_testi.mp4',
     href: '/pilates-reformer/',
-    cta: 'Accedi al Reformer',
+    cta: 'Vai al Reformer',
   },
 ];
 
@@ -297,9 +297,10 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
           let y1 = fromRect.bottom - sectionRect.top;
           let y2 = toRect.top - sectionRect.top;
           if (isMobile) {
-            // fromId is 'badge' only for the very first hop - badge already
-            // stacks above the connector svg on its own, no overlap needed.
-            if (fromId !== 'badge') y1 -= mobileOverlap;
+            // Dive into the source box too - including the "programmi" badge
+            // itself (fromId === 'badge' on the first hop), which also sits
+            // above the connector svg (.programmi-split z-index:5).
+            y1 -= mobileOverlap;
             y2 += mobileOverlap;
           }
           const yMid = boundaryRect.top - sectionRect.top;
@@ -588,7 +589,7 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
   .programmi-split__nav-link {
     display: inline-block;
     background: var(--color-black);
-    color: var(--color-red);
+    color: var(--color-white);
     font-size: clamp(0.85rem, 1.1vw, 1rem);
     font-weight: 700;
     text-transform: uppercase;
@@ -629,6 +630,18 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     height: 100%;
     object-fit: cover;
     border-radius: 12px;
+  }
+  /* Video che parte da sinistra (fila dispari): angoli sinistri squadrati.
+     Video che parte da destra (fila pari): angoli destri squadrati. */
+  .programma:nth-child(odd) .programma__media,
+  .programma:nth-child(odd) .programma__media video {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  .programma:nth-child(even) .programma__media,
+  .programma:nth-child(even) .programma__media video {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
   }
   .programma__copy {
     display: flex;
@@ -743,6 +756,10 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     }
     .programma__text[open] .programma__toggle-icon {
       transform: rotate(180deg);
+    }
+    .programmi-split__nav {
+      justify-content: center;
+      width: 100%;
     }
   }
 
