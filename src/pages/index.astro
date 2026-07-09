@@ -417,7 +417,7 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
 
   .quicklinks-section {
     height: 100vh;
-    border-top: 6px solid var(--color-black);
+    border-top: 2px solid var(--color-black);
   }
   .quicklinks {
     display: grid;
@@ -432,7 +432,7 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     justify-content: center;
   }
   .quicklinks__card:not(:first-child) {
-    border-left: 6px solid var(--color-black);
+    border-left: 2px solid var(--color-black);
   }
   .quicklinks__bg {
     position: absolute;
@@ -536,15 +536,15 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     }
     .quicklinks__card:not(:first-child) {
       border-left: none;
-      border-top: 6px solid var(--color-black);
+      border-top: 2px solid var(--color-black);
     }
   }
 
   .programmi-section {
     position: relative;
     background: var(--accent);
-    border-top: 6px solid var(--color-black);
-    border-bottom: 6px solid var(--color-black);
+    border-top: 2px solid var(--color-black);
+    border-bottom: 2px solid var(--color-black);
   }
   .programmi-connectors {
     position: absolute;
@@ -686,8 +686,18 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     display: none;
   }
   .programma__summary h3 {
-    color: var(--color-black);
-    font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+    /* Stessa etichetta di .programmi-split__nav-link, stesso stile e stessa
+       dimensione: apri/chiudi non deve cambiarne l'aspetto. */
+    display: inline-block;
+    background: var(--color-black);
+    color: var(--color-white);
+    font-family: var(--font-body);
+    font-size: clamp(0.85rem, 1.1vw, 1rem);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.5em 0.9em;
+    border-radius: 8px;
   }
   .programma__toggle-icon {
     display: none;
@@ -739,18 +749,23 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
       right: auto;
       left: 0;
     }
+    /* Aperto: copre tutti gli 8/8 della sezione (video compreso), non solo
+       l'angolo, indipendentemente dal lato di partenza. */
+    .programma:nth-child(odd) .programma__text[open],
+    .programma:nth-child(even) .programma__text[open] {
+      left: 0;
+      right: 0;
+      max-width: 100%;
+    }
     .programma__summary {
       cursor: pointer;
       pointer-events: auto;
     }
-    .programma__summary h3 {
-      font-size: clamp(1.4rem, 6vw, 1.9rem);
-    }
     .programma__toggle-icon {
       display: inline-flex;
       flex-shrink: 0;
-      width: 1.3rem;
-      height: 1.3rem;
+      width: 1rem;
+      height: 1rem;
       color: var(--color-black);
       transition: transform 0.2s ease;
     }
