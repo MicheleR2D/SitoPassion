@@ -178,6 +178,7 @@ const { title, image, video, videoEndBuffer = 3, eyebrow } = Astro.props;
     }
     .hero:has(.hero-media) .hero-inner {
       grid-column: 1;
+      align-items: flex-start;
       border-left: none;
       border-top: 6px solid var(--color-black);
       padding-top: var(--space-sm);
@@ -198,16 +199,16 @@ const { title, image, video, videoEndBuffer = 3, eyebrow } = Astro.props;
       gap: var(--space-2xs);
     }
     .hero:has(.hero-media) .hero-extra :global(p) {
-      font-size: 0.9rem;
-      line-height: 1.4;
+      font-size: 1.05rem;
+      line-height: 1.45;
     }
     .hero:has(.hero-media) :global(.hero-ctas) {
       gap: var(--space-2xs);
     }
     .hero:has(.hero-media) :global(.hero-ctas) :global(.button) {
-      font-size: 0.62rem;
-      padding: 0.55rem 0.8rem;
-      border-width: 2px;
+      font-size: 0.75rem;
+      padding: 0.75rem 1.1rem;
+      border-width: 3px;
     }
   }
 </style>
