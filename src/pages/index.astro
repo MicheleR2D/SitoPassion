@@ -159,10 +159,7 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
 
   <section class="programmi-section" aria-label="Programmi Passion Fitness">
     <svg class="programmi-connectors" aria-hidden="true" preserveAspectRatio="none">
-      <path class="programmi-connectors__path" data-from="badge" data-to="sala-pesi" data-y2-adjust="6"></path>
-      <path class="programmi-connectors__path" data-from="sala-pesi" data-to="corsi-fitness" data-y2-adjust="-6"></path>
-      <path class="programmi-connectors__path" data-from="corsi-fitness" data-to="i-love-my-trainer"></path>
-      <path class="programmi-connectors__path" data-from="i-love-my-trainer" data-to="pilates-reformer"></path>
+      <path class="programmi-connectors__path"></path>
     </svg>
     <div class="container programmi-split">
       <span class="programmi-split__badge" id="badge">programmi</span>
@@ -231,11 +228,20 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     function initProgrammiConnectors() {
       const section = document.querySelector('.programmi-section');
       const svg = document.querySelector('.programmi-connectors');
-      if (!section || !svg) return;
+      const path = svg ? svg.querySelector('.programmi-connectors__path') : null;
+      if (!section || !svg || !path) return;
 
-      const paths = svg.querySelectorAll('.programmi-connectors__path');
       const radius = 10;
       const mobileQuery = window.matchMedia('(max-width: 760px)');
+      // badge -> sala-pesi -> corsi-fitness -> i-love-my-trainer -> pilates-reformer
+      const sequence = ['badge', 'sala-pesi', 'corsi-fitness', 'i-love-my-trainer', 'pilates-reformer'];
+      // On mobile the line dives this many px past each accordion's edge, into
+      // its own footprint, instead of stopping exactly at the border. Paired
+      // with .programma__text sitting in a higher z-index than the connector
+      // svg, the accordion always covers that stretch of line - open or
+      // closed - so small measurement differences across devices never show
+      // up as a visible gap or an overshoot poking out past the box.
+      const mobileOverlap = 14;
 
       function resolveEl(id) {
         if (id === 'badge') return document.getElementById('badge');
@@ -271,28 +277,42 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
         svg.setAttribute('height', sectionRect.height);
         svg.setAttribute('viewBox', `0 0 ${sectionRect.width} ${sectionRect.height}`);
 
-        paths.forEach((path) => {
-          const fromEl = resolveEl(path.dataset.from);
-          const toEl = resolveEl(path.dataset.to);
-          const toArticle = document.getElementById(path.dataset.to);
-          if (!fromEl || !toEl || !toArticle) return;
+        const isMobile = mobileQuery.matches;
+        const subpaths = [];
+
+        for (let i = 0; i < sequence.length - 1; i++) {
+          const fromId = sequence[i];
+          const toId = sequence[i + 1];
+          const fromEl = resolveEl(fromId);
+          const toEl = resolveEl(toId);
+          const toArticle = document.getElementById(toId);
+          if (!fromEl || !toEl || !toArticle) continue;
 
           const fromRect = fromEl.getBoundingClientRect();
           const toRect = toEl.getBoundingClientRect();
           const boundaryRect = toArticle.getBoundingClientRect();
 
-          const x1 = anchorX(path.dataset.from, fromRect, sectionRect);
-          const y1 = fromRect.bottom - sectionRect.top;
-          const x2 = anchorX(path.dataset.to, toRect, sectionRect);
-          const y2 = toRect.top - sectionRect.top + Number(path.dataset.y2Adjust || 0);
+          const x1 = anchorX(fromId, fromRect, sectionRect);
+          const x2 = anchorX(toId, toRect, sectionRect);
+          let y1 = fromRect.bottom - sectionRect.top;
+          let y2 = toRect.top - sectionRect.top;
+          if (isMobile) {
+            // fromId is 'badge' only for the very first hop - badge already
+            // stacks above the connector svg on its own, no overlap needed.
+            if (fromId !== 'badge') y1 -= mobileOverlap;
+            y2 += mobileOverlap;
+          }
           const yMid = boundaryRect.top - sectionRect.top;
 
           const dir = x2 >= x1 ? 1 : -1;
           const r = Math.max(0, Math.min(radius, Math.abs(yMid - y1), Math.abs(y2 - yMid), Math.abs(x2 - x1) / 2));
 
-          const d = `M ${x1} ${y1} V ${yMid - r} Q ${x1} ${yMid} ${x1 + r * dir} ${yMid} H ${x2 - r * dir} Q ${x2} ${yMid} ${x2} ${yMid + r} V ${y2}`;
-          path.setAttribute('d', d);
-        });
+          subpaths.push(
+            `M ${x1} ${y1} V ${yMid - r} Q ${x1} ${yMid} ${x1 + r * dir} ${yMid} H ${x2 - r * dir} Q ${x2} ${yMid} ${x2} ${yMid + r} V ${y2}`
+          );
+        }
+
+        path.setAttribute('d', subpaths.join(' '));
       }
 
       update();
@@ -628,6 +648,11 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     border: 2px solid var(--color-black);
     border-radius: 12px;
     padding: var(--space-md);
+    /* Always above .programmi-connectors: the connector line is drawn to
+       dive under this box's edges (see initProgrammiConnectors), relying on
+       this box painting over it, open or closed. */
+    position: relative;
+    z-index: 2;
   }
   .programma__summary {
     display: flex;
