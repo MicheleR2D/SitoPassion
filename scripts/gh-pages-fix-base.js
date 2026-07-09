@@ -43,6 +43,14 @@ function rewriteAttrs(html) {
   });
 }
 
+// style="background-image: url(/images/...)" - non è un href/src, va gestito separatamente.
+function rewriteInlineStyleUrls(html) {
+  return html.replace(/\burl\((['"]?)(\/(?!\/)[^'")]*)\1\)/g, (match, quote, path) => {
+    if (path.startsWith(normalizedBase + '/') || path === normalizedBase) return match;
+    return `url(${quote}${normalizedBase}${path}${quote})`;
+  });
+}
+
 // srcset="/a.jpg 1x, /b.jpg 2x"
 function rewriteSrcset(html) {
   return html.replace(/\bsrcset="([^"]*)"/g, (match, value) => {
@@ -68,7 +76,7 @@ let changed = 0;
 
 for (const file of files) {
   const original = await readFile(file, 'utf8');
-  const rewritten = rewriteSrcset(rewriteAttrs(original));
+  const rewritten = rewriteInlineStyleUrls(rewriteSrcset(rewriteAttrs(original)));
   if (rewritten !== original) {
     await writeFile(file, rewritten, 'utf8');
     changed++;

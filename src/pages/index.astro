@@ -451,6 +451,11 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     }
     .quicklinks__card {
       min-height: 24rem;
+      border-left: none;
+    }
+    .quicklinks__card:not(:first-child) {
+      border-left: none;
+      border-top: 6px solid var(--color-black);
     }
   }
 
