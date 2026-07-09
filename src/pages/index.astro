@@ -197,7 +197,7 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
       if (!section || !svg) return;
 
       const paths = svg.querySelectorAll('.programmi-connectors__path');
-      const radius = 18;
+      const radius = 10;
 
       function resolveEl(id) {
         if (id === 'badge') return document.getElementById('badge');
