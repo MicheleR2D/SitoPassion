@@ -737,40 +737,89 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
       padding: 0;
       overflow: visible;
     }
+    /* Chiuso: l'intero box e' l'etichetta (nero, come .programmi-split__nav-link),
+       non piu' una card rosa con un'etichetta dentro. I bordi sono l'opposto
+       di quelli del video della stessa riga: video dispari squadrato a
+       sinistra/stondato a destra -> accordion stondato a sinistra/squadrato a
+       destra, e viceversa per le righe pari. */
     .programma__text {
       position: absolute;
       top: var(--space-sm);
       right: 0;
       left: auto;
       max-width: 78%;
-      padding: var(--space-sm);
+      background: var(--color-black);
+      border: none;
+      padding: 0.5em 0.9em;
+      border-top-left-radius: 8px;
+      border-bottom-left-radius: 8px;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
     }
     .programma:nth-child(even) .programma__text {
       right: auto;
       left: 0;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      border-top-right-radius: 8px;
+      border-bottom-right-radius: 8px;
     }
     /* Aperto: copre tutti gli 8/8 della sezione (video compreso), non solo
-       l'angolo, indipendentemente dal lato di partenza. */
+       l'angolo, indipendentemente dal lato di partenza. Bordi uguali (non
+       opposti) a quelli del video, dato che ora ne occupa lo stesso spazio. */
     .programma:nth-child(odd) .programma__text[open],
     .programma:nth-child(even) .programma__text[open] {
       left: 0;
       right: 0;
       max-width: 100%;
+      padding: var(--space-sm);
+    }
+    .programma:nth-child(odd) .programma__text[open] {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      border-top-right-radius: 12px;
+      border-bottom-right-radius: 12px;
+    }
+    .programma:nth-child(even) .programma__text[open] {
+      border-top-left-radius: 12px;
+      border-bottom-left-radius: 12px;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
     }
     .programma__summary {
       cursor: pointer;
       pointer-events: auto;
+    }
+    .programma__summary h3 {
+      /* Il box e' gia' nero: il titolo torna testo semplice, non una seconda
+         etichetta annidata dentro quella esterna. */
+      background: transparent;
+      color: var(--color-white);
+      padding: 0;
+      border-radius: 0;
     }
     .programma__toggle-icon {
       display: inline-flex;
       flex-shrink: 0;
       width: 1rem;
       height: 1rem;
-      color: var(--color-black);
+      color: var(--color-white);
       transition: transform 0.2s ease;
     }
     .programma__text[open] .programma__toggle-icon {
       transform: rotate(180deg);
+    }
+    /* La cta invert-red (nero su nero) sparirebbe sullo sfondo ora nero del
+       box: la adattiamo con un contorno rosso a contrasto. */
+    .programma__details :global(.button--invert-red) {
+      background: transparent;
+      border-color: var(--color-red);
+      color: var(--color-red);
+    }
+    .programma__details :global(.button--invert-red):hover {
+      background: var(--color-red);
+      color: var(--color-white);
+      border-color: var(--color-red);
     }
     .programmi-split {
       flex-direction: column;
