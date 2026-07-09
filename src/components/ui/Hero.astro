@@ -190,31 +190,16 @@ const { title, image, video, videoEndBuffer = 3, eyebrow } = Astro.props;
       padding-block: 0;
     }
     .hero:has(.hero-media) .hero-title-group {
-      flex: 1 1 40%;
-      min-width: 9rem;
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-3xs);
-    }
-    .hero:has(.hero-media) .hero-title-group h1 {
-      font-size: clamp(1.5rem, 8vw, 2.1rem);
-      line-height: 1.05;
-    }
-    .hero:has(.hero-media) .hero-eyebrow {
-      font-size: 0.62rem;
+      display: none;
     }
     .hero:has(.hero-media) .hero-extra {
-      flex: 1 1 52%;
-      min-width: 10rem;
+      flex: 1 1 100%;
+      min-width: 0;
       gap: var(--space-2xs);
     }
     .hero:has(.hero-media) .hero-extra :global(p) {
-      font-size: 0.78rem;
+      font-size: 0.9rem;
       line-height: 1.4;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
     }
     .hero:has(.hero-media) :global(.hero-ctas) {
       gap: var(--space-2xs);
