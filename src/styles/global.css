@@ -1,6 +1,18 @@
 /* Sistema di design Passion Fitness. Palette fissata dal cliente (non negoziabile):
    #E3032D rosso (colore reale del logo), #FEEDED rosa chiaro, #1B1B1B antracite, #FFFFFF, #000000. */
 
+/* Font autoospitato invece di affidarsi a font di sistema come Impact, che non
+   sono installati su iOS/Android e facevano apparire i titoli con uno stile
+   diverso su mobile rispetto a desktop. Anton (Google Fonts, licenza OFL) e'
+   il piu' simile a Impact per resa condensata/bold. */
+@font-face {
+  font-family: "Anton";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/anton-latin.woff2") format("woff2");
+}
+
 :root {
   --color-black: #000000;
   --color-charcoal: #1b1b1b;
@@ -23,7 +35,7 @@
   --border-on-dark: rgba(255, 255, 255, 0.14);
   --border-on-light: rgba(27, 27, 27, 0.12);
 
-  --font-display: Impact, "Arial Narrow", "Franklin Gothic Bold", sans-serif;
+  --font-display: "Anton", Impact, "Arial Narrow", "Franklin Gothic Bold", sans-serif;
   --font-body: -apple-system, "Helvetica Neue", Arial, sans-serif;
 
   --container-max-width: 76rem;

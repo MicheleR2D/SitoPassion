@@ -1,9 +1,10 @@
-// Riscrive nei file HTML generati (dist/) tutti i percorsi assoluti scritti a mano
-// (href/src/action/poster/srcset che iniziano con "/") aggiungendo il prefisso
-// BASE_PATH di GitHub Pages. Astro gestisce automaticamente il `base` config solo
-// per i propri asset (_astro/...) e per il routing interno: qualsiasi stringa scritta
-// a mano nel markup o nei contenuti .mdx (nav, header, footer, immagini/video nei
-// blog post) resta invariata e va corretta qui, una sola volta, dopo la build.
+// Riscrive nei file HTML e CSS generati (dist/) tutti i percorsi assoluti scritti
+// a mano (href/src/action/poster/srcset/url() che iniziano con "/") aggiungendo il
+// prefisso BASE_PATH di GitHub Pages. Astro gestisce automaticamente il `base`
+// config solo per i propri asset (_astro/...) e per il routing interno: qualsiasi
+// stringa scritta a mano nel markup, nei contenuti .mdx (nav, header, footer,
+// immagini/video nei blog post) o nei CSS (es. @font-face url(/fonts/...)) resta
+// invariata e va corretta qui, una sola volta, dopo la build.
 // Eseguito SOLO dal workflow GitHub Pages: build locale, dev e Netlify non sono toccati.
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 import { join, extname } from 'node:path';
@@ -25,7 +26,7 @@ async function walk(dir) {
     const fullPath = join(dir, entry.name);
     if (entry.isDirectory()) {
       files.push(...(await walk(fullPath)));
-    } else if (extname(entry.name) === '.html') {
+    } else if (extname(entry.name) === '.html' || extname(entry.name) === '.css') {
       files.push(fullPath);
     }
   }
