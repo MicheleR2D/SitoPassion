@@ -159,8 +159,8 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
 
   <section class="programmi-section" aria-label="Programmi Passion Fitness">
     <svg class="programmi-connectors" aria-hidden="true" preserveAspectRatio="none">
-      <path class="programmi-connectors__path" data-from="badge" data-to="sala-pesi"></path>
-      <path class="programmi-connectors__path" data-from="sala-pesi" data-to="corsi-fitness"></path>
+      <path class="programmi-connectors__path" data-from="badge" data-to="sala-pesi" data-y2-adjust="6"></path>
+      <path class="programmi-connectors__path" data-from="sala-pesi" data-to="corsi-fitness" data-y2-adjust="-6"></path>
       <path class="programmi-connectors__path" data-from="corsi-fitness" data-to="i-love-my-trainer"></path>
       <path class="programmi-connectors__path" data-from="i-love-my-trainer" data-to="pilates-reformer"></path>
     </svg>
@@ -284,7 +284,7 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
           const x1 = anchorX(path.dataset.from, fromRect, sectionRect);
           const y1 = fromRect.bottom - sectionRect.top;
           const x2 = anchorX(path.dataset.to, toRect, sectionRect);
-          const y2 = toRect.top - sectionRect.top;
+          const y2 = toRect.top - sectionRect.top + Number(path.dataset.y2Adjust || 0);
           const yMid = boundaryRect.top - sectionRect.top;
 
           const dir = x2 >= x1 ? 1 : -1;
