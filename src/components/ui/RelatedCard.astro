@@ -1,0 +1,46 @@
+---
+interface Props {
+  title: string;
+  href: string;
+}
+
+const { title, href } = Astro.props;
+---
+
+<a class="related-card" href={href}>
+  <span class="related-card__title">{title}</span>
+  <span class="related-card__arrow" aria-hidden="true">→</span>
+</a>
+
+<style>
+  .related-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    background: var(--color-black);
+    border: 2px solid var(--color-black);
+    border-radius: 12px;
+    padding: var(--space-sm) var(--space-md);
+    text-decoration: none;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+  .related-card__title {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+    line-height: 1.1;
+    color: var(--color-white);
+  }
+  .related-card__arrow {
+    flex-shrink: 0;
+    font-size: 1.2rem;
+    color: var(--color-red);
+  }
+  .related-card:hover {
+    background: var(--color-red);
+  }
+  .related-card:hover .related-card__arrow {
+    color: var(--color-white);
+  }
+</style>

@@ -1,0 +1,57 @@
+---
+// Contenitore delle <ContentRow>: serve perche' l'alternanza destra/sinistra
+// funziona via :nth-child, quindi le righe devono essere figlie dirette di un
+// unico wrapper. Gestisce anche la spaziatura tra righe e l'animazione di
+// entrata allo scroll (una sola volta per riga).
+---
+
+<div class="content-rows">
+  <slot />
+</div>
+
+<script>
+  // Aggiunge .is-visible quando la riga entra nel viewport: il movimento
+  // (titolo che entra di lato, paragrafo in fade) e' definito in ContentRow.
+  function initContentRowReveal() {
+    const rows = document.querySelectorAll('.content-row');
+    if (!rows.length) return;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion || !('IntersectionObserver' in window)) {
+      rows.forEach((row) => row.classList.add('is-visible'));
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -8% 0px' }
+    );
+
+    rows.forEach((row) => observer.observe(row));
+  }
+
+  initContentRowReveal();
+</script>
+
+<style>
+  .content-rows {
+    display: flex;
+    flex-direction: column;
+    /* Respiro tra una riga e l'altra e rispetto alla fascia precedente,
+       in linea con lo stacco tra le sezioni della home. */
+    gap: var(--space-xl);
+    padding-block: var(--space-lg);
+  }
+
+  @media (max-width: 860px) {
+    .content-rows {
+      gap: var(--space-lg);
+    }
+  }
+</style>

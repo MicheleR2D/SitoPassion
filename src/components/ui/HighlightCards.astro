@@ -1,0 +1,177 @@
+---
+// Fascia di card a tutta larghezza, stesso design dei "quicklinks" della home:
+// immagine di sfondo, overlay scuro che diventa rosso in hover, titolo sempre
+// visibile e paragrafo (+ CTA opzionale) rivelati in hover.
+//
+// Per replicarla su un'altra pagina basta passare l'array `items`:
+//   <HighlightCards items={[{ title, body, image, icon, href, cta }, ...]} />
+// I nomi delle icone disponibili sono le chiavi di ./icons.ts
+import { ICONS } from './icons';
+
+interface Item {
+  title: string;
+  body: string;
+  image: string;
+  icon?: string;
+  href?: string;
+  cta?: string;
+}
+
+interface Props {
+  items: Item[];
+}
+
+const { items } = Astro.props;
+---
+
+<section class="highlights">
+  <div class="highlights__grid">
+    {items.map((item) => (
+      <article class="highlights__card">
+        <div class="highlights__bg" style={`background-image: url(${item.image})`}></div>
+        <div class="highlights__overlay"></div>
+        <div class="highlights__content">
+          {item.icon && ICONS[item.icon] && (
+            <div class="highlights__icon" set:html={ICONS[item.icon]} />
+          )}
+          <h3>{item.title}</h3>
+          <p class="highlights__body">{item.body}</p>
+          {item.href && item.cta && (
+            <a class="highlights__cta" href={item.href}>{item.cta}</a>
+          )}
+        </div>
+      </article>
+    ))}
+  </div>
+</section>
+
+<style>
+  .highlights {
+    border-block: 2px solid var(--color-black);
+  }
+  .highlights__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    min-height: 34rem;
+  }
+  .highlights__card {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .highlights__card:not(:first-child) {
+    border-left: 2px solid var(--color-black);
+  }
+  .highlights__bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+  }
+  .highlights__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    transition: background-color 0.3s ease;
+  }
+  .highlights__card:hover .highlights__overlay {
+    background: var(--accent);
+  }
+  .highlights__content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-2xs);
+    padding: var(--space-lg) var(--space-md);
+    max-width: 26rem;
+  }
+  .highlights__icon {
+    width: 3.25rem;
+    height: 3.25rem;
+    color: var(--color-white);
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: opacity 0.25s ease, max-height 0.25s ease, margin-bottom 0.25s ease;
+  }
+  .highlights__card:hover .highlights__icon {
+    opacity: 1;
+    max-height: 4rem;
+    margin-bottom: var(--space-2xs);
+  }
+  .highlights__icon svg {
+    width: 100%;
+    height: 100%;
+  }
+  .highlights__content h3 {
+    color: var(--color-white);
+    font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+  }
+  /* Selettore doppio di proposito: la regola sui <p> di PostBody e' un
+     discendente (.post-body p) e batterebbe una singola classe qui. */
+  .highlights__content .highlights__body {
+    color: var(--color-white);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    opacity: 0;
+    max-height: 0;
+    margin: 0;
+    overflow: hidden;
+    transition: opacity 0.25s ease, max-height 0.25s ease, margin-block 0.25s ease;
+  }
+  .highlights__card:hover .highlights__body {
+    opacity: 1;
+    max-height: 14rem;
+    margin-block: var(--space-2xs);
+  }
+  .highlights__cta {
+    display: inline-block;
+    width: fit-content;
+    margin-top: var(--space-sm);
+    padding: 0.85rem 1.5rem;
+    background: var(--color-white);
+    color: var(--text-on-light);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-radius: 8px;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+  .highlights__cta:hover {
+    background: var(--color-black);
+    color: var(--color-white);
+  }
+
+  @media (max-width: 760px) {
+    .highlights__grid {
+      grid-template-columns: 1fr;
+      min-height: 0;
+    }
+    .highlights__card {
+      min-height: 22rem;
+      border-left: none;
+    }
+    .highlights__card:not(:first-child) {
+      border-left: none;
+      border-top: 2px solid var(--color-black);
+    }
+    /* Su mobile non c'e' hover: icona e testo sempre visibili. */
+    .highlights__icon {
+      opacity: 1;
+      max-height: 4rem;
+      margin-bottom: var(--space-2xs);
+    }
+    /* Stessa specificita' della regola base sopra, altrimenti non la scavalca. */
+    .highlights__content .highlights__body {
+      opacity: 1;
+      max-height: none;
+      margin-block: var(--space-2xs);
+    }
+  }
+</style>

@@ -414,6 +414,15 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     flex-wrap: wrap;
     margin-top: var(--space-2xs);
   }
+  /* Solo sulla home: il logo nell'header gia' mostra il brand, quindi su
+     mobile il titolo "Passion Fitness" nell'hero e' ridondante e va nascosto.
+     Le altre pagine che usano Hero con video (PageLayout) non hanno questa
+     ridondanza e devono invece mostrare il titolo. */
+  @media (max-width: 860px) {
+    :global(.hero:has(.hero-media) .hero-title-group) {
+      display: none;
+    }
+  }
 
   .quicklinks-section {
     height: 100vh;

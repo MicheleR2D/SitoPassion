@@ -42,6 +42,22 @@ const pages = defineCollection({
     slug: z.string(),
     order: z.number().optional(),
     heroImage: z.string().optional(),
+    heroVideo: z.string().optional(),
+    heroEyebrow: z.string().optional(),
+    // Paragrafo e CTA nel pannello rosso dell'hero, come sulla home.
+    // heroText accetta HTML inline (es. <br />) per gestire le andate a capo.
+    heroText: z.string().optional(),
+    heroCtas: z
+      .array(
+        z.object({
+          label: z.string(),
+          href: z.string(),
+          variant: z
+            .enum(['primary', 'white', 'dark-red', 'invert-red', 'ghost-dark', 'ghost-light'])
+            .default('dark-red'),
+        })
+      )
+      .optional(),
     seo: seoSchema.optional(),
     wpId: z.number().optional(),
     publishedAt: z.date().optional(),

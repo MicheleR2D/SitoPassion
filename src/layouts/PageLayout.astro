@@ -2,6 +2,7 @@
 import type { CollectionEntry } from 'astro:content';
 import BaseLayout from './BaseLayout.astro';
 import Hero from '../components/ui/Hero.astro';
+import Button from '../components/ui/Button.astro';
 import PostBody from '../components/blog/PostBody.astro';
 
 interface Props {
@@ -9,7 +10,7 @@ interface Props {
 }
 
 const { page } = Astro.props;
-const { title, heroImage, seo } = page.data;
+const { title, heroImage, heroVideo, heroEyebrow, heroText, heroCtas, seo } = page.data;
 ---
 
 <BaseLayout
@@ -18,8 +19,28 @@ const { title, heroImage, seo } = page.data;
   ogImage={seo?.ogImage}
   noindex={seo?.noindex}
 >
-  <Hero title={title} image={heroImage} />
+  <Hero title={title} image={heroImage} video={heroVideo} eyebrow={heroEyebrow}>
+    {heroText && <p set:html={heroText} />}
+    {heroCtas && heroCtas.length > 0 && (
+      <div class="hero-ctas">
+        {heroCtas.map((cta) => (
+          <Button href={cta.href} variant={cta.variant}>{cta.label}</Button>
+        ))}
+      </div>
+    )}
+  </Hero>
   <PostBody>
     <slot />
   </PostBody>
 </BaseLayout>
+
+<style>
+  /* Stesse regole della home, cosi' il pannello rosso dell'hero si comporta
+     allo stesso modo su tutte le pagine. */
+  .hero-ctas {
+    display: flex;
+    gap: var(--space-xs);
+    flex-wrap: wrap;
+    margin-top: var(--space-2xs);
+  }
+</style>

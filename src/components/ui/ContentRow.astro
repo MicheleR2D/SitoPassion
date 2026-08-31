@@ -1,0 +1,137 @@
+---
+// Riga full-bleed con immagine su un lato e testo sull'altro. L'alternanza
+// destra/sinistra e' automatica (:nth-child) come nella sezione "programmi"
+// della home: righe dispari immagine a sinistra, righe pari immagine a destra.
+// Va usata dentro <ContentRows>.
+//
+//   <ContentRows>
+//     <ContentRow title="Titolo" image="/images/..." alt="...">
+//       Paragrafo con **grassetto**.
+//     </ContentRow>
+//   </ContentRows>
+interface Props {
+  title?: string;
+  image: string;
+  alt?: string;
+}
+
+const { title, image, alt = '' } = Astro.props;
+---
+
+<article class="content-row">
+  <div class="content-row__media">
+    <img src={image} alt={alt} loading="lazy" />
+  </div>
+  <div class="content-row__copy">
+    {title && <h2>{title}</h2>}
+    <div class="content-row__text">
+      <slot />
+    </div>
+  </div>
+</article>
+
+<style>
+  .content-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: stretch;
+    min-height: 30rem;
+    /* Direzione da cui entra il titolo: righe dispari (testo a destra)
+       entrano da destra, righe pari (testo a sinistra) da sinistra. */
+    --enter-from: 3.5rem;
+  }
+  .content-row:nth-child(even) {
+    --enter-from: -3.5rem;
+  }
+  .content-row__media {
+    position: relative;
+    overflow: hidden;
+    /* Proporzione fissa: senza questa l'immagine imporrebbe la sua altezza
+       naturale a meta' viewport e la riga diventerebbe altissima. */
+    aspect-ratio: 4 / 3;
+    /* Angoli squadrati sul lato che tocca il bordo dello schermo, arrotondati
+       verso l'interno: stessa logica dei video della home. */
+    border-radius: 0 12px 12px 0;
+  }
+  .content-row__media img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
+  }
+  .content-row__copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-sm);
+    padding: var(--space-lg) clamp(1.5rem, 5vw, 4rem);
+  }
+  .content-row__copy h2 {
+    color: var(--color-red);
+    opacity: 0;
+    transform: translateX(var(--enter-from));
+    transition: opacity 0.6s ease, transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .content-row__text {
+    opacity: 0;
+    transition: opacity 0.8s ease 0.15s;
+  }
+  .content-row.is-visible .content-row__copy h2 {
+    opacity: 1;
+    transform: none;
+  }
+  .content-row.is-visible .content-row__text {
+    opacity: 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .content-row__copy h2,
+    .content-row__text {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+
+  /* Righe pari: immagine a destra. Va spostata anche la traccia, non solo
+     l'ordine visivo, altrimenti su griglie asimmetriche l'immagine
+     resterebbe nella colonna sbagliata. */
+  .content-row:nth-child(even) .content-row__media {
+    order: 2;
+    border-radius: 12px 0 0 12px;
+  }
+
+  /* Il testo slottato arriva dal file .mdx, quindi ha lo scope del genitore:
+     serve :global() per raggiungerlo da qui. */
+  .content-row__text :global(p) {
+    color: var(--text-on-light-muted);
+    line-height: 1.75;
+    font-size: 1.05rem;
+  }
+  .content-row__text :global(p + p) {
+    margin-top: var(--space-sm);
+  }
+  .content-row__text :global(strong) {
+    color: var(--color-red);
+  }
+
+  @media (max-width: 860px) {
+    .content-row,
+    .content-row:nth-child(even) {
+      grid-template-columns: 1fr;
+      min-height: 0;
+    }
+    .content-row__media {
+      aspect-ratio: 4 / 3;
+      border-radius: 0;
+    }
+    .content-row:nth-child(even) .content-row__media {
+      order: 0;
+      border-radius: 0;
+    }
+    .content-row__copy {
+      padding: var(--space-md) clamp(1.25rem, 4vw, 2.5rem);
+    }
+  }
+</style>

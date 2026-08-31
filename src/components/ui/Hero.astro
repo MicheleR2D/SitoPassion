@@ -74,6 +74,12 @@ const { title, image, video, videoEndBuffer = 3, eyebrow } = Astro.props;
     grid-column: 2;
     background: var(--accent);
     border-left: 2px solid var(--color-black);
+    /* .hero-inner e' anche .container (margin-inline:auto), quindi senza
+       questo si restringe al contenuto e la fascia rossa non riempie la
+       colonna: sulle pagine senza testo slottato lasciava scoperto il nero
+       del .hero ai lati. */
+    width: 100%;
+    margin-inline: 0;
   }
   .hero:has(.hero-media) .hero-eyebrow {
     color: var(--color-white);
@@ -189,9 +195,6 @@ const { title, image, video, videoEndBuffer = 3, eyebrow } = Astro.props;
       align-items: center;
       gap: var(--space-sm);
       padding-block: 0;
-    }
-    .hero:has(.hero-media) .hero-title-group {
-      display: none;
     }
     .hero:has(.hero-media) .hero-extra {
       flex: 1 1 100%;
