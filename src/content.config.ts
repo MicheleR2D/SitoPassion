@@ -91,7 +91,7 @@ const services = defineCollection({
   schema: z.object({
     title: z.string(),
     category: z
-      .enum(['fitness', 'personal-training', 'pilates', 'crossfit', 'hyrox', 'sala-pesi'])
+      .enum(['fitness', 'personal-training', 'pilates', 'hyrox', 'sala-pesi'])
       .optional(),
     icon: z.string().optional(),
     order: z.number().default(0),

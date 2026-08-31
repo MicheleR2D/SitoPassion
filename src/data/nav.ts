@@ -22,7 +22,6 @@ export const NAV_ITEMS: NavItem[] = [
     label: "Discipline",
     href: "/orari-corsi/",
     children: [
-      { label: "Crossfit Acquedotti", href: "/crossfit/" },
       { label: "Hyrox", href: "/hyrox/" },
       { label: "Personal Training", href: "/i-love-my-trainer/" },
       { label: "Pilates", href: "/pilates/" },
