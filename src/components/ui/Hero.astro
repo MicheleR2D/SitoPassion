@@ -66,11 +66,11 @@ const { title, image, video, videoEndBuffer = 3, eyebrow } = Astro.props;
   .hero:not(:has(.hero-photo, .hero-media)) {
     height: auto;
   }
-  .hero:has(.hero-media) {
+  .hero:has(.hero-media, .hero-photo) {
     display: grid;
     grid-template-columns: 2fr 1fr;
   }
-  .hero:has(.hero-media) .hero-inner {
+  .hero:has(.hero-media, .hero-photo) .hero-inner {
     grid-column: 2;
     background: var(--accent);
     border-left: 2px solid var(--color-black);
@@ -81,13 +81,13 @@ const { title, image, video, videoEndBuffer = 3, eyebrow } = Astro.props;
     width: 100%;
     margin-inline: 0;
   }
-  .hero:has(.hero-media) .hero-eyebrow {
+  .hero:has(.hero-media, .hero-photo) .hero-eyebrow {
     color: var(--color-white);
   }
-  .hero:has(.hero-media) .hero-extra {
+  .hero:has(.hero-media, .hero-photo) .hero-extra {
     color: var(--color-white);
   }
-  .hero:has(.hero-media) h1 {
+  .hero:has(.hero-media, .hero-photo) h1 {
     color: var(--color-black);
   }
 
@@ -124,12 +124,12 @@ const { title, image, video, videoEndBuffer = 3, eyebrow } = Astro.props;
     line-height: 1.9;
   }
 
+  /* Stesso trattamento di .hero-media (video): pannello immagine semplice
+     nella colonna 2/3, non il vecchio taglio diagonale pre-redesign. */
   .hero-photo {
-    position: absolute;
-    inset: 0;
-    left: 45%;
+    position: relative;
+    height: 100%;
     background: var(--color-black);
-    clip-path: polygon(12% 0, 100% 0, 100% 100%, 0% 100%);
     overflow: hidden;
   }
   .hero-photo img {
@@ -138,12 +138,6 @@ const { title, image, video, videoEndBuffer = 3, eyebrow } = Astro.props;
     width: 100%;
     height: 100%;
     object-fit: cover;
-  }
-  .hero-photo::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(200deg, rgba(227, 3, 45, 0.45) 0%, rgba(0, 0, 0, 0.1) 45%, transparent 70%);
   }
 
   .hero-media {
@@ -162,54 +156,44 @@ const { title, image, video, videoEndBuffer = 3, eyebrow } = Astro.props;
   }
 
   @media (max-width: 860px) {
-    .hero:has(.hero-photo) {
-      height: auto;
-    }
-    .hero-photo {
-      position: relative;
-      left: 0;
-      height: 18rem;
-      clip-path: none;
-    }
-    .hero:has(.hero-photo) .hero-inner--with-photo {
-      padding-top: 0;
-    }
+    /* Vale sia per il video sia per l'immagine: su mobile non serve la
+       larghezza ridotta pensata per la colonna 1/3 desktop. */
     .hero-inner--with-photo .hero-copy {
       max-width: none;
     }
 
-    .hero:has(.hero-media) {
+    .hero:has(.hero-media, .hero-photo) {
       grid-template-columns: 1fr;
       grid-template-rows: 2fr 1fr;
     }
-    .hero:has(.hero-media) .hero-inner {
+    .hero:has(.hero-media, .hero-photo) .hero-inner {
       grid-column: 1;
       align-items: flex-start;
       border-left: none;
       border-top: 2px solid var(--color-black);
       padding-top: var(--space-sm);
     }
-    .hero:has(.hero-media) .hero-copy {
+    .hero:has(.hero-media, .hero-photo) .hero-copy {
       flex-direction: row;
       flex-wrap: wrap;
       align-items: center;
       gap: var(--space-sm);
       padding-block: 0;
     }
-    .hero:has(.hero-media) .hero-extra {
+    .hero:has(.hero-media, .hero-photo) .hero-extra {
       flex: 1 1 100%;
       min-width: 0;
       gap: var(--space-2xs);
     }
-    .hero:has(.hero-media) .hero-extra :global(p) {
+    .hero:has(.hero-media, .hero-photo) .hero-extra :global(p) {
       font-size: 1.05rem;
       line-height: 1.45;
     }
-    .hero:has(.hero-media) :global(.hero-ctas) {
+    .hero:has(.hero-media, .hero-photo) :global(.hero-ctas) {
       flex-wrap: nowrap;
       gap: var(--space-3xs);
     }
-    .hero:has(.hero-media) :global(.hero-ctas) :global(.button) {
+    .hero:has(.hero-media, .hero-photo) :global(.hero-ctas) :global(.button) {
       flex: 1 1 auto;
       justify-content: center;
       font-size: 0.62rem;

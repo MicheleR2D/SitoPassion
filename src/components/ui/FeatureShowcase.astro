@@ -21,7 +21,7 @@ interface Props {
 const { title, images, features } = Astro.props;
 ---
 
-<section class="showcase">
+<section class="showcase" data-reveal>
   <div class="showcase__gallery">
     {images.map((img) => (
       <div class="showcase__gallery-item">
@@ -70,6 +70,17 @@ const { title, images, features } = Astro.props;
     height: 100%;
     object-fit: cover;
   }
+  /* Velo nero su ogni immagine, sparisce in hover sulla singola cella. */
+  .showcase__gallery-item::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    transition: opacity 0.3s ease;
+  }
+  .showcase__gallery-item:hover::after {
+    opacity: 0;
+  }
 
   .showcase__features {
     display: flex;
@@ -82,6 +93,9 @@ const { title, images, features } = Astro.props;
   .showcase .showcase__features h2 {
     color: var(--color-red);
     margin-top: 0;
+    opacity: 0;
+    transform: translateX(3.5rem);
+    transition: opacity 0.6s ease, transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
   }
   .showcase .showcase__features ul {
     display: flex;
@@ -90,6 +104,22 @@ const { title, images, features } = Astro.props;
     list-style: none;
     padding: 0;
     margin: 0;
+    opacity: 0;
+    transform: translateX(3.5rem);
+    transition: opacity 0.6s ease 0.1s, transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) 0.1s;
+  }
+  .showcase.is-visible .showcase__features h2,
+  .showcase.is-visible .showcase__features ul {
+    opacity: 1;
+    transform: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .showcase .showcase__features h2,
+    .showcase .showcase__features ul {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
   }
   .showcase .showcase__features li {
     display: flex;

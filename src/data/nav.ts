@@ -24,7 +24,6 @@ export const NAV_ITEMS: NavItem[] = [
     children: [
       { label: "Hyrox", href: "/hyrox/" },
       { label: "Personal Training", href: "/i-love-my-trainer/" },
-      { label: "Pilates", href: "/pilates/" },
       { label: "Pilates Reformer", href: "/pilates-reformer/" },
     ],
   },

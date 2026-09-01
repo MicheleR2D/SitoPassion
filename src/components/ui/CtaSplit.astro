@@ -32,7 +32,7 @@ const {
 } = Astro.props;
 ---
 
-<section class="cta-split">
+<section class="cta-split" data-reveal>
   <div class="cta-split__copy">
     <h2>{heading}</h2>
     {text && <p>{text}</p>}
@@ -62,12 +62,32 @@ const {
   .cta-split .cta-split__copy h2 {
     color: var(--color-black);
     margin-top: 0;
+    opacity: 0;
+    transform: translateX(-3.5rem);
+    transition: opacity 0.6s ease, transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
   }
   /* Due classi: il componente resta padrone della propria tipografia. */
   .cta-split .cta-split__copy p {
     color: var(--color-white);
     line-height: 1.7;
     font-size: 1.05rem;
+    opacity: 0;
+    transition: opacity 0.8s ease 0.15s;
+  }
+  .cta-split.is-visible .cta-split__copy h2 {
+    opacity: 1;
+    transform: none;
+  }
+  .cta-split.is-visible .cta-split__copy p {
+    opacity: 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cta-split .cta-split__copy h2,
+    .cta-split .cta-split__copy p {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
   }
   .cta-split__media {
     position: relative;
