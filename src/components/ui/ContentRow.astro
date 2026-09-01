@@ -11,16 +11,19 @@
 //   </ContentRows>
 interface Props {
   title?: string;
-  image: string;
+  image?: string;
+  video?: string;
   alt?: string;
 }
 
-const { title, image, alt = '' } = Astro.props;
+const { title, image, video, alt = '' } = Astro.props;
 ---
 
 <article class="content-row">
-  <div class="content-row__media" data-parallax>
-    <img src={image} alt={alt} loading="lazy" />
+  <div class="content-row__media" data-parallax={!video}>
+    {video
+      ? <video src={video} autoplay muted loop playsinline />
+      : <img src={image} alt={alt} loading="lazy" />}
   </div>
   <div class="content-row__copy">
     {title && <h2>{title}</h2>}
@@ -70,6 +73,26 @@ const { title, image, alt = '' } = Astro.props;
     height: 130%;
     object-fit: cover;
     will-change: transform;
+  }
+  /* Il video e' gia' un contenuto in movimento: nessun parallasse, riempie
+     semplicemente il riquadro (che resta della stessa dimensione di quello
+     con l'immagine, essendo lo stesso .content-row__media). */
+  .content-row__media video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  /* Velo scuro fisso sul video (mai in fade come le gallery in hover):
+     un video a piena luminosita' in loop stanca la vista piu' di una
+     foto statica. */
+  .content-row__media:has(video)::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    pointer-events: none;
   }
   .content-row__copy {
     display: flex;

@@ -8,6 +8,8 @@ import CtaSplit from '../components/ui/CtaSplit.astro';
 import FeatureShowcase from '../components/ui/FeatureShowcase.astro';
 import RelatedSection from '../components/ui/RelatedSection.astro';
 import RelatedCard from '../components/ui/RelatedCard.astro';
+import ContentRows from '../components/ui/ContentRows.astro';
+import ContentRow from '../components/ui/ContentRow.astro';
 
 const PROVA_URL =
   'https://automazione.n8ndevelop.it/form/8ce36c5e-0cc4-4813-9a0f-2da2a7605fb0?source=SitoWeb&medium=Btn_Home';
@@ -49,45 +51,6 @@ const QUICKLINK_ICONS = {
     '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 36c0-11 6-21 17-23-2 6 0 11 6 11"/><path d="M29 11c2-3 6-3 8 0 2-3 6-3 8 0 0 4-4 8-8 10-4-2-8-6-8-10Z"/></svg>',
 };
 
-const PROGRAMMI = [
-  {
-    id: 'sala-pesi',
-    title: 'Sala Pesi',
-    kicker: '1000 mq di sala pesi attrezzata',
-    body: "Passion Fitness è costantemente aggiornata sulle ultime innovazioni nel mondo delle attrezzature per il massimo coinvolgimento muscolare. Macchinari Technogym e Panatta di ultima generazione, progettati per un allenamento all'avanguardia.",
-    video: '/videos/2024/11/Sala-Pesi_Passion-Fitness.mp4',
-    href: '/palestra/sala-pesi/',
-    cta: 'Vai alla Sala Pesi',
-  },
-  {
-    id: 'corsi-fitness',
-    title: 'Corsi Fitness',
-    kicker: "Le sale più grandi della Tuscolana",
-    body: '2 sale dedicate, corsi dalle 7:00 alle 21:30: +120h di lezioni Rebalance (Pilates, Pilates Barre, Posturale, Yoga) e +130h di lezioni Energy (Pump, Met-Con, Prepugilistica, Funzionale, Booty Pump).',
-    video: '/videos/2025/02/Metcon-2.mp4',
-    href: '/palestra/corsi-fitness/',
-    cta: 'Vai ai Corsi Fitness',
-  },
-  {
-    id: 'i-love-my-trainer',
-    title: 'I Love My Trainer',
-    kicker: 'Un personal trainer per i tuoi obiettivi',
-    body: "Con la formula I Love My Trainer, acquistando lezioni individuali con uno dei nostri PT, avrai in omaggio l'abbonamento in palestra. A partire da 65€/mese.",
-    video: '/videos/2024/11/I-love-my-trainer-2.mp4',
-    href: '/i-love-my-trainer/',
-    cta: 'Vai al Personal Training',
-  },
-  {
-    id: 'pilates-reformer',
-    title: 'Reformer',
-    kicker: "Vivi l'esperienza reformer",
-    body: 'Studio Reformer per costruire basi solide, Studio Reformer+ per classi intermedie e avanzate, Studio Reformer Individuale per un percorso su misura con un trainer dedicato.',
-    video: '/videos/2024/10/reformer_senza_testi.mp4',
-    href: '/pilates-reformer/',
-    cta: 'Vai al Reformer',
-  },
-];
-
 const FAQ = [
   {
     q: 'Quali sono gli orari di apertura della palestra?',
@@ -103,27 +66,9 @@ const FAQ = [
   },
 ];
 
-const TESTIMONIANZE = [
-  {
-    quote:
-      'Ho frequentato questa palestra per sei mesi con un personal trainer e mi sono trovata molto bene. Ho partecipato anche ai corsi organizzati durante la settimana, in particolare Pilates Barre con Luca, e sono rimasta molto soddisfatta.',
-    author: 'Elnaz Yousefi',
-  },
-  {
-    quote:
-      "Dopo svariate esperienze in altre palestre l'unica cosa che mi era rimasta era la frustrazione di non aver ottenuto risultati. Ho dovuto ricredermi: sono stata ascoltata e guidata verso i miei obiettivi, oggi sono seguita a 360 gradi da tutto il personale.",
-    author: 'Francesca Amadei',
-  },
-  {
-    quote:
-      'Soluzioni di allenamento variegate, dal classico abbonamento in sala pesi a lezioni di Pilates, yoga, metabolico. Presente anche il Pilates Reformer per completare un allenamento a 360 gradi. Insegnanti tutti preparati e alla mano.',
-    author: 'Giorgia Armagno',
-  },
-];
-
 const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
   .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf())
-  .slice(0, 4);
+  .slice(0, 3);
 ---
 
 <BaseLayout
@@ -159,208 +104,6 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     </div>
   </section>
 
-  <section class="programmi-section" aria-label="Programmi Passion Fitness">
-    <svg class="programmi-connectors" aria-hidden="true" preserveAspectRatio="none">
-      <path class="programmi-connectors__path"></path>
-    </svg>
-    <div class="container programmi-split">
-      <span class="programmi-split__badge" id="badge">programmi</span>
-      <nav class="programmi-split__nav" aria-label="Vai al programma">
-        {PROGRAMMI.map((p) => (
-          <a class="programmi-split__nav-link" href={`#${p.id}`}>{p.title}</a>
-        ))}
-      </nav>
-    </div>
-    <div class="programmi">
-      {PROGRAMMI.map((p) => (
-        <article class="programma" id={p.id}>
-          <div class="programma__media">
-            <video src={p.video} autoplay muted loop playsinline></video>
-          </div>
-          <div class="programma__copy">
-            <details class="programma__text" open>
-              <summary class="programma__summary">
-                <h3>{p.title}</h3>
-                <span class="programma__toggle-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                </span>
-              </summary>
-              <div class="programma__details">
-                <p>{p.body}</p>
-                <Button href={p.href} variant="invert-red">{p.cta}</Button>
-              </div>
-            </details>
-          </div>
-        </article>
-      ))}
-    </div>
-  </section>
-
-  <script>
-    // The <details> markup always renders `open` (desktop stays expanded via
-    // pointer-events:none, no CSS fight over the [open] state). On mobile we
-    // want it collapsed by default, so close it here in JS instead - but
-    // only after it has actually laid out at least once while open. Closing
-    // an accordion that has never been open collapses its content to a
-    // 0-width box in current Chromium (a <details>/[open] sizing bug), so
-    // the forced layout read (offsetHeight) before flipping `open` matters.
-    function initProgrammiAccordion() {
-      const detailsEls = document.querySelectorAll('.programma__text');
-      const mobileQuery = window.matchMedia('(max-width: 760px)');
-
-      function applyState() {
-        detailsEls.forEach((el) => {
-          if (mobileQuery.matches) {
-            if (el.open) {
-              void el.offsetHeight;
-              el.open = false;
-            }
-          } else {
-            el.open = true;
-          }
-        });
-      }
-
-      applyState();
-      mobileQuery.addEventListener('change', applyState);
-    }
-
-    initProgrammiAccordion();
-
-    function initProgrammiConnectors() {
-      const section = document.querySelector('.programmi-section');
-      const svg = document.querySelector('.programmi-connectors');
-      const path = svg ? svg.querySelector('.programmi-connectors__path') : null;
-      if (!section || !svg || !path) return;
-
-      const radius = 10;
-      const mobileQuery = window.matchMedia('(max-width: 760px)');
-      // badge -> sala-pesi -> corsi-fitness -> i-love-my-trainer -> pilates-reformer
-      const sequence = ['badge', 'sala-pesi', 'corsi-fitness', 'i-love-my-trainer', 'pilates-reformer'];
-      // On mobile the line dives this many px past each accordion's edge, into
-      // its own footprint, instead of stopping exactly at the border. Paired
-      // with .programma__text sitting in a higher z-index than the connector
-      // svg, the accordion always covers that stretch of line - open or
-      // closed - so small measurement differences across devices never show
-      // up as a visible gap or an overshoot poking out past the box.
-      const mobileOverlap = 14;
-
-      function resolveEl(id) {
-        if (id === 'badge') return document.getElementById('badge');
-        const article = document.getElementById(id);
-        return article ? article.querySelector('.programma__text') : null;
-      }
-
-      // On mobile the video is shrunk to 7/8 width, leaving a 1/8 red sliver on
-      // one side (left/right alternating like the desktop rows) with the
-      // accordion overlapping the corner. The connector must only ever cross
-      // that red sliver, never the video, so anchor to the sliver's horizontal
-      // center instead of the accordion box's own center.
-      function anchorX(id, rect, sectionRect) {
-        const centerX = rect.left + rect.width / 2 - sectionRect.left;
-        if (!mobileQuery.matches || id === 'badge') return centerX;
-
-        const article = document.getElementById(id);
-        const media = article ? article.querySelector('.programma__media') : null;
-        if (!media) return centerX;
-
-        const mediaRect = media.getBoundingClientRect();
-        const rightGap = sectionRect.right - mediaRect.right;
-        const leftGap = mediaRect.left - sectionRect.left;
-        if (rightGap >= leftGap) {
-          return mediaRect.right - sectionRect.left + rightGap / 2;
-        }
-        return mediaRect.left - sectionRect.left - leftGap / 2;
-      }
-
-      function update() {
-        const sectionRect = section.getBoundingClientRect();
-        svg.setAttribute('width', sectionRect.width);
-        svg.setAttribute('height', sectionRect.height);
-        svg.setAttribute('viewBox', `0 0 ${sectionRect.width} ${sectionRect.height}`);
-
-        const isMobile = mobileQuery.matches;
-        const subpaths = [];
-
-        for (let i = 0; i < sequence.length - 1; i++) {
-          const fromId = sequence[i];
-          const toId = sequence[i + 1];
-          const fromEl = resolveEl(fromId);
-          const toEl = resolveEl(toId);
-          const toArticle = document.getElementById(toId);
-          if (!fromEl || !toEl || !toArticle) continue;
-
-          const fromRect = fromEl.getBoundingClientRect();
-          const toRect = toEl.getBoundingClientRect();
-          const boundaryRect = toArticle.getBoundingClientRect();
-
-          const x1 = anchorX(fromId, fromRect, sectionRect);
-          const x2 = anchorX(toId, toRect, sectionRect);
-          let y1 = fromRect.bottom - sectionRect.top;
-          let y2 = toRect.top - sectionRect.top;
-          if (isMobile) {
-            // Dive into the source box too - including the "programmi" badge
-            // itself (fromId === 'badge' on the first hop), which also sits
-            // above the connector svg (.programmi-split z-index:5).
-            y1 -= mobileOverlap;
-            y2 += mobileOverlap;
-          }
-          const yMid = boundaryRect.top - sectionRect.top;
-
-          const dir = x2 >= x1 ? 1 : -1;
-          const r = Math.max(0, Math.min(radius, Math.abs(yMid - y1), Math.abs(y2 - yMid), Math.abs(x2 - x1) / 2));
-
-          subpaths.push(
-            `M ${x1} ${y1} V ${yMid - r} Q ${x1} ${yMid} ${x1 + r * dir} ${yMid} H ${x2 - r * dir} Q ${x2} ${yMid} ${x2} ${yMid + r} V ${y2}`
-          );
-        }
-
-        path.setAttribute('d', subpaths.join(' '));
-      }
-
-      update();
-      window.addEventListener('resize', update);
-      window.addEventListener('load', update);
-
-      if (window.ResizeObserver) {
-        const observer = new ResizeObserver(() => update());
-        observer.observe(document.body);
-      }
-
-      if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(update);
-      }
-
-      // Belt-and-suspenders: the very first synchronous measurement can run
-      // before the grid CSS has actually been applied (module scripts fire at
-      // DOMContentLoaded, not after stylesheets/fonts/video metadata settle),
-      // and load/resize/ResizeObserver don't reliably fire again afterwards
-      // on a static page. Re-measure a few more times to guarantee at least
-      // one accurate pass regardless of exactly when layout settles.
-      [50, 150, 300, 600, 1200, 2500].forEach((delay) => setTimeout(update, delay));
-    }
-
-    initProgrammiConnectors();
-  </script>
-
-  <FeatureShowcase
-    title="Perché scegliere noi?"
-    images={[
-      { src: '/images/uploads/2024/11/MRZ08075.jpeg', alt: 'Passion Fitness Tuscolana' },
-      { src: '/images/uploads/2024/11/Sala-Pesi-1.jpeg', alt: 'Sala pesi Passion Fitness' },
-      { src: '/images/uploads/2024/10/sale_fitness.jpg', alt: 'Sala corsi fitness' },
-      { src: '/images/uploads/2024/11/reform_1-1.jpeg', alt: 'Studio Pilates Reformer' },
-      { src: '/images/uploads/2024/10/Palestra-11920x.jpg', alt: 'Palestra Passion Fitness' },
-      { src: '/images/uploads/2024/11/MRZ08109.jpeg', alt: 'Personal training Passion Fitness' },
-    ]}
-    features={[
-      '30+ anni di esperienza nel settore',
-      "La persona sempre al centro, prima dell'allenamento",
-      "Tutta l'attenzione che meriti, ad ogni allenamento",
-      'Ti alleniamo al tuo fianco, finché non acquisirai piena sicurezza',
-    ]}
-  />
-
   <Section tone="dark">
     <div class="stats">
       <div class="stat">
@@ -382,14 +125,76 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     </div>
   </Section>
 
-  <RelatedSection title="Cosa dicono di noi">
-    {TESTIMONIANZE.map((t) => (
-      <figure class="testimonial">
-        <blockquote>"{t.quote}"</blockquote>
-        <figcaption>{t.author} <span>— Recensione Google</span></figcaption>
-      </figure>
-    ))}
-  </RelatedSection>
+  <div class="programmi-band">
+    <ContentRows>
+      <ContentRow
+        title="Sala Pesi"
+        video="/videos/2024/11/Sala-Pesi_Passion-Fitness.mp4"
+        alt="Sala pesi Passion Fitness"
+      >
+        <p>Oltre 95 postazioni con <strong>macchinari Technogym e Panatta di ultima generazione</strong>, pensati per il massimo coinvolgimento muscolare e un allenamento sempre all'avanguardia.</p>
+        <p>Aperti <strong>tutti i giorni dalle 5:00 alle 24:00</strong>, anche a Natale e Ferragosto: zona free weight, area calisthenics e area booty training per ogni tipo di allenamento.</p>
+        <Button href="/palestra/sala-pesi/" variant="white">Vai alla Sala Pesi</Button>
+      </ContentRow>
+
+      <ContentRow
+        title="Corsi Fitness"
+        video="/videos/2025/02/Metcon-2.mp4"
+        alt="Corsi fitness Passion Fitness"
+      >
+        <p><strong>2 sale dedicate</strong>, corsi dalle 7:00 alle 21:30: oltre 120 ore mensili di lezioni <strong>Rebalance</strong> (Pilates, Pilates Barre, Posturale, Yoga) per lavorare su mobilità e postura.</p>
+        <p>A queste si aggiungono oltre 130 ore di lezioni <strong>Energy</strong> (Pump, Met-Con, Prepugilistica, Funzionale, Booty Pump), per chi cerca un allenamento più intenso e dinamico.</p>
+        <Button href="/palestra/corsi-fitness/" variant="white">Vai ai Corsi Fitness</Button>
+      </ContentRow>
+
+      <ContentRow
+        title="I Love My Trainer"
+        video="/videos/2024/11/I-love-my-trainer-2.mp4"
+        alt="Personal training Passion Fitness"
+      >
+        <p>Con la formula <strong>I Love My Trainer</strong> acquisti lezioni individuali con uno dei nostri Personal Trainer, ricevendo in omaggio l'abbonamento in palestra.</p>
+        <p>Un percorso su misura, a partire da <strong>65€/mese</strong>, pensato per chi vuole risultati concreti con la massima attenzione e personalizzazione.</p>
+        <Button href="/i-love-my-trainer/" variant="white">Vai al Personal Training</Button>
+      </ContentRow>
+
+      <ContentRow
+        title="Reformer"
+        video="/videos/2024/10/reformer_senza_testi.mp4"
+        alt="Pilates Reformer Passion Fitness"
+      >
+        <p><strong>3 sale interamente dedicate al Reformer</strong>: Studio Reformer per chi inizia, Studio Reformer Plus per livelli intermedi e avanzati.</p>
+        <p>Studio PT Reformer per lezioni individuali con <strong>Reformer, Cadillac e Chair</strong>: la prima lezione è gratuita, paghi solo 10€ di assicurazione.</p>
+        <Button href="/pilates-reformer/" variant="white">Vai al Reformer</Button>
+      </ContentRow>
+    </ContentRows>
+  </div>
+
+  <FeatureShowcase
+    title="Perché scegliere noi?"
+    images={[
+      { src: '/images/uploads/2024/11/MRZ08075.jpeg', alt: 'Passion Fitness Tuscolana' },
+      { src: '/images/uploads/2024/11/Sala-Pesi-1.jpeg', alt: 'Sala pesi Passion Fitness' },
+      { src: '/images/uploads/2024/10/sale_fitness.jpg', alt: 'Sala corsi fitness' },
+      { src: '/images/uploads/2024/11/reform_1-1.jpeg', alt: 'Studio Pilates Reformer' },
+      { src: '/images/uploads/2024/10/Palestra-11920x.jpg', alt: 'Palestra Passion Fitness' },
+      { src: '/images/uploads/2024/11/MRZ08109.jpeg', alt: 'Personal training Passion Fitness' },
+    ]}
+    features={[
+      '30+ anni di esperienza nel settore',
+      "La persona sempre al centro, prima dell'allenamento",
+      "Tutta l'attenzione che meriti, ad ogni allenamento",
+      'Ti alleniamo al tuo fianco, finché non acquisirai piena sicurezza',
+    ]}
+  />
+
+  <CtaSplit
+    heading="Pronto a iniziare?"
+    text="Il primo allenamento è gratuito e senza impegno: vieni a scoprire Passion Fitness."
+    buttonLabel="Prova Passion Fitness"
+    buttonHref={PROVA_URL}
+    image="/images/uploads/2024/11/MRZ08075.jpeg"
+    alt="Passion Fitness Tuscolana"
+  />
 
   <RelatedSection title="Il blog di Passion">
     {latestPosts.map((post) => (
@@ -401,15 +206,6 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
       />
     ))}
   </RelatedSection>
-
-  <CtaSplit
-    heading="Pronto a iniziare?"
-    text="Il primo allenamento è gratuito e senza impegno: vieni a scoprire Passion Fitness."
-    buttonLabel="Prova Passion Fitness"
-    buttonHref={PROVA_URL}
-    image="/images/uploads/2024/11/MRZ08075.jpeg"
-    alt="Passion Fitness Tuscolana"
-  />
 </BaseLayout>
 
 <style>
@@ -554,339 +350,23 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     }
   }
 
-  .programmi-section {
-    position: relative;
-    background: var(--accent);
-    border-top: 2px solid var(--color-black);
-    border-bottom: 2px solid var(--color-black);
-  }
-  .programmi-connectors {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-  }
-  .programmi-connectors__path {
-    fill: none;
-    stroke: var(--color-black);
-    stroke-width: 2px;
-    stroke-linecap: square;
-  }
-  .programmi-split {
-    position: relative;
-    z-index: 5;
-    display: flex;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    gap: var(--space-md) var(--space-sm);
-    margin-bottom: var(--space-md);
-  }
-  .programmi-split__badge {
-    display: inline-block;
+  .programmi-band {
     background: var(--bg-light-soft);
+  }
+  /* Il lato testo deve formare un blocco uguale e opposto a quello del
+     video (che ha gia' un bordo nero squadrato): stesso trattamento,
+     cosi' i due lati sembrano un'unica card divisa a meta'. */
+  .programmi-band :global(.content-row__copy) {
     border: 2px solid var(--color-black);
-    color: var(--color-black);
-    font-family: var(--font-display);
-    text-transform: lowercase;
-    font-size: clamp(2rem, 4.2vw, 3.2rem);
-    line-height: 1;
-    padding: 0.15em 0.4em;
-    border-radius: 12px;
-    transform: translateY(-50%);
   }
-  .programmi-split__nav {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    gap: var(--space-xs) var(--space-sm);
-  }
-  .programmi-split__nav-link {
-    display: inline-block;
-    background: var(--color-black);
-    color: var(--color-white);
-    font-size: clamp(0.85rem, 1.1vw, 1rem);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    padding: 0.5em 0.9em;
-    border-radius: 8px;
-    transform: translateY(-50%);
-    transition: background-color 0.15s ease, color 0.15s ease;
-  }
-  .programmi-split__nav-link:hover {
+  /* I CTA di questa sezione restano bianchi anche in hover (niente
+     inversione di colore): devono leggersi solo come testo su un
+     fondo chiaro, non come un pulsante "pieno" che cambia stato. */
+  .programmi-band :global(.content-row__copy .button--white),
+  .programmi-band :global(.content-row__copy .button--white:hover) {
     background: var(--color-white);
-    color: var(--color-red);
-  }
-  .programmi {
-    display: flex;
-    flex-direction: column;
-  }
-  .programma {
-    display: grid;
-    grid-template-columns: 5fr 3fr;
-    height: 100vh;
-  }
-  .programma:nth-child(even) {
-    grid-template-columns: 3fr 5fr;
-  }
-  .programma:nth-child(even) .programma__media {
-    order: 2;
-  }
-  .programma__media {
-    position: relative;
-    background: var(--accent);
-    overflow: hidden;
-    /* Angoli sempre squadrati: il video non e' piu' un elemento a se',
-       forma un blocco unico col box titolo+paragrafo (vedi .programma__text). */
-    border-radius: 0;
-    padding-block: var(--space-lg);
-  }
-  .programma__media video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 0;
-  }
-  .programma__copy {
-    display: flex;
-    /* Stessa altezza del video: la riga e' 100vh, il video la riempie meno
-       lo stesso padding-block usato qui, cosi' i due contenuti (video e box)
-       iniziano/finiscono esattamente alla stessa quota. */
-    padding-block: var(--space-lg);
-    padding-inline: 0;
-  }
-  .programma__text {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    gap: var(--space-2xs);
-    /* Riempie tutta l'altezza della colonna (= altezza del video), attaccato
-       al video senza spazio (padding-inline:0 sul genitore .programma__copy):
-       insieme formano un blocco unico. */
-    width: 100%;
-    height: 100%;
-    background: var(--bg-light-soft);
-    border: 2px solid var(--color-black);
-    border-radius: 12px;
-    padding: var(--space-md);
-    overflow-y: auto;
-    /* Always above .programmi-connectors: the connector line is drawn to
-       dive under this box's edges (see initProgrammiConnectors), relying on
-       this box painting over it, open or closed. */
-    position: relative;
-    z-index: 2;
-  }
-  /* Il lato attaccato al video e' squadrato (il bordo nero del box diventa
-     di fatto anche il bordo del video, dato che si toccano); l'altro lato
-     resta arrotondato come prima. */
-  .programma:nth-child(odd) .programma__text {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-  }
-  .programma:nth-child(even) .programma__text {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-  }
-  .programma__summary {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-sm);
-    width: 100%;
-    list-style: none;
-    cursor: default;
-    /* Desktop is always-expanded and non-interactive; the accordion only
-       applies on mobile (re-enabled there). Locking via pointer-events,
-       rather than fighting the native [open] state with CSS, sidesteps a
-       Chromium <details> sizing bug where overriding display on the content
-       while [open] is absent collapses it to a 0-width box. */
-    pointer-events: none;
-  }
-  .programma__summary::-webkit-details-marker {
-    display: none;
-  }
-  .programma__summary h3 {
-    /* Stesso font/colore/dimensione del titolo delle ContentRow (pagina
-       Sala Pesi): la pillola nera resta solo per l'etichetta mobile, vedi
-       l'override dentro il media query. */
-    color: var(--color-red);
-    font-size: clamp(2rem, 4.2vw, 3.2rem);
-  }
-  .programma__toggle-icon {
-    display: none;
-  }
-  .programma__details :global(.button) {
-    margin-top: var(--space-xs);
-  }
-  .programma__details p {
-    /* Stesso font/colore/dimensione del paragrafo delle ContentRow (Sala
-       Pesi): nero, grassetto rosso. Su mobile torna bianco (vedi override
-       nel media query, dove il box e' nero). */
     color: var(--text-on-light);
-    font-size: 1.05rem;
-    line-height: 1.75;
-    margin-top: var(--space-2xs);
-  }
-  .programma__details p :global(strong) {
-    color: var(--color-red);
-  }
-  @media (max-width: 760px) {
-    .programma,
-    .programma:nth-child(even) {
-      display: block;
-      position: relative;
-      height: auto;
-      grid-template-columns: none;
-    }
-    .programma__media {
-      order: 0;
-      width: 87.5%;
-      aspect-ratio: 3 / 4;
-      padding-block: var(--space-sm);
-      margin-left: 0;
-      margin-right: auto;
-    }
-    .programma:nth-child(even) .programma__media {
-      margin-left: auto;
-      margin-right: 0;
-    }
-    /* Il video squadrato ovunque e' una scelta solo desktop (box e video
-       attaccati come blocco unico): su mobile il video resta nello schema a
-       sliver 7/8-1/8, con l'angolo arrotondato sul lato opposto alla striscia
-       rossa, come prima. */
-    .programma:nth-child(odd) .programma__media,
-    .programma:nth-child(odd) .programma__media video {
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
-      border-top-right-radius: 12px;
-      border-bottom-right-radius: 12px;
-    }
-    .programma:nth-child(even) .programma__media,
-    .programma:nth-child(even) .programma__media video {
-      border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
-      border-top-left-radius: 12px;
-      border-bottom-left-radius: 12px;
-    }
-    .programma__copy {
-      position: absolute;
-      inset: 0;
-      display: block;
-      padding: 0;
-      overflow: visible;
-    }
-    /* Chiuso: l'intero box e' l'etichetta (nero, come .programmi-split__nav-link),
-       non piu' una card rosa con un'etichetta dentro. I bordi sono l'opposto
-       di quelli del video della stessa riga: video dispari squadrato a
-       sinistra/stondato a destra -> accordion stondato a sinistra/squadrato a
-       destra, e viceversa per le righe pari. */
-    .programma__text {
-      position: absolute;
-      /* Su desktop riempie tutta la colonna (height/width:100%); su mobile
-         torna a dimensionarsi sul contenuto, altrimenti la pillola chiusa
-         (o il box aperto) proverebbe a coprire l'intera riga. */
-      height: auto;
-      width: auto;
-      top: var(--space-sm);
-      right: 0;
-      left: auto;
-      max-width: 78%;
-      background: var(--color-black);
-      border: none;
-      padding: 0.5em 0.9em;
-      border-top-left-radius: 8px;
-      border-bottom-left-radius: 8px;
-      border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
-    }
-    .programma:nth-child(even) .programma__text {
-      right: auto;
-      left: 0;
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
-      border-top-right-radius: 8px;
-      border-bottom-right-radius: 8px;
-    }
-    /* Aperto: copre tutti gli 8/8 della sezione (video compreso), non solo
-       l'angolo, indipendentemente dal lato di partenza. Bordi uguali (non
-       opposti) a quelli del video, dato che ora ne occupa lo stesso spazio. */
-    .programma:nth-child(odd) .programma__text[open],
-    .programma:nth-child(even) .programma__text[open] {
-      left: 0;
-      right: 0;
-      max-width: 100%;
-      padding: var(--space-sm);
-    }
-    .programma:nth-child(odd) .programma__text[open] {
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
-      border-top-right-radius: 12px;
-      border-bottom-right-radius: 12px;
-    }
-    .programma:nth-child(even) .programma__text[open] {
-      border-top-left-radius: 12px;
-      border-bottom-left-radius: 12px;
-      border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
-    }
-    .programma__summary {
-      cursor: pointer;
-      pointer-events: auto;
-    }
-    .programma__summary h3 {
-      /* Il box e' gia' nero: il titolo torna testo semplice, non una seconda
-         etichetta annidata dentro quella esterna. Dimensione dell'etichetta
-         (non piu' quella grande da ContentRow, che vale solo su desktop). */
-      background: transparent;
-      color: var(--color-white);
-      padding: 0;
-      border-radius: 0;
-      font-family: var(--font-body);
-      font-size: clamp(0.85rem, 1.1vw, 1rem);
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-    .programma__toggle-icon {
-      display: inline-flex;
-      flex-shrink: 0;
-      width: 1rem;
-      height: 1rem;
-      color: var(--color-white);
-      transition: transform 0.2s ease;
-    }
-    .programma__text[open] .programma__toggle-icon {
-      transform: rotate(180deg);
-    }
-    /* Il paragrafo nero (base, pensato per lo sfondo rosa chiaro di
-       desktop) sarebbe invisibile sul box qui nero: torna bianco. */
-    .programma__details p {
-      color: var(--color-white);
-    }
-    .programma__details p :global(strong) {
-      color: var(--color-red);
-    }
-    /* La cta invert-red (nero su nero) sparirebbe sullo sfondo ora nero del
-       box: la adattiamo con un contorno rosso a contrasto. */
-    .programma__details :global(.button--invert-red) {
-      background: transparent;
-      border-color: var(--color-red);
-      color: var(--color-red);
-    }
-    .programma__details :global(.button--invert-red):hover {
-      background: var(--color-red);
-      color: var(--color-white);
-      border-color: var(--color-red);
-    }
-    .programmi-split {
-      flex-direction: column;
-      align-items: center;
-    }
-    .programmi-split__nav {
-      flex-direction: column;
-      align-items: center;
-    }
+    border-color: var(--color-white);
   }
 
   .stats {
@@ -901,6 +381,7 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
   }
   .stat__num {
     font-family: var(--font-display);
+    color: var(--color-red);
     font-size: clamp(2.2rem, 4vw, 3rem);
     line-height: 1;
     font-variant-numeric: tabular-nums;
@@ -913,32 +394,4 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     opacity: 0.9;
   }
 
-  /* Card testimonianza dentro <RelatedSection> (sfondo nero): stessa
-     struttura delle card "potrebbe interessarti", senza immagine. */
-  .testimonial {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: 100%;
-    margin: 0;
-    padding: var(--space-md);
-    border: 2px solid var(--color-white);
-    border-top: 3px solid var(--color-red);
-  }
-  .testimonial blockquote {
-    margin: 0;
-    color: var(--color-white);
-    font-size: 0.92rem;
-    line-height: 1.55;
-  }
-  .testimonial figcaption {
-    margin-top: var(--space-sm);
-    color: var(--color-red);
-    font-weight: 700;
-    font-size: 0.85rem;
-  }
-  .testimonial figcaption span {
-    font-weight: 400;
-    color: var(--text-on-dark-muted);
-  }
 </style>
