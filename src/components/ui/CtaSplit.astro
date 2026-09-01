@@ -1,0 +1,94 @@
+---
+// Sezione CTA a schermo pieno: fascia rossa con testo a sinistra e immagine a
+// destra. Occupa una schermata intera del device.
+//
+//   <CtaSplit
+//     heading="..."
+//     text="..."            (opzionale)
+//     buttonLabel="Prova Ora"
+//     buttonHref="..."
+//     image="/images/..."
+//   />
+import Button from './Button.astro';
+
+interface Props {
+  heading: string;
+  text?: string;
+  buttonLabel: string;
+  buttonHref: string;
+  buttonVariant?: 'primary' | 'white' | 'dark-red' | 'invert-red' | 'ghost-dark' | 'ghost-light';
+  image: string;
+  alt?: string;
+}
+
+const {
+  heading,
+  text,
+  buttonLabel,
+  buttonHref,
+  buttonVariant = 'dark-red',
+  image,
+  alt = '',
+} = Astro.props;
+---
+
+<section class="cta-split">
+  <div class="cta-split__copy">
+    <h2>{heading}</h2>
+    {text && <p>{text}</p>}
+    <Button href={buttonHref} variant={buttonVariant}>{buttonLabel}</Button>
+  </div>
+  <div class="cta-split__media">
+    <img src={image} alt={alt} loading="lazy" />
+  </div>
+</section>
+
+<style>
+  .cta-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 100vh;
+    background: var(--accent);
+    border-block: 2px solid var(--color-black);
+  }
+  .cta-split__copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: var(--space-sm);
+    padding: var(--space-lg) clamp(1.5rem, 5vw, 4rem);
+  }
+  .cta-split .cta-split__copy h2 {
+    color: var(--color-black);
+    margin-top: 0;
+  }
+  /* Due classi: il componente resta padrone della propria tipografia. */
+  .cta-split .cta-split__copy p {
+    color: var(--color-white);
+    line-height: 1.7;
+    font-size: 1.05rem;
+  }
+  .cta-split__media {
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-split__media img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (max-width: 860px) {
+    .cta-split {
+      /* Testo quanto serve, immagine a riempire il resto della schermata. */
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr;
+    }
+    .cta-split__media {
+      min-height: 14rem;
+    }
+  }
+</style>

@@ -25,7 +25,7 @@ const { items } = Astro.props;
 ---
 
 <section class="highlights">
-  <div class="highlights__grid">
+  <div class="highlights__grid" style={`--cols: ${items.length}`}>
     {items.map((item) => (
       <article class="highlights__card">
         <div class="highlights__bg" style={`background-image: url(${item.image})`}></div>
@@ -51,8 +51,15 @@ const { items } = Astro.props;
   }
   .highlights__grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    /* Una colonna per card, qualunque sia il numero (3 o 4 nelle pagine di
+       questo sito). Sotto i 1100px scende a 2 per non comprimere il testo. */
+    grid-template-columns: repeat(var(--cols, 3), 1fr);
     min-height: 34rem;
+    /* Separatori ottenuti con il gap sul fondo nero invece che con i bordi:
+       restano corretti anche quando le card vanno a capo (tablet/mobile),
+       dove un border-left finirebbe sul bordo sinistro della fascia. */
+    gap: 2px;
+    background: var(--color-black);
   }
   .highlights__card {
     position: relative;
@@ -60,9 +67,6 @@ const { items } = Astro.props;
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-  .highlights__card:not(:first-child) {
-    border-left: 2px solid var(--color-black);
   }
   .highlights__bg {
     position: absolute;
@@ -148,18 +152,21 @@ const { items } = Astro.props;
     color: var(--color-white);
   }
 
-  @media (max-width: 760px) {
+  /* Con 4 card lo spazio per colonna scende sotto i ~270px: passa a 2 per
+     riga prima che titolo e testo diventino illeggibili. */
+  @media (max-width: 1100px) {
+    .highlights__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 860px) {
     .highlights__grid {
       grid-template-columns: 1fr;
       min-height: 0;
     }
     .highlights__card {
       min-height: 22rem;
-      border-left: none;
-    }
-    .highlights__card:not(:first-child) {
-      border-left: none;
-      border-top: 2px solid var(--color-black);
     }
     /* Su mobile non c'e' hover: icona e testo sempre visibili. */
     .highlights__icon {

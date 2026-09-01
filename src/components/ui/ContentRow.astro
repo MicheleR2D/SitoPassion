@@ -33,8 +33,17 @@ const { title, image, alt = '' } = Astro.props;
 <style>
   .content-row {
     display: grid;
+    /* 50/50 esatto: e' quello che fa coincidere l'angolo dell'immagine di
+       una riga con quello della riga successiva (che ha l'immagine sul lato
+       opposto). Con colonne asimmetriche il confine si sposta a seconda
+       della riga e gli angoli non si toccano piu'. */
     grid-template-columns: 1fr 1fr;
     align-items: stretch;
+    /* min-height, non height: gli angoli si toccano grazie al 50/50 + zero
+       gap (l'angolo basso-destro dell'immagine di una riga cade sullo stesso
+       punto di quello alto-sinistro della riga dopo, a prescindere dalle
+       altezze). Lasciare crescere la riga evita la barra di scorrimento
+       interna sulle pagine con piu' testo di questa. */
     min-height: 30rem;
     /* Direzione da cui entra il titolo: righe dispari (testo a destra)
        entrano da destra, righe pari (testo a sinistra) da sinistra. */
@@ -46,12 +55,10 @@ const { title, image, alt = '' } = Astro.props;
   .content-row__media {
     position: relative;
     overflow: hidden;
-    /* Proporzione fissa: senza questa l'immagine imporrebbe la sua altezza
-       naturale a meta' viewport e la riga diventerebbe altissima. */
-    aspect-ratio: 4 / 3;
-    /* Angoli squadrati sul lato che tocca il bordo dello schermo, arrotondati
-       verso l'interno: stessa logica dei video della home. */
-    border-radius: 0 12px 12px 0;
+    /* Angoli squadrati (non arrotondati), bordo nero come i box della
+       sezione precedente (.highlights). L'altezza la riempie per intero
+       (align-items:stretch sulla riga, che ora ha height fissa). */
+    border: 2px solid var(--color-black);
   }
   .content-row__media img {
     position: absolute;
@@ -59,7 +66,6 @@ const { title, image, alt = '' } = Astro.props;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: inherit;
   }
   .content-row__copy {
     display: flex;
@@ -99,36 +105,44 @@ const { title, image, alt = '' } = Astro.props;
      resterebbe nella colonna sbagliata. */
   .content-row:nth-child(even) .content-row__media {
     order: 2;
-    border-radius: 12px 0 0 12px;
   }
 
   /* Il testo slottato arriva dal file .mdx, quindi ha lo scope del genitore:
-     serve :global() per raggiungerlo da qui. */
-  .content-row__text :global(p) {
-    color: var(--text-on-light-muted);
+     serve :global() per raggiungerlo da qui. Selettore a due classi di
+     proposito: il componente deve restare padrone della propria tipografia
+     anche se un domani PostBody tornasse a definire regole discendenti. */
+  .content-row .content-row__text :global(p) {
+    color: var(--text-on-light);
     line-height: 1.75;
     font-size: 1.05rem;
   }
-  .content-row__text :global(p + p) {
+  .content-row .content-row__text :global(p + p) {
     margin-top: var(--space-sm);
   }
-  .content-row__text :global(strong) {
+  .content-row .content-row__text :global(strong) {
     color: var(--color-red);
+  }
+  .content-row .content-row__text :global(a) {
+    color: var(--color-red);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+    font-weight: 600;
   }
 
   @media (max-width: 860px) {
     .content-row,
     .content-row:nth-child(even) {
       grid-template-columns: 1fr;
-      min-height: 0;
+      /* Su mobile le righe sono impilate, non affiancate: l'altezza fissa
+         del desktop (serve solo a far coincidere gli angoli in orizzontale)
+         non serve piu', l'immagine torna a un rapporto proprio. */
+      height: auto;
     }
     .content-row__media {
       aspect-ratio: 4 / 3;
-      border-radius: 0;
     }
     .content-row:nth-child(even) .content-row__media {
       order: 0;
-      border-radius: 0;
     }
     .content-row__copy {
       padding: var(--space-md) clamp(1.25rem, 4vw, 2.5rem);

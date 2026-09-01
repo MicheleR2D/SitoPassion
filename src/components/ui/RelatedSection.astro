@@ -1,0 +1,77 @@
+---
+// Sezione "Potrebbe interessarti anche": griglia a 4 colonne uguali, il
+// titolo occupa il primo quarto (stessa dimensione degli altri h2 di
+// pagina), i box correlati (slot) riempiono gli altri 3/4, uno per colonna.
+// Sfondo nero pieno, senza bordi: e' l'ultima sezione della pagina, quindi
+// va a toccare sia la fascia precedente che il footer, senza spazi rosa in
+// mezzo.
+//
+//   <RelatedSection title="Potrebbe interessarti anche">
+//     <RelatedCard .../>
+//     <RelatedCard .../>
+//     <RelatedCard .../>
+//   </RelatedSection>
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<section class="related-section">
+  <div class="related-section__grid">
+    <h2 class="related-section__title">{title}</h2>
+    <slot />
+  </div>
+</section>
+
+<style>
+  .related-section {
+    background: var(--color-black);
+  }
+  .related-section__grid {
+    display: grid;
+    /* Colonne generate automaticamente, una per figlio: titolo + N card
+       occupano sempre frazioni uguali (1/4 con 3 card, 1/5 con 4) senza
+       dover dichiarare il numero. */
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    /* Altezza minima cosi' la colonna e' un'area reale, non una striscia
+       stretta: le card (slot) si allungano a riempirla del tutto. */
+    min-height: 26rem;
+  }
+  .related-section__title {
+    display: flex;
+    align-items: center;
+    color: var(--color-red);
+    padding: var(--space-md);
+  }
+  .related-section__grid > :global(a) {
+    height: 100%;
+  }
+
+  /* Titolo + 4 card su una riga sola sarebbero troppo strette: il titolo
+     passa a fascia piena e le card si dispongono sotto. */
+  @media (max-width: 1100px) {
+    .related-section__grid {
+      grid-auto-flow: row;
+      grid-template-columns: repeat(2, 1fr);
+      min-height: 0;
+    }
+    .related-section__title {
+      grid-column: 1 / -1;
+    }
+    .related-section__grid > :global(a) {
+      height: 20rem;
+    }
+  }
+
+  @media (max-width: 860px) {
+    .related-section__grid {
+      grid-template-columns: 1fr;
+    }
+    .related-section__grid > :global(a) {
+      height: 22rem;
+    }
+  }
+</style>

@@ -1,13 +1,21 @@
 ---
 // Wrapper del contenuto markdown/mdx renderizzato.
 //
-// Usa il pattern "content-grid": una griglia a 3 colonne dove la corsia
-// centrale ha una misura di lettura confortevole e le corsie laterali fanno
-// da margine. Tutto finisce in corsia 2 per default, ma i blocchi che devono
-// respirare a tutta larghezza (fasce <Section>, gallerie di immagini, CTA)
-// escono in corsia 1/-1. Serve per riprodurre il linguaggio full-bleed della
-// home - fasce di colore alternate, video edge-to-edge - dentro pagine che
-// restano in gran parte contenuto scorrevole.
+// DUE REGOLE ARCHITETTURALI, da rispettare per non reintrodurre bug:
+//
+// 1. LAYOUT — pattern "content-grid": griglia a 3 colonne, la corsia centrale
+//    ha una misura di lettura confortevole e le laterali fanno da margine.
+//    Tutto va in corsia 2; i blocchi full-bleed (elencati sotto) escono in
+//    corsia 1/-1. `row-gap` e' 0: nessuno spazio automatico tra fratelli, cosi'
+//    due fasce adiacenti si toccano SEMPRE, in qualsiasi combinazione. Lo
+//    spazio del testo scorrevole e' dato da margin-top espliciti.
+//
+// 2. TIPOGRAFIA — tutte le regole qui sotto sono limitate ai FIGLI DIRETTI
+//    (`>`), cioe' al testo scritto direttamente nel .mdx. NON devono mai
+//    raggiungere l'interno dei componenti: ogni componente definisce la
+//    propria tipografia. Senza questo vincolo le regole di PostBody vincono
+//    per specificita' su quelle dei componenti (es. il pallino rosso delle
+//    liste che si sommava alla spunta dentro FeatureShowcase).
 ---
 
 <div class="post-body">
@@ -22,7 +30,7 @@
       1fr
       min(58rem, calc(100% - 2 * var(--gutter)))
       1fr;
-    row-gap: var(--space-md);
+    row-gap: 0;
     padding-bottom: var(--space-xl);
     /* Rosso chiaro come sfondo di pagina, come sulla home: mai bianco. */
     background: var(--bg-light-soft);
@@ -32,40 +40,59 @@
     min-width: 0;
   }
 
-  /* Blocchi full-bleed: fasce colorate, card, righe alternate, CTA. */
+  /* --- Blocchi full-bleed ---
+     Per aggiungere un nuovo componente a tutta larghezza basta inserire qui
+     la sua classe radice. */
   .post-body > :global(.section),
   .post-body > :global(.cta),
-  .post-body > :global(.comparison),
   .post-body > :global(.highlights),
   .post-body > :global(.content-rows),
+  .post-body > :global(.cta-split),
+  .post-body > :global(.related-section),
+  .post-body > :global(.showcase),
   .post-body > :global(p:has(img + img)),
   .post-body > :global(p:has(video)),
   .post-body > :global(.full-bleed) {
     grid-column: 1 / -1;
   }
-  /* Fasce <Section> adiacenti: nessuno spazio morto, si leggono come fasce
-     continue come sulla home. Le .content-rows gestiscono da sole il proprio
-     respiro (padding-block), quindi non vanno compresse qui. */
-  .post-body > :global(.section) + :global(.section) {
-    margin-top: calc(-1 * var(--space-md));
+  /* .related-section chiude sempre la pagina: deve toccare anche il footer,
+     annullando il padding-bottom (che serve solo quando l'ultimo elemento e'
+     testo scorrevole). */
+  .post-body > :global(.related-section) {
+    margin-bottom: calc(-1 * var(--space-xl));
   }
 
-  /* --- Tipografia --- */
-  .post-body :global(h2),
-  .post-body :global(h3) {
+  /* --- Spaziatura del testo scorrevole ---
+     Esplicita, perche' row-gap e' 0 (vedi nota 1 in testa al file). */
+  .post-body > :global(p),
+  .post-body > :global(ul),
+  .post-body > :global(ol),
+  .post-body > :global(table),
+  .post-body > :global(blockquote),
+  .post-body > :global(video),
+  .post-body > :global(iframe) {
+    margin-top: var(--space-md);
+  }
+  .post-body > :global(h2),
+  .post-body > :global(h3) {
     margin-top: var(--space-lg);
   }
-  .post-body :global(h4) {
+  .post-body > :global(h4),
+  .post-body > :global(h5),
+  .post-body > :global(h6) {
     margin-top: var(--space-md);
+  }
+
+  /* --- Titoli --- */
+  .post-body > :global(h4) {
     font-family: var(--font-display);
     text-transform: uppercase;
     letter-spacing: -0.01em;
     font-size: clamp(1.1rem, 1.8vw, 1.4rem);
     line-height: 1.1;
   }
-  .post-body :global(h5),
-  .post-body :global(h6) {
-    margin-top: var(--space-md);
+  .post-body > :global(h5),
+  .post-body > :global(h6) {
     font-family: var(--font-body);
     font-weight: 700;
     text-transform: uppercase;
@@ -73,41 +100,39 @@
     font-size: 0.8rem;
     color: var(--color-red);
   }
-  /* Dentro una fascia colorata la spaziatura la gestisce la fascia stessa. */
-  .post-body :global(.section) :global(h2),
-  .post-body :global(.section) :global(h3),
-  .post-body :global(.section) :global(h4) {
-    margin-top: 0;
-  }
 
-  .post-body :global(p) {
+  /* --- Paragrafi --- */
+  .post-body > :global(p) {
     color: var(--text-on-light-muted);
     line-height: 1.75;
     font-size: 1.05rem;
   }
-  .post-body :global(strong) {
+  .post-body > :global(p) :global(strong) {
     color: var(--text-on-light);
   }
 
-  /* --- Liste --- */
-  .post-body :global(ul),
-  .post-body :global(ol) {
+  /* --- Liste ---
+     Il ::before e' agganciato alla ul di primo livello (ma raggiunge anche le
+     li annidate) per non finire dentro i componenti. */
+  .post-body > :global(ul),
+  .post-body > :global(ol) {
     color: var(--text-on-light-muted);
     line-height: 1.75;
     padding-inline-start: 1.3em;
   }
-  .post-body :global(li + li) {
+  .post-body > :global(ul) :global(li + li),
+  .post-body > :global(ol) :global(li + li) {
     margin-top: var(--space-2xs);
   }
-  .post-body :global(ul) {
+  .post-body > :global(ul) {
     list-style: none;
     padding-inline-start: 0;
   }
-  .post-body :global(ul > li) {
+  .post-body > :global(ul) :global(li) {
     position: relative;
     padding-inline-start: 1.4em;
   }
-  .post-body :global(ul > li)::before {
+  .post-body > :global(ul) :global(li)::before {
     content: "";
     position: absolute;
     left: 0.1em;
@@ -118,45 +143,41 @@
     border-radius: 2px;
   }
 
-  /* --- Link ---
-     Limitati ai link dentro il testo scorrevole (paragrafi, liste, tabelle):
-     i componenti (card, CTA, bottoni) definiscono il proprio aspetto e non
-     devono essere sovrascritti da qui. */
-  .post-body :global(p) :global(a),
-  .post-body :global(li) :global(a),
-  .post-body :global(td) :global(a),
-  .post-body :global(th) :global(a) {
+  /* --- Link nel testo --- */
+  .post-body > :global(p) :global(a),
+  .post-body > :global(ul) :global(a),
+  .post-body > :global(ol) :global(a),
+  .post-body > :global(table) :global(a) {
     color: var(--color-red);
     text-decoration: underline;
     text-underline-offset: 0.15em;
     font-weight: 600;
   }
-  .post-body :global(p) :global(a:hover),
-  .post-body :global(li) :global(a:hover),
-  .post-body :global(td) :global(a:hover),
-  .post-body :global(th) :global(a:hover) {
+  .post-body > :global(p) :global(a:hover),
+  .post-body > :global(ul) :global(a:hover),
+  .post-body > :global(ol) :global(a:hover),
+  .post-body > :global(table) :global(a:hover) {
     color: var(--color-red-hover);
   }
-  /* I <Button> dentro al testo non devono ereditare lo stile link. */
+  /* I <Button> nel testo non ereditano lo stile link. */
   .post-body :global(a.button) {
     text-decoration: none;
     font-weight: 700;
   }
 
-  /* --- Immagini --- */
-  .post-body :global(img) {
+  /* --- Immagini nel testo --- */
+  .post-body > :global(p) :global(img) {
     max-width: 100%;
   }
   /* Immagine singola: contenuta e con proporzione fissa, mai gigante. */
-  .post-body :global(p > img:only-child) {
+  .post-body > :global(p) > :global(img:only-child) {
     width: 100%;
     aspect-ratio: 16 / 9;
     object-fit: cover;
     border-radius: 12px;
   }
-  /* Gruppo di immagini nello stesso paragrafo (artefatto della migrazione WP):
-     diventa una galleria full-bleed a proporzioni uniformi, con lo stesso
-     stacco di 2px usato come separatore sulla home. */
+  /* Piu' immagini nello stesso paragrafo (artefatto della migrazione WP):
+     diventano una galleria full-bleed a proporzioni uniformi. */
   .post-body > :global(p:has(img + img)) {
     display: grid;
     /* min() sul 48%: 4 colonne su desktop, 2 su mobile (senza il min() su
@@ -166,21 +187,23 @@
     background: var(--color-black);
     border-block: 2px solid var(--color-black);
   }
-  .post-body :global(p:has(img + img) img) {
+  .post-body > :global(p:has(img + img)) :global(img) {
     width: 100%;
     aspect-ratio: 4 / 3;
     object-fit: cover;
     border-radius: 0;
   }
 
-  /* --- Video / embed --- */
-  .post-body :global(video) {
+  /* --- Video / embed nel testo --- */
+  .post-body > :global(video),
+  .post-body > :global(p) :global(video) {
     width: 100%;
     aspect-ratio: 16 / 9;
     object-fit: cover;
     border-block: 2px solid var(--color-black);
   }
-  .post-body :global(iframe) {
+  .post-body > :global(iframe),
+  .post-body > :global(p) :global(iframe) {
     width: 100%;
     aspect-ratio: 16 / 9;
     border: none;
@@ -188,18 +211,18 @@
   }
 
   /* --- Tabelle --- */
-  .post-body :global(table) {
+  .post-body > :global(table) {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.95rem;
   }
-  .post-body :global(th),
-  .post-body :global(td) {
+  .post-body > :global(table) :global(th),
+  .post-body > :global(table) :global(td) {
     border: 1px solid var(--border-on-light);
     padding: var(--space-xs) var(--space-sm);
     text-align: left;
   }
-  .post-body :global(th) {
+  .post-body > :global(table) :global(th) {
     background: var(--bg-light-soft);
     font-family: var(--font-body);
     font-weight: 700;
@@ -208,7 +231,7 @@
     letter-spacing: 0.04em;
   }
 
-  .post-body :global(blockquote) {
+  .post-body > :global(blockquote) {
     border-left: 3px solid var(--color-red);
     margin-inline-start: 0;
     padding-inline-start: var(--space-sm);

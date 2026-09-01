@@ -1,29 +1,64 @@
 ---
+// Card di rimando ad un'altra pagina: immagine in alto e barra col titolo in
+// basso, tutto dentro un unico box cliccabile. La barra cambia sfondo in hover.
+//
+//   <RelatedCard title="Reformer" href="/pilates-reformer/" image="/images/..." />
 interface Props {
   title: string;
   href: string;
+  image: string;
+  alt?: string;
 }
 
-const { title, href } = Astro.props;
+const { title, href, image, alt = '' } = Astro.props;
 ---
 
 <a class="related-card" href={href}>
-  <span class="related-card__title">{title}</span>
-  <span class="related-card__arrow" aria-hidden="true">→</span>
+  <div class="related-card__media">
+    <img src={image} alt={alt} loading="lazy" />
+  </div>
+  <div class="related-card__bar">
+    <span class="related-card__title">{title}</span>
+    <span class="related-card__arrow" aria-hidden="true">→</span>
+  </div>
 </a>
 
 <style>
   .related-card {
     display: flex;
+    flex-direction: column;
+    border: 2px solid var(--color-black);
+    overflow: hidden;
+    text-decoration: none;
+  }
+  .related-card__media {
+    position: relative;
+    /* flex-grow invece di aspect-ratio fisso: se il box e' alto (es. dentro
+       un quarto di sezione), l'immagine riempie tutto lo spazio disponibile
+       sopra la barra, invece di lasciare area vuota. */
+    flex: 1;
+    min-height: 12rem;
+    overflow: hidden;
+  }
+  .related-card__media img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+  .related-card:hover .related-card__media img {
+    transform: scale(1.05);
+  }
+  .related-card__bar {
+    display: flex;
     align-items: center;
     justify-content: space-between;
     gap: var(--space-sm);
-    background: var(--color-black);
-    border: 2px solid var(--color-black);
-    border-radius: 12px;
+    background: var(--color-red);
     padding: var(--space-sm) var(--space-md);
-    text-decoration: none;
-    transition: background-color 0.15s ease, color 0.15s ease;
+    transition: background-color 0.15s ease;
   }
   .related-card__title {
     font-family: var(--font-display);
@@ -31,16 +66,21 @@ const { title, href } = Astro.props;
     font-size: clamp(1.05rem, 1.6vw, 1.3rem);
     line-height: 1.1;
     color: var(--color-white);
+    transition: color 0.15s ease;
   }
   .related-card__arrow {
     flex-shrink: 0;
     font-size: 1.2rem;
-    color: var(--color-red);
+    color: var(--color-black);
+    transition: color 0.15s ease;
   }
-  .related-card:hover {
-    background: var(--color-red);
+  .related-card:hover .related-card__bar {
+    background: var(--color-white);
+  }
+  .related-card:hover .related-card__title {
+    color: var(--text-on-light);
   }
   .related-card:hover .related-card__arrow {
-    color: var(--color-white);
+    color: var(--color-red);
   }
 </style>

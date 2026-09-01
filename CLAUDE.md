@@ -1,3 +1,14 @@
+## Pagine del sito (design system)
+
+Prima di creare o modificare una pagina in `src/content/pages/`, leggere
+**[docs/TEMPLATE-PAGINA.md](docs/TEMPLATE-PAGINA.md)**: contiene lo scheletro
+standard, l'API dei componenti, i valori esatti di colori/font/spaziature e le
+regole architetturali da non violare. La pagina modello di riferimento è
+`src/content/pages/palestra/sala-pesi.mdx`.
+
+Le pagine si compongono assemblando i componenti di `src/components/ui/` e
+passando dati: non si scrive CSS nei file `.mdx`.
+
 ## Development
 
 When starting the dev server, use background mode:

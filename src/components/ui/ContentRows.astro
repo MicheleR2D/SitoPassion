@@ -43,15 +43,9 @@
   .content-rows {
     display: flex;
     flex-direction: column;
-    /* Respiro tra una riga e l'altra e rispetto alla fascia precedente,
-       in linea con lo stacco tra le sezioni della home. */
-    gap: var(--space-xl);
-    padding-block: var(--space-lg);
-  }
-
-  @media (max-width: 860px) {
-    .content-rows {
-      gap: var(--space-lg);
-    }
+    /* Nessuno spazio: ne' tra le righe (l'immagine alternata sinistra/destra
+       fa toccare gli angoli come un mosaico), ne' sopra/sotto rispetto alle
+       sezioni adiacenti. Il respiro verticale del testo resta garantito dal
+       padding di .content-row__copy, non da qui. */
   }
 </style>
