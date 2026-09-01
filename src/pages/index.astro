@@ -187,14 +187,16 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     ]}
   />
 
-  <CtaSplit
-    heading="Pronto a iniziare?"
-    text="Il primo allenamento è gratuito e senza impegno: vieni a scoprire Passion Fitness."
-    buttonLabel="Prova Passion Fitness"
-    buttonHref={PROVA_URL}
-    image="/images/uploads/2024/11/MRZ08075.jpeg"
-    alt="Passion Fitness Tuscolana"
-  />
+  <div class="cta-split-home">
+    <CtaSplit
+      heading="Pronto a iniziare?"
+      text="Il primo allenamento è gratuito e senza impegno: vieni a scoprire Passion Fitness."
+      buttonLabel="Prova Passion Fitness"
+      buttonHref={PROVA_URL}
+      image="/images/uploads/2024/11/MRZ08075.jpeg"
+      alt="Passion Fitness Tuscolana"
+    />
+  </div>
 
   <RelatedSection title="Il blog di Passion">
     {latestPosts.map((post) => (
@@ -355,18 +357,53 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
   }
   /* Il lato testo deve formare un blocco uguale e opposto a quello del
      video (che ha gia' un bordo nero squadrato): stesso trattamento,
-     cosi' i due lati sembrano un'unica card divisa a meta'. */
+     cosi' i due lati sembrano un'unica card divisa a meta'. Il lato
+     attaccato al video perde il proprio bordo (il video ha gia' il suo
+     su quello stesso confine): altrimenti i due bordi affiancati si
+     leggerebbero come una linea doppia. */
   .programmi-band :global(.content-row__copy) {
     border: 2px solid var(--color-black);
   }
-  /* I CTA di questa sezione restano bianchi anche in hover (niente
-     inversione di colore): devono leggersi solo come testo su un
-     fondo chiaro, non come un pulsante "pieno" che cambia stato. */
-  .programmi-band :global(.content-row__copy .button--white),
-  .programmi-band :global(.content-row__copy .button--white:hover) {
-    background: var(--color-white);
+  .programmi-band :global(.content-row:nth-child(odd) .content-row__copy) {
+    border-left: none;
+  }
+  .programmi-band :global(.content-row:nth-child(even) .content-row__copy) {
+    border-right: none;
+  }
+  /* Il pulsante non deve leggersi come un box a se' dentro il box del
+     testo (altro doppio bordo, stavolta col proprio riquadro bianco):
+     nessuno sfondo, nessun bordo, solo scritta e freccia. */
+  .programmi-band :global(.content-row__copy .button),
+  .programmi-band :global(.content-row__copy .button:hover) {
+    background: transparent;
     color: var(--text-on-light);
-    border-color: var(--color-white);
+    border-color: transparent;
+    padding-inline: 0;
+  }
+  @media (max-width: 860px) {
+    .programmi-band :global(.content-row:nth-child(odd) .content-row__copy),
+    .programmi-band :global(.content-row:nth-child(even) .content-row__copy) {
+      border-left: 2px solid var(--color-black);
+      border-right: 2px solid var(--color-black);
+      border-top: none;
+      border-bottom: none;
+    }
+  }
+
+  /* La sezione "prova" segue la stessa altezza (non piu' 100vh) e ha un
+     bordo tra le due meta', come le righe video+testo qui sopra. */
+  .cta-split-home :global(.cta-split) {
+    height: auto;
+    min-height: 30rem;
+  }
+  .cta-split-home :global(.cta-split__copy) {
+    border-right: 2px solid var(--color-black);
+  }
+  @media (max-width: 860px) {
+    .cta-split-home :global(.cta-split__copy) {
+      border-right: none;
+      border-bottom: 2px solid var(--color-black);
+    }
   }
 
   .stats {

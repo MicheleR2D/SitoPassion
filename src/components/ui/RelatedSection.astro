@@ -46,13 +46,19 @@ const { title } = Astro.props;
     color: var(--color-red);
     padding: var(--space-md);
   }
-  .related-section__grid > :global(a),
-  .related-section__grid > :global(figure) {
+  .related-section__grid > :global(a) {
     height: 100%;
+  }
+  /* Le card sono adiacenti (nessun gap): ognuna ha un bordo nero completo,
+     quindi due card fianco a fianco mostrerebbero un doppio bordo nel
+     punto di contatto. Tolto qui, non sulla card (che resta un componente
+     autonomo con bordo su tutti i lati quando usata da sola). */
+  .related-section__grid > :global(a) + :global(a) {
+    border-left: none;
   }
 
   /* Titolo + 4 card su una riga sola sarebbero troppo strette: il titolo
-     passa a fascia piena e le card si dispongono sotto. */
+     passa a fascia piena e le card si dispongono sotto, 2 per riga. */
   @media (max-width: 1100px) {
     .related-section__grid {
       grid-auto-flow: row;
@@ -62,9 +68,18 @@ const { title } = Astro.props;
     .related-section__title {
       grid-column: 1 / -1;
     }
-    .related-section__grid > :global(a),
-  .related-section__grid > :global(figure) {
+    .related-section__grid > :global(a) {
       height: 20rem;
+    }
+    /* L'adiacenza sinistra/destra ora e' di posizione (seconda colonna),
+       non di semplice ordine nel DOM: il titolo occupa da solo la prima
+       riga, quindi la card in seconda colonna e' sempre in posizione
+       dispari nella lista dei figli (titolo=1, card1=2, card2=3, ...). */
+    .related-section__grid > :global(a) + :global(a) {
+      border-left: 2px solid var(--color-black);
+    }
+    .related-section__grid > :global(a):nth-child(odd) {
+      border-left: none;
     }
   }
 
@@ -72,9 +87,18 @@ const { title } = Astro.props;
     .related-section__grid {
       grid-template-columns: 1fr;
     }
-    .related-section__grid > :global(a),
-  .related-section__grid > :global(figure) {
+    .related-section__grid > :global(a) {
       height: 22rem;
+    }
+    /* Una colonna sola: le card si impilano, quindi il doppio bordo ora e'
+       in verticale, non piu' in orizzontale. :nth-child(n) (sempre vero)
+       serve solo per pareggiare la specificita' della regola a due colonne
+       qui sopra e ripristinare il bordo sinistro su tutte le card. */
+    .related-section__grid > :global(a):nth-child(n) {
+      border-left: 2px solid var(--color-black);
+    }
+    .related-section__grid > :global(a) + :global(a) {
+      border-top: none;
     }
   }
 </style>
