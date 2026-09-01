@@ -4,8 +4,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/ui/Hero.astro';
 import Section from '../components/ui/Section.astro';
 import Button from '../components/ui/Button.astro';
-import CTA from '../components/ui/CTA.astro';
-import PostList from '../components/blog/PostList.astro';
+import CtaSplit from '../components/ui/CtaSplit.astro';
+import FeatureShowcase from '../components/ui/FeatureShowcase.astro';
+import RelatedSection from '../components/ui/RelatedSection.astro';
+import RelatedCard from '../components/ui/RelatedCard.astro';
 
 const PROVA_URL =
   'https://automazione.n8ndevelop.it/form/8ce36c5e-0cc4-4813-9a0f-2da2a7605fb0?source=SitoWeb&medium=Btn_Home';
@@ -341,24 +343,25 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     initProgrammiConnectors();
   </script>
 
-  <Section tone="blush">
-    <div class="perche">
-      <div class="perche__copy">
-        <h2>Perché scegliere noi?</h2>
-        <p>Con 30 anni di esperienza e gli insegnamenti appresi dai nostri errori, abbiamo imparato a mettere al centro la persona prima dell'allenamento. Ti dedichiamo tutta l'attenzione che meriti, allenandoci al tuo fianco finché non acquisirai piena sicurezza in te.</p>
-      </div>
-      <div class="faq">
-        {FAQ.map((item) => (
-          <details class="faq__item">
-            <summary>{item.q}</summary>
-            <p>{item.a}</p>
-          </details>
-        ))}
-      </div>
-    </div>
-  </Section>
+  <FeatureShowcase
+    title="Perché scegliere noi?"
+    images={[
+      { src: '/images/uploads/2024/11/MRZ08075.jpeg', alt: 'Passion Fitness Tuscolana' },
+      { src: '/images/uploads/2024/11/Sala-Pesi-1.jpeg', alt: 'Sala pesi Passion Fitness' },
+      { src: '/images/uploads/2024/10/sale_fitness.jpg', alt: 'Sala corsi fitness' },
+      { src: '/images/uploads/2024/11/reform_1-1.jpeg', alt: 'Studio Pilates Reformer' },
+      { src: '/images/uploads/2024/10/Palestra-11920x.jpg', alt: 'Palestra Passion Fitness' },
+      { src: '/images/uploads/2024/11/MRZ08109.jpeg', alt: 'Personal training Passion Fitness' },
+    ]}
+    features={[
+      '30+ anni di esperienza nel settore',
+      "La persona sempre al centro, prima dell'allenamento",
+      "Tutta l'attenzione che meriti, ad ogni allenamento",
+      'Ti alleniamo al tuo fianco, finché non acquisirai piena sicurezza',
+    ]}
+  />
 
-  <Section tone="red">
+  <Section tone="dark">
     <div class="stats">
       <div class="stat">
         <span class="stat__num">30+</span>
@@ -379,31 +382,33 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     </div>
   </Section>
 
-  <Section tone="light">
-    <h2>Cosa dicono di noi</h2>
-    <div class="testimonials">
-      {TESTIMONIANZE.map((t) => (
-        <figure class="testimonial">
-          <blockquote>"{t.quote}"</blockquote>
-          <figcaption>{t.author} <span>— Recensione Google</span></figcaption>
-        </figure>
-      ))}
-    </div>
-  </Section>
+  <RelatedSection title="Cosa dicono di noi">
+    {TESTIMONIANZE.map((t) => (
+      <figure class="testimonial">
+        <blockquote>"{t.quote}"</blockquote>
+        <figcaption>{t.author} <span>— Recensione Google</span></figcaption>
+      </figure>
+    ))}
+  </RelatedSection>
 
-  <Section tone="blush">
-    <div class="section-head">
-      <h2>Il blog di Passion</h2>
-      <a class="quicklinks__link" href="/blog/">Scopri tutti gli articoli →</a>
-    </div>
-    <PostList posts={latestPosts} />
-  </Section>
+  <RelatedSection title="Il blog di Passion">
+    {latestPosts.map((post) => (
+      <RelatedCard
+        title={post.data.title}
+        href={`/${post.data.slug}/`}
+        image={post.data.coverImage}
+        alt={post.data.title}
+      />
+    ))}
+  </RelatedSection>
 
-  <CTA
+  <CtaSplit
     heading="Pronto a iniziare?"
+    text="Il primo allenamento è gratuito e senza impegno: vieni a scoprire Passion Fitness."
     buttonLabel="Prova Passion Fitness"
     buttonHref={PROVA_URL}
-    tone="dark"
+    image="/images/uploads/2024/11/MRZ08075.jpeg"
+    alt="Passion Fitness Tuscolana"
   />
 </BaseLayout>
 
@@ -631,50 +636,57 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     position: relative;
     background: var(--accent);
     overflow: hidden;
-    border-radius: 12px;
+    /* Angoli sempre squadrati: il video non e' piu' un elemento a se',
+       forma un blocco unico col box titolo+paragrafo (vedi .programma__text). */
+    border-radius: 0;
     padding-block: var(--space-lg);
   }
   .programma__media video {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 12px;
-  }
-  /* Video che parte da sinistra (fila dispari): angoli sinistri squadrati.
-     Video che parte da destra (fila pari): angoli destri squadrati. */
-  .programma:nth-child(odd) .programma__media,
-  .programma:nth-child(odd) .programma__media video {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-  }
-  .programma:nth-child(even) .programma__media,
-  .programma:nth-child(even) .programma__media video {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
+    border-radius: 0;
   }
   .programma__copy {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    gap: var(--space-md);
-    padding: var(--space-md) clamp(1.25rem, 4vw, 2.5rem);
-    overflow-y: auto;
+    /* Stessa altezza del video: la riga e' 100vh, il video la riempie meno
+       lo stesso padding-block usato qui, cosi' i due contenuti (video e box)
+       iniziano/finiscono esattamente alla stessa quota. */
+    padding-block: var(--space-lg);
+    padding-inline: 0;
   }
   .programma__text {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: flex-start;
     gap: var(--space-2xs);
+    /* Riempie tutta l'altezza della colonna (= altezza del video), attaccato
+       al video senza spazio (padding-inline:0 sul genitore .programma__copy):
+       insieme formano un blocco unico. */
+    width: 100%;
+    height: 100%;
     background: var(--bg-light-soft);
     border: 2px solid var(--color-black);
     border-radius: 12px;
     padding: var(--space-md);
+    overflow-y: auto;
     /* Always above .programmi-connectors: the connector line is drawn to
        dive under this box's edges (see initProgrammiConnectors), relying on
        this box painting over it, open or closed. */
     position: relative;
     z-index: 2;
+  }
+  /* Il lato attaccato al video e' squadrato (il bordo nero del box diventa
+     di fatto anche il bordo del video, dato che si toccano); l'altro lato
+     resta arrotondato come prima. */
+  .programma:nth-child(odd) .programma__text {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  .programma:nth-child(even) .programma__text {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
   }
   .programma__summary {
     display: flex;
@@ -695,18 +707,11 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     display: none;
   }
   .programma__summary h3 {
-    /* Stessa etichetta di .programmi-split__nav-link, stesso stile e stessa
-       dimensione: apri/chiudi non deve cambiarne l'aspetto. */
-    display: inline-block;
-    background: var(--color-black);
-    color: var(--color-white);
-    font-family: var(--font-body);
-    font-size: clamp(0.85rem, 1.1vw, 1rem);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    padding: 0.5em 0.9em;
-    border-radius: 8px;
+    /* Stesso font/colore/dimensione del titolo delle ContentRow (pagina
+       Sala Pesi): la pillola nera resta solo per l'etichetta mobile, vedi
+       l'override dentro il media query. */
+    color: var(--color-red);
+    font-size: clamp(2rem, 4.2vw, 3.2rem);
   }
   .programma__toggle-icon {
     display: none;
@@ -715,9 +720,16 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     margin-top: var(--space-xs);
   }
   .programma__details p {
-    color: var(--color-red);
-    font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+    /* Stesso font/colore/dimensione del paragrafo delle ContentRow (Sala
+       Pesi): nero, grassetto rosso. Su mobile torna bianco (vedi override
+       nel media query, dove il box e' nero). */
+    color: var(--text-on-light);
+    font-size: 1.05rem;
+    line-height: 1.75;
     margin-top: var(--space-2xs);
+  }
+  .programma__details p :global(strong) {
+    color: var(--color-red);
   }
   @media (max-width: 760px) {
     .programma,
@@ -739,6 +751,24 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
       margin-left: auto;
       margin-right: 0;
     }
+    /* Il video squadrato ovunque e' una scelta solo desktop (box e video
+       attaccati come blocco unico): su mobile il video resta nello schema a
+       sliver 7/8-1/8, con l'angolo arrotondato sul lato opposto alla striscia
+       rossa, come prima. */
+    .programma:nth-child(odd) .programma__media,
+    .programma:nth-child(odd) .programma__media video {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      border-top-right-radius: 12px;
+      border-bottom-right-radius: 12px;
+    }
+    .programma:nth-child(even) .programma__media,
+    .programma:nth-child(even) .programma__media video {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      border-top-left-radius: 12px;
+      border-bottom-left-radius: 12px;
+    }
     .programma__copy {
       position: absolute;
       inset: 0;
@@ -753,6 +783,11 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
        destra, e viceversa per le righe pari. */
     .programma__text {
       position: absolute;
+      /* Su desktop riempie tutta la colonna (height/width:100%); su mobile
+         torna a dimensionarsi sul contenuto, altrimenti la pillola chiusa
+         (o il box aperto) proverebbe a coprire l'intera riga. */
+      height: auto;
+      width: auto;
       top: var(--space-sm);
       right: 0;
       left: auto;
@@ -801,11 +836,17 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     }
     .programma__summary h3 {
       /* Il box e' gia' nero: il titolo torna testo semplice, non una seconda
-         etichetta annidata dentro quella esterna. */
+         etichetta annidata dentro quella esterna. Dimensione dell'etichetta
+         (non piu' quella grande da ContentRow, che vale solo su desktop). */
       background: transparent;
       color: var(--color-white);
       padding: 0;
       border-radius: 0;
+      font-family: var(--font-body);
+      font-size: clamp(0.85rem, 1.1vw, 1rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
     .programma__toggle-icon {
       display: inline-flex;
@@ -817,6 +858,14 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     }
     .programma__text[open] .programma__toggle-icon {
       transform: rotate(180deg);
+    }
+    /* Il paragrafo nero (base, pensato per lo sfondo rosa chiaro di
+       desktop) sarebbe invisibile sul box qui nero: torna bianco. */
+    .programma__details p {
+      color: var(--color-white);
+    }
+    .programma__details p :global(strong) {
+      color: var(--color-red);
     }
     /* La cta invert-red (nero su nero) sparirebbe sullo sfondo ora nero del
        box: la adattiamo con un contorno rosso a contrasto. */
@@ -837,39 +886,6 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     .programmi-split__nav {
       flex-direction: column;
       align-items: center;
-    }
-  }
-
-  .perche {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-lg);
-  }
-  .perche__copy p {
-    margin-top: var(--space-sm);
-    color: var(--text-on-light-muted);
-  }
-  .faq {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2xs);
-  }
-  .faq__item {
-    background: var(--color-white);
-    border: 1px solid var(--border-on-light);
-    padding: var(--space-sm);
-  }
-  .faq__item summary {
-    cursor: pointer;
-    font-weight: 700;
-  }
-  .faq__item p {
-    margin-top: var(--space-2xs);
-    color: var(--text-on-light-muted);
-  }
-  @media (max-width: 760px) {
-    .perche {
-      grid-template-columns: 1fr;
     }
   }
 
@@ -897,39 +913,32 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     opacity: 0.9;
   }
 
-  .testimonials {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-    gap: var(--space-md);
-    margin-top: var(--space-md);
-  }
+  /* Card testimonianza dentro <RelatedSection> (sfondo nero): stessa
+     struttura delle card "potrebbe interessarti", senza immagine. */
   .testimonial {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
     margin: 0;
-    padding: var(--space-sm);
-    border: 1px solid var(--border-on-light);
+    padding: var(--space-md);
+    border: 2px solid var(--color-white);
     border-top: 3px solid var(--color-red);
   }
   .testimonial blockquote {
     margin: 0;
+    color: var(--color-white);
     font-size: 0.92rem;
     line-height: 1.55;
   }
   .testimonial figcaption {
     margin-top: var(--space-sm);
+    color: var(--color-red);
     font-weight: 700;
     font-size: 0.85rem;
   }
   .testimonial figcaption span {
     font-weight: 400;
-    color: var(--text-on-light-muted);
-  }
-
-  .section-head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--space-sm);
-    flex-wrap: wrap;
-    margin-bottom: var(--space-md);
+    color: var(--text-on-dark-muted);
   }
 </style>

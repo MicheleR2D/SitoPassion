@@ -47,7 +47,9 @@ const {
   .cta-split {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    min-height: 100vh;
+    /* height, non min-height: deve coprire AL MASSIMO una schermata, non
+       crescere oltre se il testo e' lungo (in tal caso scorre, vedi sotto). */
+    height: 100vh;
     background: var(--accent);
     border-block: 2px solid var(--color-black);
   }
@@ -58,6 +60,7 @@ const {
     justify-content: center;
     gap: var(--space-sm);
     padding: var(--space-lg) clamp(1.5rem, 5vw, 4rem);
+    overflow-y: auto;
   }
   .cta-split .cta-split__copy h2 {
     color: var(--color-black);
