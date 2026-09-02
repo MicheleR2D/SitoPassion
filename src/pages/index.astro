@@ -374,21 +374,6 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     display: flex;
     flex-direction: column;
   }
-  @media (max-width: 860px) {
-    /* Su mobile "perche' scegliere noi" + "pronto a iniziare" passano
-       prima della griglia video+testo (che diventa piu' lunga da scorrere
-       coi titoli impilati sopra ai video): l'ordine nel markup resta
-       quello desktop, qui si riordina solo visivamente. */
-    .home-flow > .showcase-home {
-      order: 1;
-    }
-    .home-flow > .cta-split-home {
-      order: 2;
-    }
-    .home-flow > .programmi-band {
-      order: 3;
-    }
-  }
 
   .programmi-band {
     background: var(--bg-light-soft);
@@ -428,8 +413,13 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     .programmi-band :global(.content-row__copy) {
       display: contents;
     }
+    /* !important: sulle righe pari il componente base ha una regola piu'
+       specifica (.content-row:nth-child(even) .content-row__media) che
+       resetta l'order a 0 per il layout mobile a sliver - qui va scavalcata
+       sempre, altrimenti solo le righe dispari (Sala Pesi, I Love My
+       Trainer) mostrano il titolo sopra al video. */
     .programmi-band :global(.content-row__media) {
-      order: 2;
+      order: 2 !important;
     }
     /* .programmi-band ripetuto due volte: stessa specificita' della regola
        base del componente (2 classi + 2 attributi data-astro-cid), che
