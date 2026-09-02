@@ -150,19 +150,8 @@ import Nav from './Nav.astro';
       max-height: calc(100vh - var(--header-height));
       overflow-y: auto;
     }
-    .nav-panel :global(.site-nav > ul) {
-      flex-direction: column;
-      gap: 0;
-      padding-block: var(--space-2xs) var(--space-sm);
-    }
-    .nav-panel :global(.site-nav__dropdown) {
-      position: static;
-      opacity: 1;
-      visibility: visible;
-      transform: none;
-      border: none;
-      background: transparent;
-      padding-left: var(--space-sm);
-    }
+    /* Il layout interno del menu aperto (griglia di riquadri) e' definito
+       in Nav.astro: qui l'header si occupa solo di aprire e chiudere il
+       pannello. */
   }
 </style>

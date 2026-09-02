@@ -7,6 +7,9 @@ export interface NavItem {
   label: string;
   href: string;
   children?: NavItem[];
+  // Voce fuori dalla griglia del menu mobile: occupa una fascia a se' a
+  // piena larghezza sotto i riquadri (vedi Nav.astro).
+  standalone?: boolean;
 }
 
 export const NAV_ITEMS: NavItem[] = [
@@ -29,5 +32,5 @@ export const NAV_ITEMS: NavItem[] = [
   },
   { label: "Orari Corsi", href: "/orari-corsi/" },
   { label: "Abbonamenti", href: "/abbonamenti/" },
-  { label: "Blog", href: "/blog/" },
+  { label: "Blog", href: "/blog/", standalone: true },
 ];

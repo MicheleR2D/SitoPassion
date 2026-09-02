@@ -5,7 +5,12 @@ import { NAV_ITEMS } from '../../data/nav.ts';
 <nav class="site-nav">
   <ul>
     {NAV_ITEMS.map((item) => (
-      <li class:list={["site-nav__item", { "has-children": item.children }]}>
+      <li
+        class:list={[
+          "site-nav__item",
+          { "has-children": item.children, "site-nav__item--standalone": item.standalone },
+        ]}
+      >
         <a href={item.href}>{item.label}</a>
         {item.children && (
           <ul class="site-nav__dropdown">
@@ -87,5 +92,74 @@ import { NAV_ITEMS } from '../../data/nav.ts';
   .site-nav__dropdown a:hover {
     background: var(--bg-dark);
     color: var(--color-red);
+  }
+
+  /* --- Menu mobile ---
+     Non una lista di link ma una griglia 2x2 di riquadri rossi (Palestra,
+     Discipline, Orari Corsi, Abbonamenti): bersagli grandi da toccare col
+     pollice, con i sotto-link elencati dentro il riquadro del rispettivo
+     gruppo. Le voci marcate `standalone` (Blog) restano fuori dalla
+     griglia, in una fascia nera a piena larghezza sotto. */
+  @media (max-width: 900px) {
+    .site-nav > ul {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-2xs);
+      padding-block: var(--space-2xs) var(--space-sm);
+    }
+    .site-nav__item {
+      display: flex;
+      flex-direction: column;
+      background: var(--accent);
+      border: 2px solid var(--color-black);
+      border-radius: 12px;
+      padding: var(--space-sm);
+    }
+    .site-nav__item > a {
+      padding-block: 0;
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      line-height: 1;
+      color: var(--color-white);
+      border-bottom: none;
+    }
+    /* La freccetta del dropdown non serve: i figli sono già visibili. */
+    .site-nav__item.has-children > a::after {
+      display: none;
+    }
+    .site-nav__dropdown {
+      position: static;
+      display: flex;
+      flex-direction: column;
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+      background: transparent;
+      border: none;
+      min-width: 0;
+      margin-top: var(--space-2xs);
+      padding: 0;
+    }
+    .site-nav__dropdown a {
+      padding: 0.2rem 0;
+      font-size: 0.78rem;
+      color: var(--color-white);
+      opacity: 0.85;
+    }
+    .site-nav__dropdown a:hover {
+      background: transparent;
+      color: var(--color-black);
+      opacity: 1;
+    }
+    /* Fascia a se': fondo nero come il pannello, quindi il bordo nero
+       sparirebbe. Bordo rosso per farla leggere come area toccabile. */
+    .site-nav__item--standalone {
+      grid-column: 1 / -1;
+      align-items: center;
+      background: var(--color-black);
+      border-color: var(--color-red);
+    }
   }
 </style>
