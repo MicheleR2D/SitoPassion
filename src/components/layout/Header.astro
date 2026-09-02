@@ -146,9 +146,20 @@ import Nav from './Nav.astro';
       overflow: hidden;
       transition: max-height 0.2s ease;
     }
+    /* Menu aperto: pannello a schermo pieno sotto la barra. `top:100%` lo
+       attacca sotto l'header e, siccome il blocco contenitore e' l'header
+       stesso (position:fixed), `100%` nel calc e' proprio la sua altezza:
+       l'altezza del pannello diventa "tutto il resto della schermata",
+       senza dipendere da una variabile da tenere allineata a mano. */
     .nav-toggle-input:checked ~ .nav-panel {
-      max-height: calc(100vh - var(--header-height));
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      height: calc(100dvh - 100%);
+      max-height: none;
       overflow-y: auto;
+      background: var(--bg-dark);
     }
     /* Il layout interno del menu aperto (griglia di riquadri) e' definito
        in Nav.astro: qui l'header si occupa solo di aprire e chiudere il

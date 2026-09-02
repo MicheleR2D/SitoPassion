@@ -101,24 +101,34 @@ import { NAV_ITEMS } from '../../data/nav.ts';
      gruppo. Le voci marcate `standalone` (Blog) restano fuori dalla
      griglia, in una fascia nera a piena larghezza sotto. */
   @media (max-width: 900px) {
+    /* Il menu riempie la schermata: il pannello ha un'altezza definita
+       (vedi Header) e qui la griglia la eredita, cosi' le due righe di
+       riquadri si dividono lo spazio disponibile. */
+    .site-nav {
+      height: 100%;
+    }
     .site-nav > ul {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: var(--space-2xs);
-      padding-block: var(--space-2xs) var(--space-sm);
+      /* Due righe di riquadri che si spartiscono l'altezza + la fascia
+         finale (Blog) alta quanto il suo contenuto. */
+      grid-template-rows: 1fr 1fr auto;
+      gap: 2px;
+      height: 100%;
+      padding: 2px 0 0;
     }
     .site-nav__item {
       display: flex;
       flex-direction: column;
+      justify-content: center;
       background: var(--accent);
       border: 2px solid var(--color-black);
-      border-radius: 12px;
-      padding: var(--space-sm);
+      padding: var(--space-md) var(--space-sm);
     }
     .site-nav__item > a {
       padding-block: 0;
       font-family: var(--font-display);
-      font-size: 1.15rem;
+      font-size: clamp(1.5rem, 7vw, 2.2rem);
       font-weight: 400;
       letter-spacing: -0.01em;
       line-height: 1;
@@ -139,12 +149,12 @@ import { NAV_ITEMS } from '../../data/nav.ts';
       background: transparent;
       border: none;
       min-width: 0;
-      margin-top: var(--space-2xs);
+      margin-top: var(--space-xs);
       padding: 0;
     }
     .site-nav__dropdown a {
-      padding: 0.2rem 0;
-      font-size: 0.78rem;
+      padding: 0.28rem 0;
+      font-size: 0.95rem;
       color: var(--color-white);
       opacity: 0.85;
     }
