@@ -481,19 +481,35 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
   }
 
   @media (max-width: 860px) {
-    /* La galleria segue il testo (si legge il "perche'" prima di guardare
-       le foto) e passa da 3 a 2 colonne, cosi' con 6 immagini restano 3
-       righe piene invece di 2. */
-    .showcase-home :global(.showcase__gallery) {
-      order: 2;
-      grid-template-columns: repeat(2, 1fr);
+    /* Ordine su mobile: testo del "perche' scegliere noi", poi il riquadro
+       rosso "pronto a iniziare", e per ultima la galleria di foto.
+       Il riquadro rosso e' un fratello della sezione showcase, quindi per
+       infilarlo tra le due metà si "smontano" i box intermedi
+       (display:contents su .showcase-home e su .showcase): testo e galleria
+       diventano item della stessa colonna flex di .home-flow, riordinabili
+       con `order` insieme al riquadro rosso. */
+    .showcase-home {
+      display: contents;
+    }
+    .showcase-home :global(.showcase) {
+      display: contents;
+    }
+    .home-flow > .programmi-band {
+      order: 1;
     }
     .showcase-home :global(.showcase__features) {
-      order: 1;
-      /* Meno padding e meno spazio tra gli elementi: qui sotto deve
-         entrarci anche "pronto a iniziare", nella stessa schermata. */
+      order: 2;
+      /* Meno padding e meno spazio tra gli elementi: insieme al riquadro
+         rosso deve entrare in una sola schermata. */
       padding-block: var(--space-xs);
       gap: var(--space-2xs);
+    }
+    .home-flow > .cta-split-home {
+      order: 3;
+    }
+    .showcase-home :global(.showcase__gallery) {
+      order: 4;
+      grid-template-columns: repeat(2, 1fr);
     }
     .showcase-home :global(.showcase__features ul) {
       gap: var(--space-3xs);
