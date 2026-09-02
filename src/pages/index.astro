@@ -374,6 +374,21 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     display: flex;
     flex-direction: column;
   }
+  @media (max-width: 860px) {
+    /* Ordine richiesto su mobile: perche' scegliere noi, poi pronto a
+       iniziare (le due insieme in una sola schermata), poi la griglia
+       video+testo. Il markup resta nell'ordine desktop, qui si riordina
+       solo visivamente. */
+    .home-flow > .showcase-home {
+      order: 1;
+    }
+    .home-flow > .cta-split-home {
+      order: 2;
+    }
+    .home-flow > .programmi-band {
+      order: 3;
+    }
+  }
 
   .programmi-band {
     background: var(--bg-light-soft);
