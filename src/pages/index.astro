@@ -125,6 +125,7 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     </div>
   </Section>
 
+  <div class="home-flow">
   <div class="programmi-band">
     <ContentRows>
       <ContentRow
@@ -199,17 +200,20 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
       alt="Passion Fitness Tuscolana"
     />
   </div>
+  </div>
 
-  <RelatedSection title="Leggi il nostro Blog">
-    {latestPosts.map((post) => (
-      <RelatedCard
-        title={post.data.title}
-        href={`/${post.data.slug}/`}
-        image={post.data.coverImage}
-        alt={post.data.title}
-      />
-    ))}
-  </RelatedSection>
+  <div class="blog-home">
+    <RelatedSection title="Leggi il nostro Blog">
+      {latestPosts.map((post) => (
+        <RelatedCard
+          title={post.data.title}
+          href={`/${post.data.slug}/`}
+          image={post.data.coverImage}
+          alt={post.data.title}
+        />
+      ))}
+    </RelatedSection>
+  </div>
 </BaseLayout>
 
 <style>
@@ -226,6 +230,18 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
   @media (max-width: 860px) {
     :global(.hero:has(.hero-media) .hero-title-group) {
       display: none;
+    }
+    /* Un solo CTA, piu' grande: "Scopri i Corsi" e' secondario e sulla
+       larghezza di un telefono affiancare due bottoni li rende entrambi
+       troppo piccoli per essere il gesto principale della hero. */
+    .hero-ctas :global(a:last-child) {
+      display: none;
+    }
+    .hero-ctas :global(a:first-child) {
+      width: 100%;
+      justify-content: center;
+      font-size: 0.95rem;
+      padding: 1.15rem 2rem;
     }
   }
 
@@ -354,6 +370,26 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     }
   }
 
+  .home-flow {
+    display: flex;
+    flex-direction: column;
+  }
+  @media (max-width: 860px) {
+    /* Su mobile "perche' scegliere noi" + "pronto a iniziare" passano
+       prima della griglia video+testo (che diventa piu' lunga da scorrere
+       coi titoli impilati sopra ai video): l'ordine nel markup resta
+       quello desktop, qui si riordina solo visivamente. */
+    .home-flow > .showcase-home {
+      order: 1;
+    }
+    .home-flow > .cta-split-home {
+      order: 2;
+    }
+    .home-flow > .programmi-band {
+      order: 3;
+    }
+  }
+
   .programmi-band {
     background: var(--bg-light-soft);
   }
@@ -405,6 +441,11 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
       background: var(--accent);
       color: var(--color-white);
       padding: var(--space-sm) clamp(1.25rem, 4vw, 2.5rem);
+      /* Il banner ora e' a piena larghezza (prima era testo inline con
+         margine attorno): scivolare di lato di 56px lo farebbe sforare dal
+         viewport (e' esattamente quello che spingeva la pagina intera a
+         scorrere in orizzontale). Resta solo il fade, senza traslazione. */
+      transform: none;
     }
     /* Il bordo che prima stava sul box intero (.content-row__copy) si
        sposta sul paragrafo, l'unica parte che lo conserva ancora. */
@@ -432,11 +473,16 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
       border-bottom: 2px solid var(--color-black);
     }
     /* Solo testo: l'immagine non aggiunge informazione e sulla larghezza
-       di un telefono ruberebbe spazio al messaggio e alla CTA. */
+       di un telefono ruberebbe spazio al messaggio e alla CTA. Senza
+       immagine da riempire, il box torna a dimensionarsi sul contenuto:
+       niente piu' min-height da schermata intera. */
     .cta-split-home :global(.cta-split) {
       grid-template-rows: none;
+      min-height: 0;
     }
     .cta-split-home :global(.cta-split__copy) {
+      padding-block: var(--space-xs);
+      gap: var(--space-2xs);
       border-bottom: none;
     }
     .cta-split-home :global(.cta-split__media) {
@@ -450,12 +496,63 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
        righe piene invece di 2. */
     .showcase-home :global(.showcase__gallery) {
       order: 2;
+      grid-template-columns: repeat(2, 1fr);
     }
     .showcase-home :global(.showcase__features) {
       order: 1;
+      /* Meno padding e meno spazio tra gli elementi: qui sotto deve
+         entrarci anche "pronto a iniziare", nella stessa schermata. */
+      padding-block: var(--space-xs);
+      gap: var(--space-2xs);
     }
-    .showcase-home :global(.showcase__gallery) {
-      grid-template-columns: repeat(2, 1fr);
+    .showcase-home :global(.showcase__features ul) {
+      gap: var(--space-3xs);
+    }
+    /* Righe basse (2/1 invece di 4/3): la galleria e' un corredo visivo,
+       non ha bisogno di essere alta quanto larga per farsi riconoscere. */
+    .showcase-home :global(.showcase__gallery-item) {
+      aspect-ratio: 2 / 1;
+    }
+    /* Stesso motivo del titolo della sezione programmi: su un pannello a
+       piena larghezza come questo, l'ingresso laterale (56px) sfora dal
+       viewport e forza tutta la pagina a scorrere in orizzontale.
+       !important perche' la regola base vive in un altro file CSS: la
+       specificita' relativa tra i due dipende dall'ordine di caricamento,
+       non affidabile. */
+    .showcase-home :global(.showcase__features h2),
+    .showcase-home :global(.showcase__features ul) {
+      transform: none !important;
+    }
+  }
+
+  @media (max-width: 860px) {
+    /* Titolo + card del blog in una schermata sola: le card diventano righe
+       compatte (miniatura a sinistra, titolo a destra) invece di grandi
+       box con immagine sopra e barra sotto. */
+    .blog-home.blog-home :global(.related-section__grid > a) {
+      height: auto;
+    }
+    .blog-home :global(.related-section__title) {
+      padding: var(--space-sm) var(--space-md);
+    }
+    .blog-home :global(.related-card) {
+      flex-direction: row;
+      border-width: 1.5px;
+    }
+    .blog-home :global(.related-card__media) {
+      flex: 0 0 4.5rem;
+      min-height: 0;
+      aspect-ratio: 1;
+      border-right: 1.5px solid var(--color-black);
+    }
+    .blog-home :global(.related-card__bar) {
+      flex: 1;
+      min-width: 0;
+      padding: var(--space-2xs) var(--space-sm);
+    }
+    .blog-home :global(.related-card__title) {
+      font-size: 0.85rem;
+      line-height: 1.25;
     }
   }
 
