@@ -1,0 +1,121 @@
+---
+// Fascia full-bleed con l'orario settimanale di un corso/attivita': una
+// colonna per giorno, ogni giorno impila i propri slot (nome corso + ora)
+// senza doverli allineare in riga con gli altri giorni (esattamente come nel
+// planning cartaceo della palestra, dove i giorni hanno un numero diverso di
+// lezioni).
+//
+//   <ScheduleSection
+//     title="Corsi Energy"
+//     days={[
+//       { label: 'Lunedì', slots: [{ time: 'H. 07:00', name: 'Hyrox' }, ...] },
+//       ...
+//     ]}
+//   />
+interface Slot {
+  time: string;
+  name: string;
+}
+
+interface Day {
+  label: string;
+  slots: Slot[];
+}
+
+interface Props {
+  title: string;
+  days: Day[];
+}
+
+const { title, days } = Astro.props;
+---
+
+<section class="schedule">
+  <div class="container">
+    <h2 class="schedule__title">{title}</h2>
+    <div class="schedule__grid" style={`--cols: ${days.length}`}>
+      {days.map((day) => (
+        <div class="schedule__day">
+          <span class="schedule__day-label">{day.label}</span>
+          {day.slots.map((slot) => (
+            <div class="schedule__slot">
+              <span class="schedule__slot-name">{slot.name}</span>
+              <span class="schedule__slot-time">{slot.time}</span>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .schedule {
+    padding-block: var(--space-lg);
+  }
+  /* Alternanza chiaro/rosa come il resto del sito: qui non c'e' bordo tra le
+     fasce (a differenza di .highlights) perche' il cambio di sfondo basta
+     gia' a separarle visivamente. */
+  .schedule:nth-of-type(even) {
+    background: var(--bg-light);
+  }
+  .schedule__title {
+    color: var(--color-red);
+  }
+  .schedule__grid {
+    display: grid;
+    grid-template-columns: repeat(var(--cols), 1fr);
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+  }
+  .schedule__day {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+  }
+  .schedule__day-label {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    color: var(--text-on-light);
+    font-size: clamp(0.9rem, 1.4vw, 1.1rem);
+    padding-bottom: var(--space-2xs);
+    margin-bottom: var(--space-3xs);
+    border-bottom: 2px solid var(--color-black);
+  }
+  .schedule__slot {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15em;
+    background: var(--color-black);
+    color: var(--color-white);
+    border-radius: 8px;
+    padding: 0.55em 0.7em;
+  }
+  .schedule__slot-name {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-size: 0.82rem;
+    line-height: 1.15;
+  }
+  .schedule__slot-time {
+    color: var(--color-red);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  /* Con 5-6 colonne il layout in griglia diventa illeggibile sotto un certo
+     punto: passa a scroll orizzontale con colonne di larghezza fissa,
+     invece di comprimere nomi corso e orari. */
+  @media (max-width: 760px) {
+    .schedule__grid {
+      grid-template-columns: none;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(7.5rem, 1fr);
+      overflow-x: auto;
+      padding-bottom: var(--space-2xs);
+      margin-inline: calc(-1 * var(--gutter));
+      padding-inline: var(--gutter);
+    }
+  }
+</style>

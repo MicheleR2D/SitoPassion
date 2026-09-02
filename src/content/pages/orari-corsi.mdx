@@ -1,10 +1,258 @@
 ---
 title: Orari Corsi
 slug: orari-corsi
+heroEyebrow: Aperti 365 giorni l'anno
+heroText: Dalle 05:00 alle 24:00, incluse le feste.<br />Il planning di Reformer, Studio Reform Plus, Corsi Energy e Corsi Rebalance.
+heroCtas:
+  - label: Prova Ora
+    href: https://automazione.n8ndevelop.it/form/8ce36c5e-0cc4-4813-9a0f-2da2a7605fb0?source=SitoWeb&medium=Btn_Orari_Corsi
+    variant: dark-red
+  - label: Scopri gli Abbonamenti
+    href: /abbonamenti/
+    variant: ghost-dark
 wpId: 3979
 publishedAt: 2024-09-17T03:28:17.000Z
-updatedAt: 2025-01-15T15:05:21.000Z
+updatedAt: 2026-09-02T00:00:00.000Z
 draft: false
 ---
 
+import ScheduleSection from '../../components/ui/ScheduleSection.astro';
+import CtaSplit from '../../components/ui/CtaSplit.astro';
+import RelatedSection from '../../components/ui/RelatedSection.astro';
+import RelatedCard from '../../components/ui/RelatedCard.astro';
 
+<ScheduleSection
+  title="Reformer Club"
+  days={[
+    { label: 'Lunedì', slots: [
+      { time: 'H. 7:00', name: 'Small Class' },
+      { time: 'H. 10:00', name: 'Small Class' },
+      { time: 'H. 13:30', name: 'Small Class' },
+      { time: 'H. 16:00', name: 'Small Class' },
+      { time: 'H. 18:00', name: 'Small Class' },
+      { time: 'H. 19:00', name: 'Small Class' },
+      { time: 'H. 20:00', name: 'Small Class' },
+    ] },
+    { label: 'Martedì', slots: [
+      { time: 'H. 7:00', name: 'Small Class' },
+      { time: 'H. 10:00', name: 'Small Class' },
+      { time: 'H. 13:30', name: 'Small Class' },
+      { time: 'H. 16:00', name: 'Small Class' },
+      { time: 'H. 18:00', name: 'Small Class' },
+      { time: 'H. 19:00', name: 'Small Class' },
+      { time: 'H. 20:00', name: 'Small Class' },
+    ] },
+    { label: 'Mercoledì', slots: [
+      { time: 'H. 7:00', name: 'Small Class' },
+      { time: 'H. 10:00', name: 'Small Class' },
+      { time: 'H. 13:30', name: 'Small Class' },
+      { time: 'H. 16:00', name: 'Small Class' },
+      { time: 'H. 18:00', name: 'Small Class' },
+      { time: 'H. 19:00', name: 'Small Class' },
+      { time: 'H. 20:00', name: 'Small Class' },
+    ] },
+    { label: 'Giovedì', slots: [
+      { time: 'H. 7:00', name: 'Small Class' },
+      { time: 'H. 10:00', name: 'Small Class' },
+      { time: 'H. 13:30', name: 'Small Class' },
+      { time: 'H. 16:00', name: 'Small Class' },
+      { time: 'H. 18:00', name: 'Small Class' },
+      { time: 'H. 19:00', name: 'Small Class' },
+      { time: 'H. 20:00', name: 'Small Class' },
+    ] },
+    { label: 'Venerdì', slots: [
+      { time: 'H. 7:00', name: 'Small Class' },
+      { time: 'H. 10:00', name: 'Small Class' },
+      { time: 'H. 13:30', name: 'Small Class' },
+      { time: 'H. 16:00', name: 'Small Class' },
+      { time: 'H. 18:00', name: 'Small Class' },
+      { time: 'H. 19:00', name: 'Small Class' },
+      { time: 'H. 20:00', name: 'Small Class' },
+    ] },
+    { label: 'Sabato', slots: [
+      { time: 'H. 10:00', name: 'Small Class' },
+      { time: 'H. 12:00', name: 'Small Class' },
+    ] },
+  ]}
+/>
+
+<ScheduleSection
+  title="Studio Reform Plus"
+  days={[
+    { label: 'Lunedì', slots: [
+      { time: 'H. 9:00', name: 'Small Class' },
+      { time: 'H. 12:00', name: 'Small Class' },
+      { time: 'H. 17:00', name: 'Small Class' },
+      { time: 'H. 18:30', name: 'Small Class' },
+      { time: 'H. 19:30', name: 'Small Class' },
+    ] },
+    { label: 'Martedì', slots: [
+      { time: 'H. 8:00', name: 'Small Class' },
+      { time: 'H. 9:00', name: 'Small Class' },
+      { time: 'H. 12:00', name: 'Small Class' },
+      { time: 'H. 17:30', name: 'Small Class' },
+      { time: 'H. 18:30', name: 'Small Class' },
+      { time: 'H. 19:30', name: 'Small Class' },
+    ] },
+    { label: 'Mercoledì', slots: [
+      { time: 'H. 8:00', name: 'Small Class' },
+      { time: 'H. 9:00', name: 'Small Class' },
+      { time: 'H. 12:00', name: 'Small Class' },
+      { time: 'H. 17:30', name: 'Small Class' },
+      { time: 'H. 18:30', name: 'Small Class' },
+      { time: 'H. 19:30', name: 'Small Class' },
+    ] },
+    { label: 'Giovedì', slots: [
+      { time: 'H. 8:00', name: 'Small Class' },
+      { time: 'H. 9:00', name: 'Small Class' },
+      { time: 'H. 12:00', name: 'Small Class' },
+      { time: 'H. 17:30', name: 'Small Class' },
+      { time: 'H. 18:30', name: 'Small Class' },
+      { time: 'H. 19:30', name: 'Small Class' },
+    ] },
+    { label: 'Venerdì', slots: [
+      { time: 'H. 9:00', name: 'Small Class' },
+      { time: 'H. 12:00', name: 'Small Class' },
+      { time: 'H. 17:00', name: 'Small Class' },
+      { time: 'H. 18:00', name: 'Small Class' },
+    ] },
+    { label: 'Sabato', slots: [
+      { time: 'H. 9:00', name: 'Small Class' },
+      { time: 'H. 11:00', name: 'Small Class' },
+    ] },
+  ]}
+/>
+
+<ScheduleSection
+  title="Corsi Energy"
+  days={[
+    { label: 'Lunedì', slots: [
+      { time: 'H. 07:00', name: 'Hyrox' },
+      { time: 'H. 09:30', name: 'Met-Con' },
+      { time: 'H. 13:30', name: 'Pump' },
+      { time: 'H. 16:30', name: 'Hyrox' },
+      { time: 'H. 17:30', name: 'Met-Con' },
+      { time: 'H. 18:30', name: 'Booty Pump' },
+      { time: 'H. 19:30', name: 'Hyrox' },
+      { time: 'H. 20:30', name: 'Met-Con' },
+    ] },
+    { label: 'Martedì', slots: [
+      { time: 'H. 07:00', name: 'Functional' },
+      { time: 'H. 09:00', name: 'Booty Pump' },
+      { time: 'H. 13:30', name: 'Met-Con' },
+      { time: 'H. 17:30', name: 'Hyrox' },
+      { time: 'H. 18:30', name: 'Zumba' },
+      { time: 'H. 19:30', name: 'Strong Nation' },
+      { time: 'H. 20:30', name: 'Hyrox' },
+    ] },
+    { label: 'Mercoledì', slots: [
+      { time: 'H. 07:00', name: 'Met-Con' },
+      { time: 'H. 09:30', name: 'Hyrox' },
+      { time: 'H. 13:30', name: 'Booty Pump' },
+      { time: 'H. 16:30', name: 'Functional' },
+      { time: 'H. 17:30', name: 'Total Body' },
+      { time: 'H. 18:30', name: 'Met-Con' },
+      { time: 'H. 19:30', name: 'Hyrox' },
+      { time: 'H. 20:30', name: 'Combat Metcon' },
+    ] },
+    { label: 'Giovedì', slots: [
+      { time: 'H. 07:00', name: 'Functional' },
+      { time: 'H. 09:00', name: 'Pump' },
+      { time: 'H. 13:30', name: 'Hyrox' },
+      { time: 'H. 17:30', name: 'Met-Con' },
+      { time: 'H. 18:30', name: 'Total Body' },
+      { time: 'H. 19:30', name: 'Strong Nation' },
+      { time: 'H. 20:30', name: 'Met-Con' },
+    ] },
+    { label: 'Venerdì', slots: [
+      { time: 'H. 07:00', name: 'Hyrox' },
+      { time: 'H. 09:30', name: 'Met-Con' },
+      { time: 'H. 13:30', name: 'Functional' },
+      { time: 'H. 17:30', name: 'Pump' },
+      { time: 'H. 18:30', name: 'Met-Con' },
+      { time: 'H. 19:30', name: 'T.B. Funzionale' },
+      { time: 'H. 20:30', name: 'Prepugilistica' },
+    ] },
+    { label: 'Sabato', slots: [
+      { time: 'H. 09:00', name: 'Hyrox' },
+      { time: 'H. 10:00', name: 'Met-Con' },
+      { time: 'H. 11:00', name: 'Hyrox' },
+    ] },
+  ]}
+/>
+
+<ScheduleSection
+  title="Corsi Rebalance"
+  days={[
+    { label: 'Lunedì', slots: [
+      { time: 'H. 09:00', name: 'Pilates' },
+      { time: 'H. 11:00', name: 'Barre' },
+      { time: 'H. 13:30', name: 'Posturale' },
+      { time: 'H. 17:00', name: 'Posturale' },
+      { time: 'H. 18:00', name: 'Dance 4Fun' },
+      { time: 'H. 19:00', name: 'Posturale' },
+      { time: 'H. 20:00', name: 'Pilates' },
+    ] },
+    { label: 'Martedì', slots: [
+      { time: 'H. 07:00', name: 'Yoga' },
+      { time: 'H. 10:00', name: 'Pilates' },
+      { time: 'H. 18:30', name: 'Yoga' },
+      { time: 'H. 19:30', name: 'Barre' },
+      { time: 'H. 20:30', name: 'Yoga' },
+    ] },
+    { label: 'Mercoledì', slots: [
+      { time: 'H. 09:00', name: 'Posturale' },
+      { time: 'H. 10:30', name: 'Yoga' },
+      { time: 'H. 13:30', name: 'Posturale' },
+      { time: 'H. 18:00', name: 'Barre' },
+      { time: 'H. 19:00', name: 'Posturale' },
+      { time: 'H. 20:00', name: 'Pilates' },
+    ] },
+    { label: 'Giovedì', slots: [
+      { time: 'H. 07:00', name: 'Yoga' },
+      { time: 'H. 10:00', name: 'Pilates' },
+      { time: 'H. 18:30', name: 'Yoga' },
+      { time: 'H. 19:30', name: 'Dance 4Fun' },
+      { time: 'H. 20:30', name: 'Yoga' },
+    ] },
+    { label: 'Venerdì', slots: [
+      { time: 'H. 09:00', name: 'Posturale' },
+      { time: 'H. 11:00', name: 'Barre' },
+      { time: 'H. 13:30', name: 'Posturale' },
+      { time: 'H. 17:00', name: 'Posturale' },
+      { time: 'H. 18:00', name: 'Flow Pilates' },
+      { time: 'H. 19:00', name: 'Posturale' },
+      { time: 'H. 20:00', name: 'Pilates' },
+    ] },
+  ]}
+/>
+
+<CtaSplit
+  heading="Pronto a iniziare?"
+  text="Il primo allenamento è gratuito e senza impegno: vieni a scoprire Passion Fitness."
+  buttonLabel="Prova Ora"
+  buttonHref="https://automazione.n8ndevelop.it/form/8ce36c5e-0cc4-4813-9a0f-2da2a7605fb0?source=SitoWeb&medium=Btn_Orari_Corsi"
+  image="/images/uploads/2024/11/MRZ08075.jpeg"
+  alt="Passion Fitness Tuscolana"
+/>
+
+<RelatedSection title="Potrebbe interessarti anche">
+  <RelatedCard
+    title="Sala Pesi"
+    href="/palestra/sala-pesi/"
+    image="/images/uploads/2024/11/Sala-Pesi-1.jpeg"
+    alt="Sala pesi Passion Fitness"
+  />
+  <RelatedCard
+    title="Corsi Fitness"
+    href="/palestra/corsi-fitness/"
+    image="/images/uploads/2024/10/sale_fitness.jpg"
+    alt="Sala corsi fitness di Passion Fitness"
+  />
+  <RelatedCard
+    title="Reformer"
+    href="/pilates-reformer/"
+    image="/images/uploads/2024/11/reform_1-1.jpeg"
+    alt="Studio Pilates Reformer di Passion Fitness"
+  />
+</RelatedSection>
