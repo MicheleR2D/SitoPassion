@@ -61,7 +61,13 @@ const { title, image, video, videoEndBuffer = 3, eyebrow } = Astro.props;
     background: var(--bg-dark);
     overflow: hidden;
     margin-top: calc(-1 * var(--header-height));
+    /* dvh (non vh) sui mobile browser: vh e' calcolato sull'altezza massima
+       (barra degli indirizzi nascosta), quindi al primo caricamento (barra
+       visibile) l'hero sfora oltre lo schermo reale. dvh segue l'altezza
+       visibile per davvero, in ogni momento. vh resta come fallback per i
+       browser che non supportano dvh. */
     height: 100vh;
+    height: 100dvh;
   }
   .hero:not(:has(.hero-photo, .hero-media)) {
     height: auto;

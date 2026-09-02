@@ -169,23 +169,25 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     </ContentRows>
   </div>
 
-  <FeatureShowcase
-    title="Perché scegliere noi?"
-    images={[
-      { src: '/images/uploads/2024/11/MRZ08075.jpeg', alt: 'Passion Fitness Tuscolana' },
-      { src: '/images/uploads/2024/11/Sala-Pesi-1.jpeg', alt: 'Sala pesi Passion Fitness' },
-      { src: '/images/uploads/2024/10/sale_fitness.jpg', alt: 'Sala corsi fitness' },
-      { src: '/images/uploads/2024/11/reform_1-1.jpeg', alt: 'Studio Pilates Reformer' },
-      { src: '/images/uploads/2024/10/Palestra-11920x.jpg', alt: 'Palestra Passion Fitness' },
-      { src: '/images/uploads/2024/11/MRZ08109.jpeg', alt: 'Personal training Passion Fitness' },
-    ]}
-    features={[
-      '30+ anni di esperienza nel settore',
-      "La persona sempre al centro, prima dell'allenamento",
-      "Tutta l'attenzione che meriti, ad ogni allenamento",
-      'Ti alleniamo al tuo fianco, finché non acquisirai piena sicurezza',
-    ]}
-  />
+  <div class="showcase-home">
+    <FeatureShowcase
+      title="Perché scegliere noi?"
+      images={[
+        { src: '/images/uploads/2024/11/MRZ08075.jpeg', alt: 'Passion Fitness Tuscolana' },
+        { src: '/images/uploads/2024/11/Sala-Pesi-1.jpeg', alt: 'Sala pesi Passion Fitness' },
+        { src: '/images/uploads/2024/10/sale_fitness.jpg', alt: 'Sala corsi fitness' },
+        { src: '/images/uploads/2024/11/reform_1-1.jpeg', alt: 'Studio Pilates Reformer' },
+        { src: '/images/uploads/2024/10/Palestra-11920x.jpg', alt: 'Palestra Passion Fitness' },
+        { src: '/images/uploads/2024/11/MRZ08109.jpeg', alt: 'Personal training Passion Fitness' },
+      ]}
+      features={[
+        '30+ anni di esperienza nel settore',
+        "La persona sempre al centro, prima dell'allenamento",
+        "Tutta l'attenzione che meriti, ad ogni allenamento",
+        'Ti alleniamo al tuo fianco, finché non acquisirai piena sicurezza',
+      ]}
+    />
+  </div>
 
   <div class="cta-split-home">
     <CtaSplit
@@ -198,7 +200,7 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     />
   </div>
 
-  <RelatedSection title="Il blog di Passion">
+  <RelatedSection title="Leggi il nostro Blog">
     {latestPosts.map((post) => (
       <RelatedCard
         title={post.data.title}
@@ -381,12 +383,37 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     padding-inline: 0;
   }
   @media (max-width: 860px) {
-    .programmi-band :global(.content-row:nth-child(odd) .content-row__copy),
-    .programmi-band :global(.content-row:nth-child(even) .content-row__copy) {
-      border-left: 2px solid var(--color-black);
-      border-right: 2px solid var(--color-black);
+    /* Il titolo si stacca dal box del paragrafo e va sopra al video: serve
+       "smontare" .content-row__copy (display:contents) cosi' i suoi due
+       figli (h2 e .content-row__text) diventano item della griglia di
+       .content-row alla pari di .content-row__media, riordinabili a
+       piacere con `order` senza toccare il markup del componente
+       condiviso (che resta intatto per tutte le altre pagine). */
+    .programmi-band :global(.content-row__copy) {
+      display: contents;
+    }
+    .programmi-band :global(.content-row__media) {
+      order: 2;
+    }
+    /* .programmi-band ripetuto due volte: stessa specificita' della regola
+       base del componente (2 classi + 2 attributi data-astro-cid), che
+       altrimenti vincerebbe a parita' di punteggio in base al solo ordine
+       di caricamento dei due file CSS (non affidabile). */
+    .programmi-band.programmi-band :global(.content-row__copy h2) {
+      order: 1;
+      margin: 0;
+      background: var(--accent);
+      color: var(--color-white);
+      padding: var(--space-sm) clamp(1.25rem, 4vw, 2.5rem);
+    }
+    /* Il bordo che prima stava sul box intero (.content-row__copy) si
+       sposta sul paragrafo, l'unica parte che lo conserva ancora. */
+    .programmi-band :global(.content-row__text) {
+      order: 3;
+      border: 2px solid var(--color-black);
       border-top: none;
-      border-bottom: none;
+      background: var(--bg-light-soft);
+      padding: var(--space-md) clamp(1.25rem, 4vw, 2.5rem);
     }
   }
 
@@ -404,12 +431,43 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
       border-right: none;
       border-bottom: 2px solid var(--color-black);
     }
+    /* Solo testo: l'immagine non aggiunge informazione e sulla larghezza
+       di un telefono ruberebbe spazio al messaggio e alla CTA. */
+    .cta-split-home :global(.cta-split) {
+      grid-template-rows: none;
+    }
+    .cta-split-home :global(.cta-split__copy) {
+      border-bottom: none;
+    }
+    .cta-split-home :global(.cta-split__media) {
+      display: none;
+    }
+  }
+
+  @media (max-width: 860px) {
+    /* La galleria segue il testo (si legge il "perche'" prima di guardare
+       le foto) e passa da 3 a 2 colonne, cosi' con 6 immagini restano 3
+       righe piene invece di 2. */
+    .showcase-home :global(.showcase__gallery) {
+      order: 2;
+    }
+    .showcase-home :global(.showcase__features) {
+      order: 1;
+    }
+    .showcase-home :global(.showcase__gallery) {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
 
   .stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
     gap: var(--space-md);
+  }
+  @media (max-width: 860px) {
+    .stats {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
   .stat {
     display: flex;
