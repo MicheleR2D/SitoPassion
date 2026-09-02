@@ -1,0 +1,148 @@
+---
+// Card prezzi per un gruppo di abbonamento (es. "Open", "Sala Pesi"): testata
+// nera con attività comprese, poi le durate disponibili (12 mesi/4 mesi/flex)
+// affiancate con prezzo e CTA, condizioni comuni in fondo. Non e' full-bleed:
+// resta nella colonna di lettura, come una tabella.
+//
+//   <PricingGroup
+//     title="Open"
+//     subtitle="Reformer, Sala Pesi, Corsi Fitness"
+//     features={['Accesso senza limiti orari', ...]}
+//     plans={[
+//       { duration: '12 mesi', price: '87', href: '...' },
+//       { duration: '4 mesi', price: '97', href: '...' },
+//       { duration: 'Flex', price: '119', href: '...' },
+//     ]}
+//     note="Quota di attivazione una tantum 60€. Sospensioni mensili illimitate a 15€ al mese solare."
+//   />
+import Button from './Button.astro';
+
+interface Plan {
+  duration: string;
+  price: string;
+  href: string;
+}
+
+interface Props {
+  title: string;
+  subtitle?: string;
+  features: string[];
+  plans: Plan[];
+  note?: string;
+}
+
+const { title, subtitle, features, plans, note } = Astro.props;
+---
+
+<div class="pricing-group">
+  <div class="pricing-group__head">
+    <h3>{title}</h3>
+    {subtitle && <p class="pricing-group__subtitle">{subtitle}</p>}
+    <ul class="pricing-group__features">
+      {features.map((feature) => (
+        <li>{feature}</li>
+      ))}
+    </ul>
+  </div>
+  <div class="pricing-group__plans" style={`--plan-count: ${plans.length}`}>
+    {plans.map((plan) => (
+      <div class="pricing-group__plan">
+        <span class="pricing-group__duration">{plan.duration}</span>
+        <span class="pricing-group__price"><strong>{plan.price}€</strong> al mese</span>
+        <Button href={plan.href} variant="dark-red" arrow={false}>Iscriviti Ora</Button>
+      </div>
+    ))}
+  </div>
+  {note && <p class="pricing-group__note">{note}</p>}
+</div>
+
+<style>
+  .pricing-group {
+    border: 2px solid var(--color-black);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .pricing-group__head {
+    background: var(--color-black);
+    color: var(--color-white);
+    padding: var(--space-md);
+  }
+  .pricing-group__head h3 {
+    color: var(--color-red);
+  }
+  .pricing-group__subtitle {
+    color: var(--text-on-dark-muted);
+    margin-top: var(--space-3xs);
+  }
+  .pricing-group__features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    margin-top: var(--space-sm);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-sm);
+  }
+  .pricing-group .pricing-group__features li {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: var(--color-white);
+    position: relative;
+    padding-inline-start: 1.1em;
+    margin: 0;
+  }
+  .pricing-group .pricing-group__features li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--color-red);
+    font-weight: 700;
+  }
+  .pricing-group__plans {
+    display: grid;
+    grid-template-columns: repeat(var(--plan-count, 3), 1fr);
+    background: var(--color-black);
+    gap: 2px;
+  }
+  .pricing-group__plan {
+    background: var(--bg-light-soft);
+    padding: var(--space-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-2xs);
+  }
+  .pricing-group__duration {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    color: var(--text-on-light);
+    font-size: 1.1rem;
+  }
+  .pricing-group__price {
+    color: var(--text-on-light-muted);
+    font-size: 0.9rem;
+  }
+  .pricing-group__price strong {
+    display: block;
+    color: var(--color-red);
+    font-family: var(--font-display);
+    font-size: 1.9rem;
+    line-height: 1;
+  }
+  .pricing-group__note {
+    padding: var(--space-sm) var(--space-md);
+    background: var(--bg-light);
+    border-top: 2px solid var(--color-black);
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: var(--text-on-light-muted);
+    margin: 0;
+  }
+
+  @media (max-width: 760px) {
+    .pricing-group__plans {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

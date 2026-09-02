@@ -10,72 +10,100 @@ const { title, slug, excerpt, coverImage, categories, publishedAt } = post.data;
 ---
 
 <article class="post-card">
-  <a href={`/${slug}/`} class="post-card__media">
-    {coverImage ? <img src={coverImage} alt="" /> : <span class="post-card__placeholder" />}
+  <a href={`/${slug}/`} class="post-card__link">
+    <div class="post-card__media">
+      {coverImage ? <img src={coverImage} alt="" loading="lazy" /> : <span class="post-card__placeholder" />}
+    </div>
+    <div class="post-card__body">
+      {categories[0] && <p class="eyebrow post-card__category">{categories[0]}</p>}
+      <h3 class="post-card__title">{title}</h3>
+      {excerpt && <p class="post-card__excerpt">{excerpt}</p>}
+      <time class="post-card__date" datetime={publishedAt.toISOString()}>
+        {publishedAt.toLocaleDateString('it-IT')}
+      </time>
+    </div>
   </a>
-  <div class="post-card__body">
-    {categories[0] && <p class="eyebrow post-card__category">{categories[0]}</p>}
-    <h3><a href={`/${slug}/`}>{title}</a></h3>
-    {excerpt && <p class="post-card__excerpt">{excerpt}</p>}
-    <time datetime={publishedAt.toISOString()}>{publishedAt.toLocaleDateString('it-IT')}</time>
-  </div>
 </article>
 
 <style>
   .post-card {
-    background: var(--color-white);
-    border: 1px solid var(--border-on-light);
+    display: flex;
+    border: 2px solid var(--color-black);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--bg-light);
+  }
+  .post-card__link {
     display: flex;
     flex-direction: column;
+    width: 100%;
+    text-decoration: none;
   }
   .post-card__media {
-    display: block;
     aspect-ratio: 16 / 10;
-    background: var(--bg-light-soft);
     overflow: hidden;
+    border-bottom: 2px solid var(--color-black);
   }
   .post-card__media img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.2s ease;
+    transition: transform 0.4s ease;
   }
   .post-card:hover .post-card__media img {
-    transform: scale(1.04);
+    transform: scale(1.05);
   }
   .post-card__placeholder {
     display: block;
     width: 100%;
     height: 100%;
+    background: var(--bg-light-soft);
   }
   .post-card__body {
-    padding: var(--space-sm);
     display: flex;
+    flex: 1;
     flex-direction: column;
     gap: var(--space-3xs);
+    padding: var(--space-sm);
+    /* L'inversione in hover riguarda il pannello testo, come la barra delle
+       RelatedCard: l'immagine resta sempre a colori. */
+    background: var(--bg-light);
+    transition: background-color 0.2s ease;
   }
-  .post-card__category {
+  .post-card:hover .post-card__body {
+    background: var(--color-black);
+  }
+  .post-card .post-card__category {
     color: var(--color-red);
   }
-  .post-card__body h3 {
-    font-size: 1.15rem;
-    line-height: 1.1;
-    margin-top: 0.2rem;
+  .post-card .post-card__title {
+    font-size: clamp(1.1rem, 1.7vw, 1.35rem);
+    color: var(--text-on-light);
+    transition: color 0.2s ease;
   }
-  .post-card__body h3 a:hover {
-    color: var(--color-red);
+  .post-card:hover .post-card__title {
+    color: var(--color-white);
   }
-  .post-card__excerpt {
-    font-size: 0.85rem;
+  .post-card .post-card__excerpt {
+    font-size: 0.88rem;
+    line-height: 1.55;
     color: var(--text-on-light-muted);
-    line-height: 1.5;
-    margin-top: 0.3rem;
+    transition: color 0.2s ease;
   }
-  .post-card time {
-    margin-top: var(--space-2xs);
+  .post-card:hover .post-card__excerpt {
+    color: var(--text-on-dark-muted);
+  }
+  .post-card .post-card__date {
+    margin-top: auto;
+    padding-top: var(--space-2xs);
     font-size: 0.72rem;
-    letter-spacing: 0.04em;
+    font-weight: 700;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--text-on-light-muted);
+    transition: color 0.2s ease;
+  }
+  .post-card:hover .post-card__date {
+    color: var(--color-red);
   }
 </style>

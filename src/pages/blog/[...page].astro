@@ -1,7 +1,13 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/ui/Hero.astro';
+import Button from '../../components/ui/Button.astro';
+import CtaSplit from '../../components/ui/CtaSplit.astro';
 import PostList from '../../components/blog/PostList.astro';
+
+const PROVA_URL =
+  'https://automazione.n8ndevelop.it/form/8ce36c5e-0cc4-4813-9a0f-2da2a7605fb0?source=SitoWeb&medium=Btn_Blog';
 
 export async function getStaticPaths({ paginate }) {
   const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
@@ -14,10 +20,94 @@ const { page } = Astro.props;
 ---
 
 <BaseLayout title="Blog" description="Articoli e consigli su fitness, allenamento e benessere.">
-  <h1>Blog</h1>
-  <PostList posts={page.data} />
-  <nav class="pagination">
-    {page.url.prev && <a href={page.url.prev}>&laquo; Precedenti</a>}
-    {page.url.next && <a href={page.url.next}>Successivi &raquo;</a>}
-  </nav>
+  <Hero
+    title="Blog"
+    image="/images/uploads/2024/11/MRZ01857-scaled.jpeg"
+    eyebrow="Consigli, allenamento e benessere"
+  >
+    <p>Guide pratiche, schede di allenamento e approfondimenti scritti dai trainer di Passion Fitness.</p>
+    <div class="hero-ctas">
+      <Button href={PROVA_URL} variant="dark-red">Prova Passion Fitness</Button>
+      <Button href="/orari-corsi/" variant="ghost-dark">Scopri i Corsi</Button>
+    </div>
+  </Hero>
+
+  <section class="blog-list">
+    <div class="container">
+      <PostList posts={page.data} />
+
+      {(page.url.prev || page.url.next) && (
+        <nav class="pagination" aria-label="Navigazione articoli">
+          <div class="pagination__side">
+            {page.url.prev && (
+              <Button href={page.url.prev} variant="ghost-light" arrow={false}>← Precedenti</Button>
+            )}
+          </div>
+          <span class="pagination__status">Pagina {page.currentPage} di {page.lastPage}</span>
+          <div class="pagination__side pagination__side--end">
+            {page.url.next && (
+              <Button href={page.url.next} variant="ghost-light" arrow={false}>Successivi →</Button>
+            )}
+          </div>
+        </nav>
+      )}
+    </div>
+  </section>
+
+  <CtaSplit
+    heading="Dalla teoria alla pratica"
+    text="Il primo allenamento è gratuito e senza impegno: vieni a metterli in pratica con noi."
+    buttonLabel="Prova Ora"
+    buttonHref={PROVA_URL}
+    image="/images/uploads/2024/11/MRZ08075.jpeg"
+    alt="Passion Fitness Tuscolana"
+  />
 </BaseLayout>
+
+<style>
+  .hero-ctas {
+    display: flex;
+    gap: var(--space-xs);
+    flex-wrap: wrap;
+    margin-top: var(--space-2xs);
+  }
+  .blog-list {
+    background: var(--bg-light-soft);
+    padding-block: var(--space-lg);
+  }
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    margin-top: var(--space-lg);
+    padding-top: var(--space-md);
+    border-top: 2px solid var(--color-black);
+  }
+  /* Le due estremita' hanno la stessa larghezza, cosi' il contatore pagine
+     resta centrato anche quando manca "Precedenti" o "Successivi". */
+  .pagination__side {
+    flex: 1;
+    display: flex;
+  }
+  .pagination__side--end {
+    justify-content: flex-end;
+  }
+  .pagination__status {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-on-light-muted);
+  }
+
+  @media (max-width: 620px) {
+    .pagination {
+      flex-direction: column;
+    }
+    .pagination__side,
+    .pagination__side--end {
+      justify-content: center;
+    }
+  }
+</style>

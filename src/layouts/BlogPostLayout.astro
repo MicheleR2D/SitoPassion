@@ -1,15 +1,27 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
 import BaseLayout from './BaseLayout.astro';
 import Hero from '../components/ui/Hero.astro';
 import PostBody from '../components/blog/PostBody.astro';
+import CtaSplit from '../components/ui/CtaSplit.astro';
+import RelatedSection from '../components/ui/RelatedSection.astro';
+import RelatedCard from '../components/ui/RelatedCard.astro';
 
 interface Props {
   post: CollectionEntry<'blog'>;
 }
 
+const PROVA_URL =
+  'https://automazione.n8ndevelop.it/form/8ce36c5e-0cc4-4813-9a0f-2da2a7605fb0?source=SitoWeb&medium=Btn_Blog';
+
 const { post } = Astro.props;
-const { title, coverImage, excerpt, categories, tags, publishedAt, seo } = post.data;
+const { title, slug, coverImage, excerpt, categories, tags, publishedAt, seo } = post.data;
+
+const relatedPosts = (await getCollection('blog', ({ data }) => !data.draft))
+  .filter((entry) => entry.data.slug !== slug)
+  .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf())
+  .slice(0, 3);
 ---
 
 <BaseLayout
@@ -17,27 +29,58 @@ const { title, coverImage, excerpt, categories, tags, publishedAt, seo } = post.
   description={seo?.description || excerpt}
   ogImage={seo?.ogImage || coverImage}
 >
-  <Hero title={title} image={coverImage} />
-  <p class="post-meta">
-    <time datetime={publishedAt.toISOString()}>{publishedAt.toLocaleDateString('it-IT')}</time>
-    {categories.length > 0 && <span> · {categories.join(', ')}</span>}
-  </p>
+  <Hero title={title} image={coverImage} eyebrow={categories[0]} />
   <PostBody>
+    <div class="post-meta">
+      <p>
+        <time datetime={publishedAt.toISOString()}>{publishedAt.toLocaleDateString('it-IT')}</time>
+        {categories.length > 0 && <span> · {categories.join(', ')}</span>}
+      </p>
+    </div>
     <slot />
+    {tags.length > 0 && (
+      <div class="post-tags">
+        <ul>
+          {tags.map((tag) => <li>{tag}</li>)}
+        </ul>
+      </div>
+    )}
   </PostBody>
-  {tags.length > 0 && (
-    <ul class="post-tags">
-      {tags.map((tag) => <li>{tag}</li>)}
-    </ul>
+
+  <CtaSplit
+    heading="Dalla teoria alla pratica"
+    text="Il primo allenamento è gratuito e senza impegno: vieni a metterlo in pratica con noi."
+    buttonLabel="Prova Ora"
+    buttonHref={PROVA_URL}
+    image="/images/uploads/2024/11/MRZ08075.jpeg"
+    alt="Passion Fitness Tuscolana"
+  />
+
+  {relatedPosts.length > 0 && (
+    <RelatedSection title="Continua a leggere">
+      {relatedPosts.map((entry) => (
+        <RelatedCard
+          title={entry.data.title}
+          href={`/${entry.data.slug}/`}
+          image={entry.data.coverImage}
+          alt={entry.data.title}
+        />
+      ))}
+    </RelatedSection>
   )}
 </BaseLayout>
 
 <style>
+  /* Meta e tag stanno dentro PostBody, quindi seguono la stessa corsia di
+     lettura del testo: nessuna larghezza propria da tenere allineata a mano.
+     Il <p>/<ul> e' annidato in un contenitore proprio, cosi' non e' figlio
+     diretto di .post-body e non prende la tipografia del testo scorrevole
+     (colore attenuato, quadratino rosso delle liste). Lo spazio verticale va
+     messo qui: il row-gap della griglia e' 0 per definizione. */
   .post-meta {
-    max-width: 48rem;
-    margin-inline: auto;
-    padding-inline: clamp(1.25rem, 4vw, 2.5rem);
-    padding-top: var(--space-lg);
+    margin-top: var(--space-lg);
+  }
+  .post-meta p {
     font-family: var(--font-body);
     font-size: 0.8rem;
     font-weight: 700;
@@ -50,14 +93,15 @@ const { title, coverImage, excerpt, categories, tags, publishedAt, seo } = post.
   }
 
   .post-tags {
+    margin-top: var(--space-lg);
+  }
+  .post-tags ul {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2xs);
-    max-width: 48rem;
-    margin-inline: auto;
-    padding-inline: clamp(1.25rem, 4vw, 2.5rem);
-    padding-bottom: var(--space-lg);
     list-style: none;
+    padding: 0;
+    margin: 0;
   }
   .post-tags li {
     background: var(--color-black);

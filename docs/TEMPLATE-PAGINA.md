@@ -125,6 +125,37 @@ Import: `import X from '../../../components/ui/X.astro';`
 - Il titolo occupa una colonna, le card le restanti. Si adatta al numero di card.
 - Deve essere **l'ultimo** elemento: tocca il footer senza stacco.
 
+### ScheduleSection — orario settimanale (pagina Orari Corsi)
+```jsx
+<ScheduleSection title="Corsi Energy" days={[
+  { label: 'Lunedì', slots: [{ time: 'H. 07:00', name: 'Hyrox' }] },
+]} />
+```
+- Una colonna per giorno; ogni giorno impila i propri slot, senza allinearli in
+  riga con gli altri (i giorni hanno un numero diverso di lezioni).
+- Full-bleed, alterna sfondo rosa/bianco tra fasce consecutive.
+- Sotto i 760px passa a scroll orizzontale invece di comprimere le colonne.
+
+### PricingGroup — card prezzi (pagina Abbonamenti)
+```jsx
+<PricingGroup
+  title="Open" subtitle="Reformer, Sala Pesi e Corsi Fitness"
+  features={['Accesso senza limiti orari', /* ... */]}
+  plans={[{ duration: '12 mesi', price: '87', href: 'https://...' }]}
+  note="Quota di attivazione una tantum 60€. ..."
+/>
+```
+- **Non** full-bleed: resta nella colonna di lettura, come una tabella.
+- Testata nera (titolo rosso + attività comprese con spunta), durate affiancate
+  con prezzo rosso e CTA "Iscriviti Ora", condizioni comuni in fondo.
+- Le colonne derivano dal numero di durate; sotto i 760px si impilano.
+
+### FaqAccordion — domande frequenti
+```jsx
+<FaqAccordion items={[{ q: 'Domanda?', a: 'Risposta con <a href="...">link</a>.' }]} />
+```
+- `<details>` nativo, nessuno script. Le risposte accettano HTML inline.
+
 ### icons.ts — icone disponibili
 `clock` `area` `dumbbell` `calendar` `heart-arm` `trainer` `group` `trophy`
 `sparkle` `shield` `reformer` `running`
@@ -213,21 +244,16 @@ il bordo schermo. Le immagini a contatto tra righe non hanno raggio.
 
 Componenti non ancora esistenti, richiesti da pagine specifiche:
 
-- **Tabella prezzi** — `pilates-reformer` e `abbonamenti` (piani con durata, prezzo,
-  elenco condizioni, CTA "Iscriviti ora").
 - **Griglia prima/dopo** — `i-love-my-trainer` (8 risultati clienti con foto e
   didascalia).
-- **FAQ ad accordion** — `abbonamenti` (esiste già il pattern nella home).
 
 ## 8. Contenuti da bonificare prima del restyling
 
 Problemi noti nel Markdown migrato da WordPress:
 
-- `abbonamenti.mdx`: tabelle prezzi duplicate due volte, FAQ duplicata e schiacciata
-  in un unico paragrafo, **footer del sito incollato dentro il corpo pagina**.
-- `pilates-reformer.mdx`: descrizioni dei tre livelli ripetute due volte; prezzi
-  duplicati rispetto ad `abbonamenti.mdx`.
-- Tutte le pagine programma: link "SCOPRI DI PIÙ" senza destinazione, ancore morte
-  `#eae-pupup-item-...` da popup Elementor, tag `<video>` grezzi nel Markdown
-  (vanno spostati in `heroVideo` o dentro un componente).
-- `palestra.mdx`, `pilates.mdx`, `orari-corsi.mdx`: **corpo vuoto**, servono contenuti.
+- `pilates-reformer.mdx`: prezzi del Reformer non riportati in pagina (la pagina
+  rimanda ad `abbonamenti/`), così non esiste una seconda copia da tenere allineata.
+- `palestra.mdx`: **corpo vuoto**, servono contenuti.
+
+Già bonificati: `abbonamenti.mdx` (tabelle prezzi e FAQ duplicate, footer del sito
+incollato nel corpo pagina) e `orari-corsi.mdx` (corpo vuoto → 4 tabelle orario).
