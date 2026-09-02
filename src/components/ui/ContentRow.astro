@@ -165,13 +165,38 @@ const { title, image, video, alt = '' } = Astro.props;
          non serve piu', l'immagine torna a un rapporto proprio. */
       height: auto;
     }
-    .content-row__media {
+    /* Ordine mobile: titolo, media, testo. Il titolo si stacca dal box del
+       paragrafo (display:contents su .content-row__copy: i suoi due figli
+       diventano item della griglia della riga) e diventa una fascia rossa
+       sopra al media, uguale per righe pari e dispari. */
+    .content-row__copy {
+      display: contents;
+    }
+    .content-row__copy h2,
+    .content-row:nth-child(even) .content-row__copy h2 {
+      order: 1;
+      margin: 0;
+      background: var(--accent);
+      color: var(--color-white);
+      padding: var(--space-sm) clamp(1.25rem, 4vw, 2.5rem);
+      /* Fascia a piena larghezza: l'ingresso laterale la farebbe sforare
+         dal viewport (e la pagina scorrerebbe in orizzontale). Solo fade. */
+      transform: none;
+    }
+    .content-row__media,
+    .content-row:nth-child(even) .content-row__media {
+      order: 2;
       aspect-ratio: 4 / 3;
     }
-    .content-row:nth-child(even) .content-row__media {
-      order: 0;
-    }
-    .content-row__copy {
+    /* Il bordo che su desktop puo' stare sul box intero qui vive sul
+       paragrafo, l'unica parte che resta un riquadro. Il lato alto non ha
+       bordo: tocca il media sopra (altrimenti doppia linea). */
+    .content-row__text,
+    .content-row:nth-child(even) .content-row__text {
+      order: 3;
+      border: 2px solid var(--color-black);
+      border-top: none;
+      background: var(--bg-light-soft);
       padding: var(--space-md) clamp(1.25rem, 4vw, 2.5rem);
     }
   }

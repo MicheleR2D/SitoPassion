@@ -87,8 +87,13 @@ const { title } = Astro.props;
     .related-section__grid {
       grid-template-columns: 1fr;
     }
+    /* Le card qui diventano righe compatte (vedi RelatedCard): l'altezza la
+       decide il loro contenuto, cosi' titolo + card stanno in una schermata. */
     .related-section__grid > :global(a) {
-      height: 22rem;
+      height: auto;
+    }
+    .related-section__title {
+      padding: var(--space-sm) var(--space-md);
     }
     /* Una colonna sola: le card si impilano, quindi il doppio bordo ora e'
        in verticale, non piu' in orizzontale. :nth-child(n) (sempre vero)

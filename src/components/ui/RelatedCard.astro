@@ -83,4 +83,30 @@ const { title, href, image, alt = '' } = Astro.props;
   .related-card:hover .related-card__arrow {
     color: var(--color-red);
   }
+
+  /* Su mobile la card diventa una riga compatta: miniatura quadrata a
+     sinistra, barra col titolo a destra. Impilate una sotto l'altra, tre
+     card cosi' stanno in mezza schermata invece di tre. */
+  @media (max-width: 860px) {
+    .related-card {
+      flex-direction: row;
+      border-width: 1.5px;
+    }
+    .related-card__media {
+      flex: 0 0 4.5rem;
+      /* Il min-height serve solo al formato verticale desktop. */
+      min-height: 0;
+      aspect-ratio: 1;
+      border-right: 1.5px solid var(--color-black);
+    }
+    .related-card__bar {
+      flex: 1;
+      min-width: 0;
+      padding: var(--space-2xs) var(--space-sm);
+    }
+    .related-card__title {
+      font-size: 0.85rem;
+      line-height: 1.25;
+    }
+  }
 </style>

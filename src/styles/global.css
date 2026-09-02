@@ -113,3 +113,21 @@ p { margin: 0; }
   margin-inline: auto;
   padding-inline: clamp(1.25rem, 4vw, 2.5rem);
 }
+
+/* Le CTA dell'hero: due bottoni affiancati su desktop, un solo bottone
+   grande su mobile. Affiancarli sulla larghezza di un telefono li rende
+   entrambi troppo piccoli per essere il gesto principale della pagina,
+   quindi resta solo il primo (l'azione di conversione, per convenzione) a
+   tutta larghezza. Regola globale: vale per la home e per ogni pagina che
+   passa `heroCtas` da frontmatter. */
+@media (max-width: 860px) {
+  .hero-ctas > a:not(:first-child) {
+    display: none;
+  }
+  .hero-ctas > a:first-child {
+    width: 100%;
+    justify-content: center;
+    font-size: 0.95rem;
+    padding: 1.15rem 2rem;
+  }
+}

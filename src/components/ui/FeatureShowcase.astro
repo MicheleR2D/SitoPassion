@@ -6,7 +6,14 @@
 //     title="Perché scegliere la Sala Pesi di Passion"
 //     images={[{ src: '/images/...', alt: '...' }, ...]}   (6 immagini)
 //     features={['Aperti tutti i giorni dalle 5:00 alle 24:00', ...]}
-//   />
+//   >
+//     <CtaSplit slot="cta" ... />      (opzionale)
+//   </FeatureShowcase>
+//
+// Lo slot "cta" ospita la fascia rossa di chiusura: su desktop resta una
+// fascia a se' sotto la sezione (come se fosse un fratello), su mobile si
+// infila tra l'elenco dei punti di forza e la gallery, cosi' testo + CTA
+// stanno in una schermata e le foto restano per ultime.
 interface ImageItem {
   src: string;
   alt?: string;
@@ -40,14 +47,31 @@ const { title, images, features } = Astro.props;
       ))}
     </ul>
   </div>
+  {Astro.slots.has('cta') && (
+    <div class="showcase__cta">
+      <slot name="cta" />
+    </div>
+  )}
 </section>
 
 <style>
   .showcase {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    min-height: 34rem;
+    /* La prima riga (gallery + elenco) conserva l'altezza minima di prima;
+       la seconda, se c'e' la CTA slottata, si dimensiona sul contenuto. */
+    grid-template-rows: minmax(34rem, auto);
+    grid-auto-rows: auto;
   }
+  /* La CTA slottata e' una fascia a se': occupa tutta la riga sotto le due
+     colonne, quindi da desktop non si distingue da un fratello della
+     sezione (com'era prima di diventare uno slot). */
+  .showcase__cta {
+    grid-column: 1 / -1;
+  }
+  /* Nota: lo slot non impone altezza ne' bordi alla CTA su desktop, cosi'
+     ogni pagina mantiene l'aspetto che aveva prima (100vh di default dal
+     componente, oppure una fascia piu' bassa se la pagina lo richiede). */
 
   .showcase__gallery {
     display: grid;
@@ -145,18 +169,51 @@ const { title, images, features } = Astro.props;
   @media (max-width: 860px) {
     .showcase {
       grid-template-columns: 1fr;
+      grid-template-rows: none;
+    }
+    /* Ordine mobile: prima si legge il "perche'", poi (se c'e') la CTA,
+       e per ultime le foto. */
+    .showcase__features {
+      order: 1;
+      /* Spaziatura compatta: elenco + CTA devono stare in una schermata. */
+      padding: var(--space-xs) clamp(1.25rem, 4vw, 2.5rem);
+      gap: var(--space-2xs);
+    }
+    .showcase .showcase__features ul {
+      gap: var(--space-3xs);
+    }
+    .showcase__cta {
+      order: 2;
+    }
+    /* Senza immagine (la nasconde CtaSplit su mobile) non c'e' una seconda
+       meta' da separare, ne' un'altezza minima da riempire: la fascia si
+       dimensiona sul testo, cosi' sta in schermata insieme all'elenco. */
+    .showcase__cta :global(.cta-split) {
+      height: auto;
       min-height: 0;
     }
-    /* Su mobile la fascia non ha piu' un'altezza da riempire: la proporzione
-       la impone la singola cella, cosi' regge qualsiasi numero di immagini. */
+    .showcase__cta :global(.cta-split__copy) {
+      border-right: none;
+    }
     .showcase__gallery {
+      order: 3;
+      /* Su mobile la fascia non ha piu' un'altezza da riempire: la
+         proporzione la impone la singola cella, cosi' regge qualsiasi
+         numero di immagini. Due colonne (con 6 foto: 3 righe piene). */
+      grid-template-columns: repeat(2, 1fr);
       grid-auto-rows: auto;
     }
+    /* Celle basse: la gallery e' un corredo visivo, non deve rubare
+       schermate di scorrimento. */
     .showcase__gallery-item {
-      aspect-ratio: 4 / 3;
+      aspect-ratio: 2 / 1;
     }
-    .showcase__features {
-      padding: var(--space-md) clamp(1.25rem, 4vw, 2.5rem);
+    /* Niente ingresso laterale su mobile: titolo ed elenco sono blocchi a
+       piena larghezza, traslarli di 3.5rem li fa sforare dal viewport e
+       costringe l'intera pagina a scorrere in orizzontale. Resta il fade. */
+    .showcase .showcase__features h2,
+    .showcase .showcase__features ul {
+      transform: none;
     }
   }
 </style>

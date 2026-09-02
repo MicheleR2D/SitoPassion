@@ -105,13 +105,26 @@ const {
   }
 
   @media (max-width: 860px) {
+    /* Solo testo: sulla larghezza di un telefono l'immagine ruberebbe
+       spazio al messaggio e alla CTA senza aggiungere informazione. Senza
+       immagine da riempire, la fascia si dimensiona sul contenuto. */
     .cta-split {
-      /* Testo quanto serve, immagine a riempire il resto della schermata. */
       grid-template-columns: 1fr;
-      grid-template-rows: auto 1fr;
+      grid-template-rows: none;
+      height: auto;
+      min-height: 0;
     }
     .cta-split__media {
-      min-height: 14rem;
+      display: none;
+    }
+    .cta-split__copy {
+      padding-block: var(--space-md);
+      gap: var(--space-2xs);
+    }
+    /* Come negli altri blocchi a piena larghezza: nessuna traslazione
+       laterale su mobile, altrimenti il titolo sfora dal viewport. */
+    .cta-split .cta-split__copy h2 {
+      transform: none;
     }
   }
 </style>

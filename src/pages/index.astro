@@ -51,21 +51,6 @@ const QUICKLINK_ICONS = {
     '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 36c0-11 6-21 17-23-2 6 0 11 6 11"/><path d="M29 11c2-3 6-3 8 0 2-3 6-3 8 0 0 4-4 8-8 10-4-2-8-6-8-10Z"/></svg>',
 };
 
-const FAQ = [
-  {
-    q: 'Quali sono gli orari di apertura della palestra?',
-    a: 'Passion Fitness Tuscolana è aperta tutti i giorni, dalle 5 alle 24.',
-  },
-  {
-    q: 'Verrò seguito/a dai personal trainer in sala pesi?',
-    a: "Di più! Con la formula I Love My Trainer acquisti direttamente le lezioni individuali, a partire da 65€/mese, con un Personal Trainer che si dedicherà unicamente a te.",
-  },
-  {
-    q: 'Posso acquistare online gli abbonamenti?',
-    a: 'Sì, accedendo alla sezione degli abbonamenti online puoi iscriverti scegliendo la tipologia di abbonamento desiderato.',
-  },
-];
-
 const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
   .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf())
   .slice(0, 3);
@@ -125,7 +110,6 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     </div>
   </Section>
 
-  <div class="home-flow">
   <div class="programmi-band">
     <ContentRows>
       <ContentRow
@@ -170,28 +154,25 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     </ContentRows>
   </div>
 
-  <div class="showcase-home">
-    <FeatureShowcase
-      title="Perché scegliere noi?"
-      images={[
-        { src: '/images/uploads/2024/11/MRZ08075.jpeg', alt: 'Passion Fitness Tuscolana' },
-        { src: '/images/uploads/2024/11/Sala-Pesi-1.jpeg', alt: 'Sala pesi Passion Fitness' },
-        { src: '/images/uploads/2024/10/sale_fitness.jpg', alt: 'Sala corsi fitness' },
-        { src: '/images/uploads/2024/11/reform_1-1.jpeg', alt: 'Studio Pilates Reformer' },
-        { src: '/images/uploads/2024/10/Palestra-11920x.jpg', alt: 'Palestra Passion Fitness' },
-        { src: '/images/uploads/2024/11/MRZ08109.jpeg', alt: 'Personal training Passion Fitness' },
-      ]}
-      features={[
-        '30+ anni di esperienza nel settore',
-        "La persona sempre al centro, prima dell'allenamento",
-        "Tutta l'attenzione che meriti, ad ogni allenamento",
-        'Ti alleniamo al tuo fianco, finché non acquisirai piena sicurezza',
-      ]}
-    />
-  </div>
-
-  <div class="cta-split-home">
+  <FeatureShowcase
+    title="Perché scegliere noi?"
+    images={[
+      { src: '/images/uploads/2024/11/MRZ08075.jpeg', alt: 'Passion Fitness Tuscolana' },
+      { src: '/images/uploads/2024/11/Sala-Pesi-1.jpeg', alt: 'Sala pesi Passion Fitness' },
+      { src: '/images/uploads/2024/10/sale_fitness.jpg', alt: 'Sala corsi fitness' },
+      { src: '/images/uploads/2024/11/reform_1-1.jpeg', alt: 'Studio Pilates Reformer' },
+      { src: '/images/uploads/2024/10/Palestra-11920x.jpg', alt: 'Palestra Passion Fitness' },
+      { src: '/images/uploads/2024/11/MRZ08109.jpeg', alt: 'Personal training Passion Fitness' },
+    ]}
+    features={[
+      '30+ anni di esperienza nel settore',
+      "La persona sempre al centro, prima dell'allenamento",
+      "Tutta l'attenzione che meriti, ad ogni allenamento",
+      'Ti alleniamo al tuo fianco, finché non acquisirai piena sicurezza',
+    ]}
+  >
     <CtaSplit
+      slot="cta"
       heading="Pronto a iniziare?"
       text="Il primo allenamento è gratuito e senza impegno: vieni a scoprire Passion Fitness."
       buttonLabel="Prova Passion Fitness"
@@ -199,21 +180,18 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
       image="/images/uploads/2024/11/MRZ08075.jpeg"
       alt="Passion Fitness Tuscolana"
     />
-  </div>
-  </div>
+  </FeatureShowcase>
 
-  <div class="blog-home">
-    <RelatedSection title="Leggi il nostro Blog">
-      {latestPosts.map((post) => (
-        <RelatedCard
-          title={post.data.title}
-          href={`/${post.data.slug}/`}
-          image={post.data.coverImage}
-          alt={post.data.title}
-        />
-      ))}
-    </RelatedSection>
-  </div>
+  <RelatedSection title="Leggi il nostro Blog">
+    {latestPosts.map((post) => (
+      <RelatedCard
+        title={post.data.title}
+        href={`/${post.data.slug}/`}
+        image={post.data.coverImage}
+        alt={post.data.title}
+      />
+    ))}
+  </RelatedSection>
 </BaseLayout>
 
 <style>
@@ -246,7 +224,10 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
   }
 
   .quicklinks-section {
+    /* dvh come l'hero: con vh la fascia sfora oltre lo schermo reale
+       quando la barra degli indirizzi del browser mobile e' visibile. */
     height: 100vh;
+    height: 100dvh;
     border-top: 2px solid var(--color-black);
   }
   .quicklinks {
@@ -370,20 +351,15 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     }
   }
 
-  .home-flow {
-    display: flex;
-    flex-direction: column;
-  }
-
+  /* Regole solo-desktop specifiche della home. Il comportamento mobile
+     vive nei componenti (ContentRow, FeatureShowcase, CtaSplit,
+     RelatedCard), cosi' e' identico su tutte le pagine. */
   .programmi-band {
     background: var(--bg-light-soft);
   }
-  /* Il lato testo deve formare un blocco uguale e opposto a quello del
-     video (che ha gia' un bordo nero squadrato): stesso trattamento,
-     cosi' i due lati sembrano un'unica card divisa a meta'. Il lato
-     attaccato al video perde il proprio bordo (il video ha gia' il suo
-     su quello stesso confine): altrimenti i due bordi affiancati si
-     leggerebbero come una linea doppia. */
+  /* Il lato testo forma un blocco uguale e opposto a quello del video: il
+     lato attaccato al video perde il proprio bordo (il video ha gia' il
+     suo su quel confine), altrimenti si legge una linea doppia. */
   .programmi-band :global(.content-row__copy) {
     border: 2px solid var(--color-black);
   }
@@ -393,8 +369,7 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
   .programmi-band :global(.content-row:nth-child(even) .content-row__copy) {
     border-right: none;
   }
-  /* Il pulsante non deve leggersi come un box a se' dentro il box del
-     testo (altro doppio bordo, stavolta col proprio riquadro bianco):
+  /* Il pulsante non deve leggersi come un box dentro il box del testo:
      nessuno sfondo, nessun bordo, solo scritta e freccia. */
   .programmi-band :global(.content-row__copy .button),
   .programmi-band :global(.content-row__copy .button:hover) {
@@ -403,162 +378,24 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     border-color: transparent;
     padding-inline: 0;
   }
-  @media (max-width: 860px) {
-    /* Il titolo si stacca dal box del paragrafo e va sopra al video: serve
-       "smontare" .content-row__copy (display:contents) cosi' i suoi due
-       figli (h2 e .content-row__text) diventano item della griglia di
-       .content-row alla pari di .content-row__media, riordinabili a
-       piacere con `order` senza toccare il markup del componente
-       condiviso (che resta intatto per tutte le altre pagine). */
-    .programmi-band :global(.content-row__copy) {
-      display: contents;
-    }
-    /* !important: sulle righe pari il componente base ha una regola piu'
-       specifica (.content-row:nth-child(even) .content-row__media) che
-       resetta l'order a 0 per il layout mobile a sliver - qui va scavalcata
-       sempre, altrimenti solo le righe dispari (Sala Pesi, I Love My
-       Trainer) mostrano il titolo sopra al video. */
-    .programmi-band :global(.content-row__media) {
-      order: 2 !important;
-    }
-    /* .programmi-band ripetuto due volte: stessa specificita' della regola
-       base del componente (2 classi + 2 attributi data-astro-cid), che
-       altrimenti vincerebbe a parita' di punteggio in base al solo ordine
-       di caricamento dei due file CSS (non affidabile). */
-    .programmi-band.programmi-band :global(.content-row__copy h2) {
-      order: 1;
-      margin: 0;
-      background: var(--accent);
-      color: var(--color-white);
-      padding: var(--space-sm) clamp(1.25rem, 4vw, 2.5rem);
-      /* Il banner ora e' a piena larghezza (prima era testo inline con
-         margine attorno): scivolare di lato di 56px lo farebbe sforare dal
-         viewport (e' esattamente quello che spingeva la pagina intera a
-         scorrere in orizzontale). Resta solo il fade, senza traslazione. */
-      transform: none;
-    }
-    /* Il bordo che prima stava sul box intero (.content-row__copy) si
-       sposta sul paragrafo, l'unica parte che lo conserva ancora. */
-    .programmi-band :global(.content-row__text) {
-      order: 3;
-      border: 2px solid var(--color-black);
-      border-top: none;
-      background: var(--bg-light-soft);
-      padding: var(--space-md) clamp(1.25rem, 4vw, 2.5rem);
-    }
-  }
+  /* Su mobile .content-row__copy diventa display:contents (vedi
+     ContentRow): senza box non ha bordi da mostrare, quindi le regole qui
+     sopra si disattivano da sole. */
 
-  /* La sezione "prova" segue la stessa altezza (non piu' 100vh) e ha un
-     bordo tra le due meta', come le righe video+testo qui sopra. */
-  .cta-split-home :global(.cta-split) {
-    height: auto;
-    min-height: 30rem;
-  }
-  .cta-split-home :global(.cta-split__copy) {
-    border-right: 2px solid var(--color-black);
-  }
-  @media (max-width: 860px) {
-    .cta-split-home :global(.cta-split__copy) {
-      border-right: none;
-      border-bottom: 2px solid var(--color-black);
-    }
-    /* Solo testo: l'immagine non aggiunge informazione e sulla larghezza
-       di un telefono ruberebbe spazio al messaggio e alla CTA. Senza
-       immagine da riempire, il box torna a dimensionarsi sul contenuto:
-       niente piu' min-height da schermata intera. */
-    .cta-split-home :global(.cta-split) {
-      grid-template-rows: none;
-      min-height: 0;
-    }
-    .cta-split-home :global(.cta-split__copy) {
-      padding-block: var(--space-xs);
-      gap: var(--space-2xs);
-      border-bottom: none;
-    }
-    .cta-split-home :global(.cta-split__media) {
-      display: none;
-    }
-  }
-
-  @media (max-width: 860px) {
-    /* Ordine su mobile: testo del "perche' scegliere noi", poi il riquadro
-       rosso "pronto a iniziare", e per ultima la galleria di foto.
-       Il riquadro rosso e' un fratello della sezione showcase, quindi per
-       infilarlo tra le due metà si "smontano" i box intermedi
-       (display:contents su .showcase-home e su .showcase): testo e galleria
-       diventano item della stessa colonna flex di .home-flow, riordinabili
-       con `order` insieme al riquadro rosso. */
-    .showcase-home {
-      display: contents;
-    }
-    .showcase-home :global(.showcase) {
-      display: contents;
-    }
-    .home-flow > .programmi-band {
-      order: 1;
-    }
-    .showcase-home :global(.showcase__features) {
-      order: 2;
-      /* Meno padding e meno spazio tra gli elementi: insieme al riquadro
-         rosso deve entrare in una sola schermata. */
-      padding-block: var(--space-xs);
-      gap: var(--space-2xs);
-    }
-    .home-flow > .cta-split-home {
-      order: 3;
-    }
-    .showcase-home :global(.showcase__gallery) {
-      order: 4;
-      grid-template-columns: repeat(2, 1fr);
-    }
-    .showcase-home :global(.showcase__features ul) {
-      gap: var(--space-3xs);
-    }
-    /* Righe basse (2/1 invece di 4/3): la galleria e' un corredo visivo,
-       non ha bisogno di essere alta quanto larga per farsi riconoscere. */
-    .showcase-home :global(.showcase__gallery-item) {
-      aspect-ratio: 2 / 1;
-    }
-    /* Stesso motivo del titolo della sezione programmi: su un pannello a
-       piena larghezza come questo, l'ingresso laterale (56px) sfora dal
-       viewport e forza tutta la pagina a scorrere in orizzontale.
-       !important perche' la regola base vive in un altro file CSS: la
-       specificita' relativa tra i due dipende dall'ordine di caricamento,
-       non affidabile. */
-    .showcase-home :global(.showcase__features h2),
-    .showcase-home :global(.showcase__features ul) {
-      transform: none !important;
-    }
-  }
-
-  @media (max-width: 860px) {
-    /* Titolo + card del blog in una schermata sola: le card diventano righe
-       compatte (miniatura a sinistra, titolo a destra) invece di grandi
-       box con immagine sopra e barra sotto. */
-    .blog-home.blog-home :global(.related-section__grid > a) {
+  /* Solo qui la fascia rossa di chiusura e' alta come una riga video+testo
+     invece di una schermata intera, e ha un bordo tra le due meta'. Le
+     altre pagine tengono il 100vh di default del componente. Limitato al
+     desktop: su mobile la fascia si dimensiona sul testo (vedi CtaSplit). */
+  @media (min-width: 861px) {
+    /* Tre classi: la regola `height:100vh` del componente CtaSplit ne ha
+       due (classe + attributo di scope) e a parita' vincerebbe in base al
+       solo ordine di caricamento dei file CSS. */
+    :global(.showcase .showcase__cta .cta-split) {
       height: auto;
+      min-height: 30rem;
     }
-    .blog-home :global(.related-section__title) {
-      padding: var(--space-sm) var(--space-md);
-    }
-    .blog-home :global(.related-card) {
-      flex-direction: row;
-      border-width: 1.5px;
-    }
-    .blog-home :global(.related-card__media) {
-      flex: 0 0 4.5rem;
-      min-height: 0;
-      aspect-ratio: 1;
-      border-right: 1.5px solid var(--color-black);
-    }
-    .blog-home :global(.related-card__bar) {
-      flex: 1;
-      min-width: 0;
-      padding: var(--space-2xs) var(--space-sm);
-    }
-    .blog-home :global(.related-card__title) {
-      font-size: 0.85rem;
-      line-height: 1.25;
+    :global(.showcase .showcase__cta .cta-split__copy) {
+      border-right: 2px solid var(--color-black);
     }
   }
 

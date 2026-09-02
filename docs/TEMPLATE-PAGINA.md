@@ -205,6 +205,42 @@ il bordo schermo. Le immagini a contatto tra righe non hanno raggio.
 
 ---
 
+## 4-bis. Mobile (≤860px) — comportamento dei componenti
+
+Il mobile **non si scrive nelle pagine**: ogni componente porta con sé il
+proprio adattamento, quindi una pagina costruita col template qui sopra è già
+ottimizzata. Cosa cambia sotto gli 860px:
+
+| Componente | Comportamento mobile |
+|---|---|
+| `Hero` | altezza `100dvh` (non `vh`: con la barra del browser visibile sforerebbe); delle `heroCtas` resta **solo la prima**, a tutta larghezza e più grande |
+| `ContentRow` | ordine **titolo → media → paragrafo**. Il titolo diventa una fascia rossa a piena larghezza (testo bianco) sopra al media; il paragrafo resta un riquadro bordato sotto |
+| `FeatureShowcase` | ordine **elenco → CTA slottata → gallery**; gallery a 2 colonne con celle `2/1`, spaziature compatte |
+| `CtaSplit` | immagine nascosta, altezza sul contenuto, padding compatto |
+| `RelatedCard` | card orizzontale compatta: miniatura quadrata + barra col titolo |
+| `RelatedSection` | una card per riga, altezza sul contenuto |
+
+**Regola da non violare: su mobile nessun blocco a piena larghezza può avere
+`transform: translateX(...)`.** L'animazione d'ingresso laterale su un elemento
+larghezza-piena lo fa uscire dal viewport: il browser allarga il layout
+viewport per contenerlo e **tutta la pagina scorre in orizzontale**, con una
+banda vuota di lato e i controlli dell'header spinti fuori schermo. Su mobile
+resta solo il fade (`transform: none` nei media query dei componenti).
+
+**Slot CTA di `FeatureShowcase`:** per ottenere l'ordine elenco → CTA → gallery
+la CTA va passata come slot, non come blocco fratello:
+
+```jsx
+<FeatureShowcase title="..." images={[...]} features={[...]}>
+  <CtaSplit slot="cta" heading="..." buttonLabel="Prova Ora" buttonHref="..." image="..." />
+</FeatureShowcase>
+```
+Su desktop resta una fascia a sé sotto la sezione (identica a prima), su mobile
+si infila tra elenco e gallery. Dentro lo slot la CTA è alta `min-height:30rem`,
+non una schermata intera.
+
+---
+
 ## 5. Regole architetturali — non violarle
 
 1. **`PostBody` stila solo il testo di primo livello.** Tutte le sue regole sono
