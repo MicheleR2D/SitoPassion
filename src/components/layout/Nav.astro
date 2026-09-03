@@ -15,7 +15,15 @@ import { NAV_ITEMS } from '../../data/nav.ts';
             ruota: su desktop e' display:contents, quindi il layout della
             barra e del dropdown resta esattamente quello di prima. */}
         <div class="site-nav__card">
-          <a href={item.href}>{item.label}</a>
+          {item.children ? (
+            /* Le voci con sotto-pagine non portano da nessuna parte: il
+               titolo apre il dropdown (desktop) o gira la card (mobile).
+               <button> e non <span> perche' e' focalizzabile: al tocco
+               riceve il focus e :focus-within fa scattare il giro. */
+            <button class="site-nav__title" type="button">{item.label}</button>
+          ) : (
+            <a class="site-nav__title" href={item.href}>{item.label}</a>
+          )}
           {item.children && (
             <ul class="site-nav__dropdown">
               {item.children.map((child) => (
@@ -46,20 +54,28 @@ import { NAV_ITEMS } from '../../data/nav.ts';
   .site-nav__item {
     position: relative;
   }
-  .site-nav__card > a {
+  /* Il titolo e' un <a> (voci senza figli) o un <button> (voci con figli):
+     qui si azzera lo stile nativo del bottone, cosi' i due sono identici. */
+  .site-nav__title {
     display: inline-block;
+    appearance: none;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding-inline: 0;
     padding-block: 0.4rem;
+    font-family: inherit;
     font-size: 0.8rem;
     font-weight: 700;
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--text-on-dark);
-    border-bottom: 2px solid transparent;
+    cursor: pointer;
   }
-  .site-nav__card > a:hover {
+  .site-nav__title:hover {
     border-color: var(--color-red);
   }
-  .site-nav__item.has-children .site-nav__card > a::after {
+  .site-nav__item.has-children .site-nav__title::after {
     content: "";
     display: inline-block;
     margin-left: 0.4rem;
@@ -145,7 +161,7 @@ import { NAV_ITEMS } from '../../data/nav.ts';
     }
     /* Le due facce occupano lo stesso spazio, contenuto centrato; il retro
        parte girato di 180deg, cosi' ruotando la card diventa fronte. */
-    .site-nav__card > a,
+    .site-nav__title,
     .site-nav__dropdown {
       position: absolute;
       inset: 0;
@@ -158,7 +174,7 @@ import { NAV_ITEMS } from '../../data/nav.ts';
       padding: var(--space-sm);
       backface-visibility: hidden;
     }
-    .site-nav__card > a {
+    .site-nav__title {
       padding-block: var(--space-sm);
       font-family: var(--font-display);
       font-size: clamp(1.5rem, 7vw, 2.2rem);
@@ -169,7 +185,7 @@ import { NAV_ITEMS } from '../../data/nav.ts';
       border-bottom: none;
     }
     /* La freccetta del dropdown non serve: il retro si rivela girando. */
-    .site-nav__item.has-children .site-nav__card > a::after {
+    .site-nav__item.has-children .site-nav__title::after {
       display: none;
     }
     /* Retro: inversione dei colori del fronte (rosso su bianco), cosi' i
@@ -225,7 +241,7 @@ import { NAV_ITEMS } from '../../data/nav.ts';
        griglia): con la faccia in position:absolute non avrebbe altezza, qui
        torna nel flusso (non deve girarsi, non ha sotto-pagine). */
     .site-nav__item--standalone .site-nav__card,
-    .site-nav__item--standalone .site-nav__card > a {
+    .site-nav__item--standalone .site-nav__title {
       position: static;
       inset: auto;
     }
