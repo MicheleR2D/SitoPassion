@@ -189,6 +189,12 @@ const { title, image, video, videoEndBuffer = 3, eyebrow } = Astro.props;
       grid-column: 1;
       align-items: flex-start;
       padding-top: var(--space-sm);
+      /* Spazio rosso garantito sotto la CTA, qualunque sia la lunghezza del
+         testo: senza questo, sulle pagine con titolo + occhiello + due righe
+         il bottone finisce appiccicato al bordo della sezione successiva.
+         La riga della griglia (1fr = minmax(auto, 1fr)) cresce quel tanto
+         che serve, prendendo spazio al video: l'hero resta di 100dvh. */
+      padding-bottom: var(--space-lg);
     }
     /* Qui il pannello sta sotto il media, quindi la sfumatura sale invece
        di andare a sinistra. */

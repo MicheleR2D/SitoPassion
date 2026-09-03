@@ -52,9 +52,11 @@ const pages = defineCollection({
         z.object({
           label: z.string(),
           href: z.string(),
+          // La CTA principale dell'hero e' bianca su tutto il sito (vedi la
+          // home): il default sta qui, cosi' le pagine non lo ripetono.
           variant: z
             .enum(['primary', 'white', 'dark-red', 'invert-red', 'ghost-dark', 'ghost-light'])
-            .default('dark-red'),
+            .default('white'),
         })
       )
       .optional(),
