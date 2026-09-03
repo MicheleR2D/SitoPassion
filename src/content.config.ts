@@ -121,9 +121,16 @@ const footerSettings = defineCollection({
   loader: singletonFile('./src/content/settings/footer.json', 'footer'),
   schema: z.object({
     footerText: z.string().optional(),
+    description: z.string().optional(),
+    // Dati societari e legali: obbligatori per legge sul sito di una SSD,
+    // quindi vivono nei contenuti (editabili) e non nel markup.
+    legalNotice: z.string().optional(),
     address: z.string().optional(),
+    vatNumber: z.string().optional(),
+    registryNumber: z.string().optional(),
     phone: z.string().optional(),
     email: z.string().optional(),
+    careersUrl: z.string().optional(),
     openingHours: z
       .array(
         z.object({

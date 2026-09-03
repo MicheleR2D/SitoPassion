@@ -1,4 +1,8 @@
 {
   "siteName": "Passion Fitness",
-  "socials": {}
+  "socials": {
+    "instagram": "https://www.instagram.com/passionfitnessroma/",
+    "facebook": "https://www.facebook.com/PassionFitnessRoma/?fref=ts",
+    "youtube": "https://www.youtube.com/user/PassionFitness"
+  }
 }

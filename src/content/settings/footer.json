@@ -1,7 +1,14 @@
 {
   "footerText": "Passion Fitness | Palestre Roma | Passion Fitness Tuscolana",
+  "description": "Passion Fitness è la palestra più grande ed attrezzata dei quartieri Tuscolana, Cinecittà, Don Bosco e San Policarpo.",
+  "legalNotice": "Powered by TUSCOLANA SSD Arl senza scopo di lucro promuove l'attività fisica e la didattica sportiva dilettantistica",
   "address": "Via Flavio Stilicone 238, 00175 Roma (RM)",
+  "vatNumber": "13935851009",
+  "registryNumber": "Registro Nazionale Ass. e Società Sportive e Dilettantistiche n. 285646 — C.O.N.I. 2.0",
   "phone": "067674709",
   "email": "info@passionfitness.it",
-  "openingHours": []
+  "careersUrl": "https://zgcrbhl8m6b.typeform.com/to/hMHz9NVx",
+  "openingHours": [
+    { "day": "Dal Lunedì alla Domenica", "hours": "05:00 - 24:00" }
+  ]
 }

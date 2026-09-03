@@ -6,6 +6,25 @@ const site = await getEntry('siteSettings', 'site');
 const data = footer?.data;
 const socials = site?.data.socials ?? {};
 const year = new Date().getFullYear();
+
+// Etichette leggibili per le chiavi di site.json (che sono minuscole).
+const SOCIAL_LABELS: Record<string, string> = {
+  instagram: 'Instagram',
+  facebook: 'Facebook',
+  youtube: 'YouTube',
+};
+
+// Enti e certificazioni: presentazione, quindi restano qui e non nei dati.
+const PARTNERS = [
+  { src: '/images/uploads/2024/10/coni.png', alt: 'CONI' },
+  { src: '/images/uploads/2024/10/ciwas-300x204-1.png', alt: 'CIWAS' },
+  { src: '/images/uploads/2024/10/ASI.png', alt: 'ASI' },
+  { src: '/images/uploads/2024/10/logo-anif.png', alt: 'ANIF' },
+  { src: '/images/uploads/2024/10/fitnesswa.png', alt: 'FitnessWay' },
+];
+
+const MAPS_SRC =
+  'https://maps.google.com/maps?q=PASSION%20FITNESS%20TUSCOLANA&t=m&z=15&output=embed&iwloc=near';
 ---
 
 <footer class="site-footer">
@@ -15,7 +34,18 @@ const year = new Date().getFullYear();
         <a href="/" class="brand">
           <img src="/images/logo-passion-mark.png" alt="Passion Fitness Club" width="1409" height="592" />
         </a>
-        {data?.address && <p>{data.address}</p>}
+        {data?.description && <p class="footer-brand__claim">{data.description}</p>}
+        {Object.keys(socials).length > 0 && (
+          <ul class="footer-socials">
+            {Object.entries(socials).map(([name, url]) => (
+              <li>
+                <a href={url} target="_blank" rel="noopener">
+                  {SOCIAL_LABELS[name] ?? name}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <div class="footer-col">
@@ -23,41 +53,80 @@ const year = new Date().getFullYear();
         <ul>
           <li><a href="/palestra/sala-pesi/">Sala Pesi</a></li>
           <li><a href="/palestra/corsi-fitness/">Corsi Fitness</a></li>
-          <li><a href="/orari-corsi/">Orari Corsi</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-col">
-        <h4 class="eyebrow">Servizi</h4>
-        <ul>
           <li><a href="/personal-training/">Personal Training</a></li>
           <li><a href="/pilates-reformer/">Pilates Reformer</a></li>
           <li><a href="/hyrox/">Hyrox</a></li>
-          <li><a href="/abbonamenti/">Abbonamenti</a></li>
         </ul>
       </div>
 
       <div class="footer-col">
-        <h4 class="eyebrow">Contatti</h4>
+        <h4 class="eyebrow">Informazioni</h4>
         <ul>
+          <li><a href="/orari-corsi/">Orari Corsi</a></li>
+          <li><a href="/abbonamenti/">Abbonamenti</a></li>
+          <li><a href="/blog/">Blog</a></li>
+          <li><a href="/porta-un-amico/">Porta un Amico</a></li>
+          <li><a href="/contatti/">Contattaci</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="eyebrow">Dove siamo</h4>
+        <div class="footer-map">
+          <iframe
+            src={MAPS_SRC}
+            title="Passion Fitness Tuscolana su Google Maps"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
+        <ul>
+          {data?.address && <li>{data.address}</li>}
           {data?.phone && <li><a href={`tel:+39${data.phone}`}>{data.phone}</a></li>}
           {data?.email && <li><a href={`mailto:${data.email}`}>{data.email}</a></li>}
-          <li><a href="/porta-un-amico/">Porta un Amico</a></li>
         </ul>
-        {Object.keys(socials).length > 0 && (
-          <ul class="footer-socials">
-            {Object.entries(socials).map(([name, url]) => (
-              <li><a href={url}>{name}</a></li>
+        {data?.openingHours && data.openingHours.length > 0 && (
+          <ul class="footer-hours">
+            {data.openingHours.map((o) => (
+              <li><strong>{o.day}</strong> {o.hours}</li>
             ))}
           </ul>
         )}
       </div>
     </div>
 
+    {data?.careersUrl && (
+      <div class="footer-careers">
+        <p>Passion Fitness è alla ricerca di personale: lavora con noi.</p>
+        <a class="footer-careers__cta" href={data.careersUrl} target="_blank" rel="noopener">
+          Inviaci il tuo CV
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    )}
+
+    <ul class="footer-partners">
+      {PARTNERS.map((p) => (
+        <li><img src={p.src} alt={`Logo ${p.alt}`} loading="lazy" /></li>
+      ))}
+    </ul>
+
+    <div class="footer-legal">
+      {data?.legalNotice && <p>{data.legalNotice}</p>}
+      <p class="footer-legal__ids">
+        {data?.vatNumber && <span>C.F. / P.IVA {data.vatNumber}</span>}
+        {data?.registryNumber && <span>{data.registryNumber}</span>}
+      </p>
+    </div>
+
     <div class="footer-bottom">
       <span>© {year} Passion Fitness — Palestra Roma Tuscolana</span>
-      <span>
-        <a href="/informativa-privacy/">Privacy</a> · <a href="/informativa-estesa-sullutilizzo-dei-cookie/">Cookie</a>
+      <span class="footer-bottom__links">
+        <a href="/informativa-privacy/">Informativa privacy</a>
+        <a href="/informativa-estesa-sullutilizzo-dei-cookie/">Cookie Policy</a>
+        <a href="https://passionfitness.it/3-codice-di-condotta_mog-determina-modulo-segnalazione-tuscolana-s-s-d-arl/">
+          MOG e Codice di Condotta
+        </a>
       </span>
     </div>
   </div>
@@ -80,15 +149,15 @@ const year = new Date().getFullYear();
 
   .footer-grid {
     display: grid;
-    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
     gap: var(--space-md);
     padding-bottom: var(--space-lg);
   }
-  .footer-brand p {
+  .footer-brand__claim {
     margin-top: var(--space-xs);
     font-size: 0.85rem;
     color: var(--text-on-dark-muted);
-    max-width: 18rem;
+    max-width: 22rem;
     line-height: 1.5;
   }
   .footer-col h4 {
@@ -96,7 +165,8 @@ const year = new Date().getFullYear();
     margin-bottom: var(--space-xs);
   }
   .footer-col ul,
-  .footer-socials {
+  .footer-socials,
+  .footer-hours {
     list-style: none;
     margin: 0;
     padding: 0;
@@ -111,12 +181,106 @@ const year = new Date().getFullYear();
   }
   .footer-socials {
     flex-direction: row;
+    flex-wrap: wrap;
     gap: var(--space-sm);
     margin-top: var(--space-sm);
     text-transform: uppercase;
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.05em;
+  }
+
+  .footer-map {
+    margin-bottom: var(--space-xs);
+    border: 2px solid var(--border-on-dark);
+    overflow: hidden;
+  }
+  .footer-map iframe {
+    display: block;
+    width: 100%;
+    height: 9rem;
+    border: none;
+    /* La mappa a colori pieni su fondo nero spicca troppo rispetto al resto
+       del footer: leggermente desaturata si integra senza perdere leggibilita'. */
+    filter: grayscale(0.35);
+  }
+  .footer-hours {
+    margin-top: var(--space-xs);
+    font-size: 0.82rem;
+    color: var(--text-on-dark-muted);
+  }
+  .footer-hours strong {
+    color: var(--text-on-dark);
+    display: block;
+  }
+
+  /* Fascia "lavora con noi": si distingue dal resto senza diventare una
+     sezione a se', da qui il solo filetto sopra e sotto. */
+  .footer-careers {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    padding-block: var(--space-sm);
+    border-block: 1px solid var(--border-on-dark);
+  }
+  .footer-careers p {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-size: clamp(1rem, 1.6vw, 1.3rem);
+    line-height: 1.1;
+  }
+  .footer-careers__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    color: var(--color-red);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    white-space: nowrap;
+  }
+  .footer-careers__cta span {
+    transition: transform 0.15s ease;
+  }
+  .footer-careers__cta:hover span {
+    transform: translateX(3px);
+  }
+
+  .footer-partners {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-md);
+    padding-block: var(--space-sm);
+  }
+  .footer-partners img {
+    height: 2.25rem;
+    width: auto;
+    /* I loghi degli enti sono di colori diversi tra loro: in bianco su fondo
+       nero restano leggibili e non fanno a pugni col resto. */
+    filter: grayscale(1) brightness(1.8);
+    opacity: 0.7;
+  }
+
+  .footer-legal {
+    padding-block: var(--space-sm);
+    font-size: 0.75rem;
+    line-height: 1.6;
+    color: var(--text-on-dark-muted);
+  }
+  .footer-legal__ids {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-sm);
+    margin-top: var(--space-3xs);
   }
 
   .footer-bottom {
@@ -129,13 +293,24 @@ const year = new Date().getFullYear();
     font-size: 0.75rem;
     color: var(--text-on-dark-muted);
   }
+  .footer-bottom__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-sm);
+  }
   .footer-bottom a:hover {
     color: var(--color-red);
   }
 
-  @media (max-width: 760px) {
+  @media (max-width: 860px) {
     .footer-grid {
       grid-template-columns: 1fr 1fr;
+    }
+    /* Marchio e mappa a fascia piena: entrambi hanno bisogno di larghezza
+       (il claim per non spezzarsi, la mappa per restare leggibile). */
+    .footer-brand,
+    .footer-col:last-child {
+      grid-column: 1 / -1;
     }
   }
 </style>
