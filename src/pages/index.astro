@@ -64,11 +64,11 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     title="PASSION FITNESS"
     video="/videos/hero-provvisorio.mp4"
     image="/images/uploads/2024/11/MRZ08075.jpeg"
+    soft
   >
     <p>La palestra più grande delle zone Tuscolana, Cinecittà, Don Bosco e San Policarpo.<br />Un luogo dove persone diverse, con obiettivi unici, trovano il proprio percorso ideale per sentirsi meglio, insieme.</p>
     <div class="hero-ctas">
-      <Button href={PROVA_URL} variant="dark-red">Prova Passion Fitness</Button>
-      <Button href="/orari-corsi/" variant="ghost-dark">Scopri i Corsi</Button>
+      <Button href={PROVA_URL} variant="white">Prova Passion Fitness</Button>
     </div>
   </Hero>
 
@@ -200,6 +200,24 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     gap: var(--space-xs);
     flex-wrap: wrap;
     margin-top: var(--space-2xs);
+  }
+  /* CTA unica della hero: piu' grande del bottone standard e con uno zoom
+     in hover al posto del piccolo scatto verticale, piu' lento cosi' il
+     movimento si legge. `a.button` per stare sopra la regola del
+     componente Button senza ricorrere a !important. */
+  .hero-ctas :global(a.button) {
+    font-size: clamp(1rem, 1.15vw, 1.2rem);
+    padding: 1.1rem 2.2rem;
+    transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
+      background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  }
+  .hero-ctas :global(a.button:hover) {
+    transform: scale(1.06);
+  }
+  /* Anche la freccia rallenta, altrimenti scatta mentre il bottone scala. */
+  .hero-ctas :global(a.button:hover) :global(.button__arrow) {
+    transform: translateX(5px);
+    transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
   }
   /* Solo sulla home: il logo nell'header gia' mostra il brand, quindi su
      mobile il titolo "Passion Fitness" nell'hero e' ridondante e va nascosto.

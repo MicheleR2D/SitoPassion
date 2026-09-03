@@ -32,6 +32,10 @@
   --text-on-light-muted: #6b6260;
   --accent: var(--color-red);
   --accent-hover: var(--color-red-hover);
+  /* Stesso rosso ad alpha 0: serve come stop finale nei gradienti. Con
+     `transparent` alcuni browser interpolano passando per il nero e la
+     sfumatura mostra una banda grigia. */
+  --accent-transparent: rgba(227, 3, 45, 0);
   --border-on-dark: rgba(255, 255, 255, 0.14);
   --border-on-light: rgba(27, 27, 27, 0.12);
 

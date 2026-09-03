@@ -5,12 +5,15 @@ interface Props {
   video?: string;
   videoEndBuffer?: number;
   eyebrow?: string;
+  // Variante "morbida": nessun bordo tra media e pannello, sfumatura rossa
+  // che esce dal pannello sul media, titolo bianco e paragrafo nero.
+  soft?: boolean;
 }
 
-const { title, image, video, videoEndBuffer = 3, eyebrow } = Astro.props;
+const { title, image, video, videoEndBuffer = 3, eyebrow, soft = false } = Astro.props;
 ---
 
-<div class="hero">
+<div class:list={["hero", { "hero--soft": soft }]}>
   {video && (
     <div class="hero-media">
       <video
@@ -146,6 +149,30 @@ const { title, image, video, videoEndBuffer = 3, eyebrow } = Astro.props;
     object-fit: cover;
   }
 
+  /* --- Variante "soft": passaggio morbido tra media e pannello rosso ---
+     Al posto del bordo netto, una sfumatura che esce dal pannello e si
+     stende sul media. Il pannello resta pieno: sfuma solo la parte che
+     sborda sul video, cosi' il testo mantiene il suo contrasto. */
+  .hero--soft:has(.hero-media, .hero-photo) .hero-inner {
+    border-left: none;
+  }
+  .hero--soft:has(.hero-media, .hero-photo) .hero-inner::before {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    /* subito a sinistra del pannello, sopra il media */
+    right: 100%;
+    width: min(20rem, 30vw);
+    background: linear-gradient(to left, var(--accent), var(--accent-transparent));
+    pointer-events: none;
+  }
+  .hero--soft:has(.hero-media, .hero-photo) h1 {
+    color: var(--color-white);
+  }
+  .hero--soft:has(.hero-media, .hero-photo) .hero-extra {
+    color: var(--color-black);
+  }
+
   .hero-media {
     position: relative;
     height: 100%;
@@ -178,6 +205,20 @@ const { title, image, video, videoEndBuffer = 3, eyebrow } = Astro.props;
       border-left: none;
       border-top: 2px solid var(--color-black);
       padding-top: var(--space-sm);
+    }
+    /* Variante soft: qui il pannello sta sotto il media, quindi la
+       sfumatura sale invece di andare a sinistra. */
+    .hero--soft:has(.hero-media, .hero-photo) .hero-inner {
+      border-top: none;
+    }
+    .hero--soft:has(.hero-media, .hero-photo) .hero-inner::before {
+      inset-block: auto;
+      inset-inline: 0;
+      right: auto;
+      bottom: 100%;
+      width: auto;
+      height: min(9rem, 18vh);
+      background: linear-gradient(to top, var(--accent), var(--accent-transparent));
     }
     .hero:has(.hero-media, .hero-photo) .hero-copy {
       flex-direction: row;
