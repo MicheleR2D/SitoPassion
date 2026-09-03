@@ -1,13 +1,10 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/ui/Hero.astro';
 import Section from '../components/ui/Section.astro';
 import Button from '../components/ui/Button.astro';
 import CtaSplit from '../components/ui/CtaSplit.astro';
 import FeatureShowcase from '../components/ui/FeatureShowcase.astro';
-import RelatedSection from '../components/ui/RelatedSection.astro';
-import RelatedCard from '../components/ui/RelatedCard.astro';
 import ContentRows from '../components/ui/ContentRows.astro';
 import ContentRow from '../components/ui/ContentRow.astro';
 
@@ -51,9 +48,6 @@ const QUICKLINK_ICONS = {
     '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 36c0-11 6-21 17-23-2 6 0 11 6 11"/><path d="M29 11c2-3 6-3 8 0 2-3 6-3 8 0 0 4-4 8-8 10-4-2-8-6-8-10Z"/></svg>',
 };
 
-const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
-  .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf())
-  .slice(0, 3);
 ---
 
 <BaseLayout
@@ -185,19 +179,6 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
       alt="Passion Fitness Tuscolana"
     />
   </FeatureShowcase>
-
-  <div class="blog-home">
-    <RelatedSection title="Leggi il nostro Blog">
-      {latestPosts.map((post) => (
-        <RelatedCard
-          title={post.data.title}
-          href={`/${post.data.slug}/`}
-          image={post.data.coverImage}
-          alt={post.data.title}
-        />
-      ))}
-    </RelatedSection>
-  </div>
 </BaseLayout>
 
 <style>
@@ -389,9 +370,12 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
       border: none !important;
     }
     /* Stessa idea della hero "soft": invece di un confine netto, una
-       sfumatura rossa che esce dal titolo e si stende sul video sotto.
-       Qui piu' leggera (rosso a meta' opacita' invece che pieno) e piu'
-       corta (meta' dell'altezza usata nella hero). */
+       sfumatura che esce dal titolo e si stende sul video sotto. Deve
+       partire dallo stesso rosso pieno del banner (non da un rosso gia'
+       piu' chiaro): altrimenti si vede uno scalino di colore esattamente
+       al confine, cioe' il "bordo squadrato" che si voleva evitare. La
+       leggerezza viene dalla curva (scende in fretta), non da un taglio
+       netto in partenza. */
     .programmi-band.programmi-band :global(.content-row__copy h2) {
       position: relative;
       /* Il video (fratello successivo nella griglia) dipinge sopra a
@@ -404,23 +388,59 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
       position: absolute;
       inset-inline: 0;
       top: 100%;
-      height: min(4rem, 8vh);
-      background: linear-gradient(to bottom, rgba(227, 3, 45, 0.55), var(--accent-transparent));
+      height: min(5rem, 10vh);
+      background: linear-gradient(
+        to bottom,
+        var(--accent) 0%,
+        rgba(227, 3, 45, 0.25) 45%,
+        var(--accent-transparent) 100%
+      );
       pointer-events: none;
+    }
+  }
+
+  /* Stesso principio su desktop, ma orizzontale (video e testo sono
+     affiancati, non impilati) e nei toni chiari del box invece che rossi:
+     la sfumatura esce dal lato del testo che tocca il video e vi si stende
+     sopra. Anche qui parte dal colore pieno del box, non da una versione
+     gia' attenuata, per non lasciare uno scalino visibile al confine. */
+  @media (min-width: 861px) {
+    .programmi-band :global(.content-row__copy) {
+      position: relative;
+      /* Sulle righe pari il media ha order:2 (per finire dal lato giusto),
+         quindi dipinge dopo il testo e coprirebbe la sfumatura: stesso
+         bug gia' visto su mobile, stessa soluzione. */
+      z-index: 2;
+    }
+    .programmi-band :global(.content-row__copy)::before {
+      content: "";
+      position: absolute;
+      inset-block: 0;
+      width: min(7rem, 14%);
+      pointer-events: none;
+    }
+    .programmi-band :global(.content-row:nth-child(odd) .content-row__copy)::before {
+      right: 100%;
+      background: linear-gradient(
+        to left,
+        var(--bg-light-soft) 0%,
+        rgba(254, 237, 237, 0.5) 45%,
+        rgba(254, 237, 237, 0) 100%
+      );
+    }
+    .programmi-band :global(.content-row:nth-child(even) .content-row__copy)::before {
+      left: 100%;
+      background: linear-gradient(
+        to right,
+        var(--bg-light-soft) 0%,
+        rgba(254, 237, 237, 0.5) 45%,
+        rgba(254, 237, 237, 0) 100%
+      );
     }
   }
 
   /* L'altezza della CTA qui la decide gia' la variante mergeCta di
      FeatureShowcase (vedi il componente): niente da aggiungere per la home. */
-
-  /* Box del blog piu' piccoli, solo qui: altrove (RelatedSection e'
-     condivisa da "potrebbe interessarti anche" su tutte le pagine) restano
-     al default. */
-  @media (min-width: 861px) {
-    .blog-home :global(.related-section__grid) {
-      min-height: 16rem;
-    }
-  }
 
   .stats {
     display: grid;
