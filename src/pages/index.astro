@@ -82,7 +82,10 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
             <div class="quicklinks__icon" set:html={QUICKLINK_ICONS[item.icon]} />
             <h3>{item.title}</h3>
             <p class="quicklinks__body">{item.body}</p>
-            <a class="quicklinks__cta" href={item.href}>{item.cta}</a>
+            <a class="quicklinks__cta" href={item.href}>
+              {item.cta}
+              <span aria-hidden="true">→</span>
+            </a>
           </div>
         </article>
       ))}
@@ -232,8 +235,8 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
   .quicklinks-section {
     /* dvh come l'hero: con vh la fascia sfora oltre lo schermo reale
        quando la barra degli indirizzi del browser mobile e' visibile. */
-    height: 100vh;
-    height: 100dvh;
+    height: 50vh;
+    height: 50dvh;
     border-top: 2px solid var(--color-black);
   }
   .quicklinks {
@@ -277,23 +280,10 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     padding: var(--space-lg) var(--space-md);
     max-width: 26rem;
   }
+  /* Il box e' meta' altezza di prima: niente piu' spazio per l'icona,
+     tolta del tutto invece di continuare a riservarle un posto vuoto. */
   .quicklinks__icon {
-    width: 3.25rem;
-    height: 3.25rem;
-    color: var(--color-white);
-    opacity: 0;
-    max-height: 0;
-    overflow: hidden;
-    transition: opacity 0.25s ease, max-height 0.25s ease, margin-bottom 0.25s ease;
-  }
-  .quicklinks__card:hover .quicklinks__icon {
-    opacity: 1;
-    max-height: 4rem;
-    margin-bottom: var(--space-2xs);
-  }
-  .quicklinks__icon svg {
-    width: 100%;
-    height: 100%;
+    display: none;
   }
   .quicklinks__content h3 {
     color: var(--color-white);
@@ -307,30 +297,36 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     max-height: 0;
     margin: 0;
     overflow: hidden;
-    transition: opacity 0.25s ease, max-height 0.25s ease, margin-block 0.25s ease;
+    transition: opacity 0.25s ease, max-height 0.25s ease, margin-block 0.25s ease, color 0.25s ease;
   }
   .quicklinks__card:hover .quicklinks__body {
     opacity: 1;
     max-height: 12rem;
     margin-block: var(--space-2xs);
+    color: var(--color-white);
   }
+  /* Solo scritta, nessun box: sottolineato bianco con freccia, come gli
+     altri link testuali del sito ma senza il rosso (qui e' gia' su fondo
+     rosso in hover). */
   .quicklinks__cta {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
     width: fit-content;
     margin-top: var(--space-sm);
-    padding: 0.85rem 1.5rem;
-    background: var(--color-white);
-    color: var(--text-on-light);
+    color: var(--color-white);
     font-size: 0.8rem;
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    border-radius: 8px;
-    transition: background-color 0.15s ease, color 0.15s ease;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
   }
-  .quicklinks__cta:hover {
-    background: var(--color-black);
-    color: var(--color-white);
+  .quicklinks__cta span {
+    transition: transform 0.15s ease;
+  }
+  .quicklinks__cta:hover span {
+    transform: translateX(3px);
   }
   .quicklinks__link {
     display: inline-block;
