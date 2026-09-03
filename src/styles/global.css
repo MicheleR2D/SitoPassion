@@ -32,10 +32,13 @@
   --text-on-light-muted: #6b6260;
   --accent: var(--color-red);
   --accent-hover: var(--color-red-hover);
-  /* Stesso rosso ad alpha 0: serve come stop finale nei gradienti. Con
-     `transparent` alcuni browser interpolano passando per il nero e la
-     sfumatura mostra una banda grigia. */
+  /* Stessi colori ad alpha ridotta/zero: servono come stop intermedi e
+     finali nei gradienti. Con `transparent` alcuni browser interpolano
+     passando per il nero e la sfumatura mostra una banda grigia. */
   --accent-transparent: rgba(227, 3, 45, 0);
+  --accent-quarter: rgba(227, 3, 45, 0.25);
+  --bg-light-soft-half: rgba(254, 237, 237, 0.5);
+  --bg-light-soft-transparent: rgba(254, 237, 237, 0);
   --border-on-dark: rgba(255, 255, 255, 0.14);
   --border-on-light: rgba(27, 27, 27, 0.12);
 
@@ -118,12 +121,35 @@ p { margin: 0; }
   padding-inline: clamp(1.25rem, 4vw, 2.5rem);
 }
 
-/* Le CTA dell'hero: due bottoni affiancati su desktop, un solo bottone
-   grande su mobile. Affiancarli sulla larghezza di un telefono li rende
-   entrambi troppo piccoli per essere il gesto principale della pagina,
-   quindi resta solo il primo (l'azione di conversione, per convenzione) a
-   tutta larghezza. Regola globale: vale per la home e per ogni pagina che
-   passa `heroCtas` da frontmatter. */
+/* Le CTA dell'hero. Regole globali: valgono per la home (markup inline) e
+   per ogni pagina che passa `heroCtas` da frontmatter (PageLayout). */
+.hero-ctas {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+  margin-top: var(--space-2xs);
+}
+/* Piu' grande del bottone standard e con uno zoom in hover al posto del
+   piccolo scatto verticale, piu' lento cosi' il movimento si legge. */
+.hero-ctas > a.button {
+  font-size: clamp(1rem, 1.15vw, 1.2rem);
+  padding: 1.1rem 2.2rem;
+  transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
+    background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+.hero-ctas > a.button:hover {
+  transform: scale(1.06);
+}
+/* Anche la freccia rallenta, altrimenti scatta mentre il bottone scala. */
+.hero-ctas > a.button:hover .button__arrow {
+  transform: translateX(5px);
+  transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* Su mobile resta un solo bottone, grande: affiancarne due sulla larghezza
+   di un telefono li rende entrambi troppo piccoli per essere il gesto
+   principale della pagina. Resta il primo, che per convenzione e' l'azione
+   di conversione. */
 @media (max-width: 860px) {
   .hero-ctas > a:not(:first-child) {
     display: none;

@@ -58,7 +58,6 @@ const QUICKLINK_ICONS = {
     title="PASSION FITNESS"
     video="/videos/hero-provvisorio.mp4"
     image="/images/uploads/2024/11/MRZ08075.jpeg"
-    soft
   >
     <p>La palestra più grande delle zone Tuscolana, Cinecittà, Don Bosco e San Policarpo.</p>
     <div class="hero-ctas">
@@ -153,7 +152,6 @@ const QUICKLINK_ICONS = {
 
   <FeatureShowcase
     title="Perché scegliere noi?"
-    mergeCta
     images={[
       { src: '/images/uploads/2024/11/MRZ08075.jpeg', alt: 'Passion Fitness Tuscolana' },
       { src: '/images/uploads/2024/11/Sala-Pesi-1.jpeg', alt: 'Sala pesi Passion Fitness' },
@@ -182,30 +180,10 @@ const QUICKLINK_ICONS = {
 </BaseLayout>
 
 <style>
-  .hero-ctas {
-    display: flex;
-    gap: var(--space-xs);
-    flex-wrap: wrap;
-    margin-top: var(--space-2xs);
-  }
-  /* CTA unica della hero: piu' grande del bottone standard e con uno zoom
-     in hover al posto del piccolo scatto verticale, piu' lento cosi' il
-     movimento si legge. `a.button` per stare sopra la regola del
-     componente Button senza ricorrere a !important. */
-  .hero-ctas :global(a.button) {
-    font-size: clamp(1rem, 1.15vw, 1.2rem);
-    padding: 1.1rem 2.2rem;
-    transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
-      background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
-  }
-  .hero-ctas :global(a.button:hover) {
-    transform: scale(1.06);
-  }
-  /* Anche la freccia rallenta, altrimenti scatta mentre il bottone scala. */
-  .hero-ctas :global(a.button:hover) :global(.button__arrow) {
-    transform: translateX(5px);
-    transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
-  }
+  /* Le regole di .hero-ctas (dimensioni, zoom in hover, CTA unica su
+     mobile) vivono in global.css: valgono per la home e per le pagine che
+     passano heroCtas da frontmatter. */
+
   /* Solo sulla home: il logo nell'header gia' mostra il brand, quindi su
      mobile il titolo "Passion Fitness" nell'hero e' ridondante e va nascosto.
      Le altre pagine che usano Hero con video (PageLayout) non hanno questa
@@ -338,109 +316,9 @@ const QUICKLINK_ICONS = {
     }
   }
 
-  /* Regole solo-desktop specifiche della home. Il comportamento mobile
-     vive nei componenti (ContentRow, FeatureShowcase, CtaSplit,
-     RelatedCard), cosi' e' identico su tutte le pagine. */
-  .programmi-band {
-    background: var(--bg-light-soft);
-  }
-  /* Niente bordi neri in questa sezione (ne' sul video ne' sul testo): il
-     passaggio tra le due meta' e' morbido, non un confine netto. */
-  .programmi-band :global(.content-row__media) {
-    border: none;
-  }
-  /* Il pulsante non deve leggersi come un box dentro il box del testo:
-     nessuno sfondo, nessun bordo, solo scritta e freccia. */
-  .programmi-band :global(.content-row__copy .button),
-  .programmi-band :global(.content-row__copy .button:hover) {
-    background: transparent;
-    color: var(--text-on-light);
-    border-color: transparent;
-    padding-inline: 0;
-  }
-  @media (max-width: 860px) {
-    /* Stesso discorso del desktop: nessun bordo nero sul riquadro di testo
-       sotto al video (nel componente base ce l'ha, qui no). !important
-       perche' sulle righe pari il componente base ha una regola piu'
-       specifica (.content-row:nth-child(even) .content-row__text) che
-       altrimenti vince: e' la stessa causa del bug gia' visto sull'order
-       del media, qui si manifestava come una riga nera visibile sopra il
-       titolo della riga successiva (Corsi Fitness -> Personal Training). */
-    .programmi-band :global(.content-row__text) {
-      border: none !important;
-    }
-    /* Stessa idea della hero "soft": invece di un confine netto, una
-       sfumatura che esce dal titolo e si stende sul video sotto. Deve
-       partire dallo stesso rosso pieno del banner (non da un rosso gia'
-       piu' chiaro): altrimenti si vede uno scalino di colore esattamente
-       al confine, cioe' il "bordo squadrato" che si voleva evitare. La
-       leggerezza viene dalla curva (scende in fretta), non da un taglio
-       netto in partenza. */
-    .programmi-band.programmi-band :global(.content-row__copy h2) {
-      position: relative;
-      /* Il video (fratello successivo nella griglia) dipinge sopra a
-         chiunque non abbia un proprio z-index: senza questo, la sfumatura
-         qui sotto resta sempre coperta e invisibile. */
-      z-index: 2;
-    }
-    .programmi-band.programmi-band :global(.content-row__copy h2)::after {
-      content: "";
-      position: absolute;
-      inset-inline: 0;
-      top: 100%;
-      height: min(5rem, 10vh);
-      background: linear-gradient(
-        to bottom,
-        var(--accent) 0%,
-        rgba(227, 3, 45, 0.25) 45%,
-        var(--accent-transparent) 100%
-      );
-      pointer-events: none;
-    }
-  }
-
-  /* Stesso principio su desktop, ma orizzontale (video e testo sono
-     affiancati, non impilati) e nei toni chiari del box invece che rossi:
-     la sfumatura esce dal lato del testo che tocca il video e vi si stende
-     sopra. Anche qui parte dal colore pieno del box, non da una versione
-     gia' attenuata, per non lasciare uno scalino visibile al confine. */
-  @media (min-width: 861px) {
-    .programmi-band :global(.content-row__copy) {
-      position: relative;
-      /* Sulle righe pari il media ha order:2 (per finire dal lato giusto),
-         quindi dipinge dopo il testo e coprirebbe la sfumatura: stesso
-         bug gia' visto su mobile, stessa soluzione. */
-      z-index: 2;
-    }
-    .programmi-band :global(.content-row__copy)::before {
-      content: "";
-      position: absolute;
-      inset-block: 0;
-      width: min(7rem, 14%);
-      pointer-events: none;
-    }
-    .programmi-band :global(.content-row:nth-child(odd) .content-row__copy)::before {
-      right: 100%;
-      background: linear-gradient(
-        to left,
-        var(--bg-light-soft) 0%,
-        rgba(254, 237, 237, 0.5) 45%,
-        rgba(254, 237, 237, 0) 100%
-      );
-    }
-    .programmi-band :global(.content-row:nth-child(even) .content-row__copy)::before {
-      left: 100%;
-      background: linear-gradient(
-        to right,
-        var(--bg-light-soft) 0%,
-        rgba(254, 237, 237, 0.5) 45%,
-        rgba(254, 237, 237, 0) 100%
-      );
-    }
-  }
-
-  /* L'altezza della CTA qui la decide gia' la variante mergeCta di
-     FeatureShowcase (vedi il componente): niente da aggiungere per la home. */
+  /* La fascia "programmi" e la sua veste (nessun bordo, sfumature tra
+     media e testo, CTA come solo testo) vivono in ContentRow/ContentRows:
+     stesso risultato su tutte le pagine, senza CSS di pagina. */
 
   .stats {
     display: grid;

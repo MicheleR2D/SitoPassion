@@ -10,16 +10,12 @@
 //     <CtaSplit slot="cta" ... />      (opzionale)
 //   </FeatureShowcase>
 //
-// Lo slot "cta" ospita la fascia rossa di chiusura: su desktop resta una
-// fascia a se' sotto la sezione (come se fosse un fratello), su mobile si
-// infila tra l'elenco dei punti di forza e la gallery, cosi' testo + CTA
-// stanno in una schermata e le foto restano per ultime.
-//
-// `mergeCta` (solo desktop): invece di una fascia a tutta larghezza sotto,
-// il riquadro di testo della CTA prende il posto della sua immagine (che
-// viene nascosta) nella colonna destra, alla stessa altezza dell'elenco.
-// La gallery si allunga a coprire l'intera colonna sinistra (elenco + CTA)
-// e passa da 3x2 a 2x3, per restare proporzionata alla nuova altezza.
+// Lo slot "cta" ospita la fascia rossa di chiusura:
+// - su desktop il riquadro di testo della CTA sta nella colonna destra
+//   sotto l'elenco (la sua immagine e' nascosta), e la gallery si allunga
+//   a coprire tutta la colonna sinistra passando da 3x2 a 2x3;
+// - su mobile si infila tra l'elenco e la gallery, cosi' elenco + CTA
+//   coprono una schermata e le foto restano per ultime.
 interface ImageItem {
   src: string;
   alt?: string;
@@ -29,13 +25,12 @@ interface Props {
   title: string;
   images: ImageItem[];
   features: string[];
-  mergeCta?: boolean;
 }
 
-const { title, images, features, mergeCta = false } = Astro.props;
+const { title, images, features } = Astro.props;
 ---
 
-<section class:list={["showcase", { "showcase--merge-cta": mergeCta }]} data-reveal>
+<section class="showcase" data-reveal>
   <div class="showcase__gallery">
     {images.map((img) => (
       <div class="showcase__gallery-item">
@@ -64,33 +59,20 @@ const { title, images, features, mergeCta = false } = Astro.props;
 <style>
   .showcase {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    /* La prima riga (gallery + elenco) conserva l'altezza minima di prima;
-       la seconda, se c'e' la CTA slottata, si dimensiona sul contenuto. */
-    grid-template-rows: minmax(34rem, auto);
     grid-auto-rows: auto;
   }
-  /* La CTA slottata e' una fascia a se': occupa tutta la riga sotto le due
-     colonne, quindi da desktop non si distingue da un fratello della
-     sezione (com'era prima di diventare uno slot). */
   .showcase__cta {
     grid-column: 1 / -1;
   }
-  /* Nota: lo slot non impone altezza ne' bordi alla CTA su desktop, cosi'
-     ogni pagina mantiene l'aspetto che aveva prima (100vh di default dal
-     componente, oppure una fascia piu' bassa se la pagina lo richiede). */
 
-  /* --- Variante mergeCta (solo desktop: sotto gli 861px il layout torna
-     quello impilato del media query in fondo al file, che gia' resetta
-     grid-template-columns/rows per l'intera .showcase). --- */
+  /* --- Desktop: gallery a sinistra su due righe, elenco e CTA a destra --- */
   @media (min-width: 861px) {
-    /* Le due righe insieme (elenco + CTA) devono stare in una schermata:
-       molto meno dei 34rem di partenza (pensati per una sezione con la
-       sola gallery a tutta altezza sopra), ridotte anche nella riga CTA. */
-    .showcase--merge-cta {
+    /* Le due righe insieme (elenco + CTA) devono stare in una schermata. */
+    .showcase {
+      grid-template-columns: 1fr 1fr;
       grid-template-rows: minmax(22rem, auto) auto;
     }
-    .showcase--merge-cta .showcase__gallery {
+    .showcase .showcase__gallery {
       /* Copre entrambe le righe (elenco + CTA): la stessa colonna sinistra
          che prima si fermava alla prima riga. */
       grid-row: 1 / -1;
@@ -98,11 +80,11 @@ const { title, images, features, mergeCta = false } = Astro.props;
          altezza doppia della gallery. */
       grid-template-columns: repeat(2, 1fr);
     }
-    .showcase--merge-cta .showcase__features {
+    .showcase .showcase__features {
       grid-row: 1;
       padding-block: var(--space-md);
     }
-    .showcase--merge-cta .showcase__cta {
+    .showcase .showcase__cta {
       /* Non piu' una fascia a tutta larghezza: solo la colonna destra,
          seconda riga - dove prima c'era l'immagine della CTA. */
       grid-column: 2;
@@ -110,32 +92,38 @@ const { title, images, features, mergeCta = false } = Astro.props;
     }
     /* L'immagine della CTA sparisce (la gallery ne prende visivamente il
        posto): il riquadro di testo riempie da solo tutta la colonna. */
-    .showcase--merge-cta .showcase__cta :global(.cta-split) {
+    .showcase .showcase__cta :global(.cta-split) {
       grid-template-columns: 1fr;
       /* Il componente base ha height:100vh (fascia a schermo intero): va
          azzerato esplicitamente, non basta min-height a farlo restringere. */
       height: auto;
       min-height: 18rem;
     }
-    .showcase--merge-cta .showcase__cta :global(.cta-split__media) {
+    .showcase .showcase__cta :global(.cta-split__media) {
       display: none;
     }
-    .showcase--merge-cta .showcase__cta :global(.cta-split__copy) {
+    .showcase .showcase__cta :global(.cta-split__copy) {
       border-right: none;
       padding-block: var(--space-md);
     }
   }
 
   @media (max-width: 860px) {
-    /* Su mobile, invece, questa sezione deve coprire un'intera schermata
-       (non piu' stare compatta insieme ad altro): padding molto piu'
-       generosi sui due box, cosi' la coppia elenco+CTA si allunga a
-       occupare tutto lo spazio verticale disponibile. */
-    .showcase--merge-cta .showcase__features {
-      padding-block: 6rem;
+    /* Su mobile questa sezione deve coprire un'intera schermata. Non con
+       padding fissi (dipenderebbero da quanto testo ha la pagina: con 8
+       punti elenco invece di 4 si sforava di oltre 150px), ma spartendo
+       l'altezza dello schermo tra i due box: 55% + 45% = una schermata
+       esatta, e se una pagina ha molto testo cresce solo dello stretto
+       necessario. Il contenuto resta centrato in ciascun box. */
+    .showcase .showcase__features {
+      min-height: 55dvh;
+      padding-block: var(--space-lg);
     }
-    .showcase--merge-cta .showcase__cta :global(.cta-split__copy) {
-      padding-block: 7rem;
+    .showcase .showcase__cta :global(.cta-split) {
+      min-height: 45dvh;
+    }
+    .showcase .showcase__cta :global(.cta-split__copy) {
+      padding-block: var(--space-lg);
     }
   }
 
@@ -190,7 +178,10 @@ const { title, images, features, mergeCta = false } = Astro.props;
   .showcase .showcase__features ul {
     display: flex;
     flex-direction: column;
-    gap: var(--space-sm);
+    /* Compatto: la pagina piu' densa (Sala Pesi) ha 8 punti e con
+       gap:1.25rem la sezione sforava di ~50px su un portatile da 800px,
+       rompendo il vincolo "tutto in una schermata". */
+    gap: var(--space-xs);
     list-style: none;
     padding: 0;
     margin: 0;

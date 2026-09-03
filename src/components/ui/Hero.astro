@@ -5,15 +5,12 @@ interface Props {
   video?: string;
   videoEndBuffer?: number;
   eyebrow?: string;
-  // Variante "morbida": nessun bordo tra media e pannello, sfumatura rossa
-  // che esce dal pannello sul media, titolo bianco e paragrafo nero.
-  soft?: boolean;
 }
 
-const { title, image, video, videoEndBuffer = 3, eyebrow, soft = false } = Astro.props;
+const { title, image, video, videoEndBuffer = 3, eyebrow } = Astro.props;
 ---
 
-<div class:list={["hero", { "hero--soft": soft }]}>
+<div class="hero">
   {video && (
     <div class="hero-media">
       <video
@@ -82,7 +79,6 @@ const { title, image, video, videoEndBuffer = 3, eyebrow, soft = false } = Astro
   .hero:has(.hero-media, .hero-photo) .hero-inner {
     grid-column: 2;
     background: var(--accent);
-    border-left: 2px solid var(--color-black);
     /* .hero-inner e' anche .container (margin-inline:auto), quindi senza
        questo si restringe al contenuto e la fascia rossa non riempie la
        colonna: sulle pagine senza testo slottato lasciava scoperto il nero
@@ -93,11 +89,9 @@ const { title, image, video, videoEndBuffer = 3, eyebrow, soft = false } = Astro
   .hero:has(.hero-media, .hero-photo) .hero-eyebrow {
     color: var(--color-white);
   }
+  .hero:has(.hero-media, .hero-photo) h1,
   .hero:has(.hero-media, .hero-photo) .hero-extra {
     color: var(--color-white);
-  }
-  .hero:has(.hero-media, .hero-photo) h1 {
-    color: var(--color-black);
   }
 
   .hero-inner {
@@ -149,14 +143,12 @@ const { title, image, video, videoEndBuffer = 3, eyebrow, soft = false } = Astro
     object-fit: cover;
   }
 
-  /* --- Variante "soft": passaggio morbido tra media e pannello rosso ---
-     Al posto del bordo netto, una sfumatura che esce dal pannello e si
-     stende sul media. Il pannello resta pieno: sfuma solo la parte che
-     sborda sul video, cosi' il testo mantiene il suo contrasto. */
-  .hero--soft:has(.hero-media, .hero-photo) .hero-inner {
-    border-left: none;
-  }
-  .hero--soft:has(.hero-media, .hero-photo) .hero-inner::before {
+  /* --- Passaggio morbido tra media e pannello rosso ---
+     Nessun bordo netto: una sfumatura esce dal pannello e si stende sul
+     media. Il pannello resta pieno, sfuma solo la parte che sborda sul
+     video, cosi' il testo mantiene il suo contrasto. Parte dal rosso
+     pieno del pannello, altrimenti al confine si vedrebbe uno scalino. */
+  .hero:has(.hero-media, .hero-photo) .hero-inner::before {
     content: "";
     position: absolute;
     inset-block: 0;
@@ -165,12 +157,6 @@ const { title, image, video, videoEndBuffer = 3, eyebrow, soft = false } = Astro
     width: min(20rem, 30vw);
     background: linear-gradient(to left, var(--accent), var(--accent-transparent));
     pointer-events: none;
-  }
-  .hero--soft:has(.hero-media, .hero-photo) h1 {
-    color: var(--color-white);
-  }
-  .hero--soft:has(.hero-media, .hero-photo) .hero-extra {
-    color: var(--color-white);
   }
 
   .hero-media {
@@ -202,16 +188,11 @@ const { title, image, video, videoEndBuffer = 3, eyebrow, soft = false } = Astro
     .hero:has(.hero-media, .hero-photo) .hero-inner {
       grid-column: 1;
       align-items: flex-start;
-      border-left: none;
-      border-top: 2px solid var(--color-black);
       padding-top: var(--space-sm);
     }
-    /* Variante soft: qui il pannello sta sotto il media, quindi la
-       sfumatura sale invece di andare a sinistra. */
-    .hero--soft:has(.hero-media, .hero-photo) .hero-inner {
-      border-top: none;
-    }
-    .hero--soft:has(.hero-media, .hero-photo) .hero-inner::before {
+    /* Qui il pannello sta sotto il media, quindi la sfumatura sale invece
+       di andare a sinistra. */
+    .hero:has(.hero-media, .hero-photo) .hero-inner::before {
       /* inset-inline:0 azzera anche il right:100% del desktop: se lo si
          rimette a `auto` l'elemento resta senza larghezza (left:0 +
          right:auto + width:auto = 0px) e la sfumatura sparisce. */

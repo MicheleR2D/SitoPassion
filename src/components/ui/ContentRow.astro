@@ -58,10 +58,8 @@ const { title, image, video, alt = '' } = Astro.props;
   .content-row__media {
     position: relative;
     overflow: hidden;
-    /* Angoli squadrati (non arrotondati), bordo nero come i box della
-       sezione precedente (.highlights). L'altezza la riempie per intero
-       (align-items:stretch sulla riga, che ora ha height fissa). */
-    border: 2px solid var(--color-black);
+    /* Nessun bordo: il confine tra media e testo e' una sfumatura (vedi
+       .content-row__copy::before piu' sotto), non una linea netta. */
   }
   .content-row__media img {
     position: absolute;
@@ -100,6 +98,48 @@ const { title, image, video, alt = '' } = Astro.props;
     justify-content: center;
     gap: var(--space-sm);
     padding: var(--space-lg) clamp(1.5rem, 5vw, 4rem);
+    position: relative;
+    /* Sulle righe pari il media ha order:2 (per finire dal lato giusto) e
+       quindi dipinge dopo il testo: senza z-index coprirebbe la sfumatura
+       che sborda dal lato del testo. */
+    z-index: 2;
+  }
+  /* Passaggio morbido tra testo e media: una sfumatura nel colore del box
+     esce dal lato che tocca il media e vi si stende sopra. Parte dal
+     colore pieno del box, altrimenti al confine si vede uno scalino. */
+  .content-row__copy::before {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    width: min(7rem, 14%);
+    pointer-events: none;
+  }
+  .content-row:nth-child(odd) .content-row__copy::before {
+    right: 100%;
+    background: linear-gradient(
+      to left,
+      var(--bg-light-soft) 0%,
+      var(--bg-light-soft-half) 45%,
+      var(--bg-light-soft-transparent) 100%
+    );
+  }
+  .content-row:nth-child(even) .content-row__copy::before {
+    left: 100%;
+    background: linear-gradient(
+      to right,
+      var(--bg-light-soft) 0%,
+      var(--bg-light-soft-half) 45%,
+      var(--bg-light-soft-transparent) 100%
+    );
+  }
+  /* La CTA dentro il testo non deve leggersi come un box dentro un box:
+     nessuno sfondo, nessun bordo, solo scritta e freccia. */
+  .content-row__text :global(.button),
+  .content-row__text :global(.button:hover) {
+    background: transparent;
+    color: var(--text-on-light);
+    border-color: transparent;
+    padding-inline: 0;
   }
   .content-row__copy h2 {
     color: var(--color-red);
@@ -182,20 +222,42 @@ const { title, image, video, alt = '' } = Astro.props;
       /* Fascia a piena larghezza: l'ingresso laterale la farebbe sforare
          dal viewport (e la pagina scorrerebbe in orizzontale). Solo fade. */
       transform: none;
+      position: relative;
+      /* Il media e' il fratello successivo e dipinge sopra a chiunque non
+         abbia un proprio z-index: senza questo la sfumatura resta coperta. */
+      z-index: 2;
+    }
+    /* Qui media e testo sono impilati, quindi la sfumatura scende dal
+       titolo sul video invece di uscire di lato. */
+    .content-row__copy h2::after {
+      content: "";
+      position: absolute;
+      inset-inline: 0;
+      top: 100%;
+      height: min(5rem, 10vh);
+      background: linear-gradient(
+        to bottom,
+        var(--accent) 0%,
+        var(--accent-quarter) 45%,
+        var(--accent-transparent) 100%
+      );
+      pointer-events: none;
+    }
+    /* Su mobile il testo e' impilato sotto il media: la sfumatura
+       orizzontale del desktop non ha senso. */
+    .content-row__copy::before {
+      content: none;
     }
     .content-row__media,
     .content-row:nth-child(even) .content-row__media {
       order: 2;
       aspect-ratio: 4 / 3;
     }
-    /* Il bordo che su desktop puo' stare sul box intero qui vive sul
-       paragrafo, l'unica parte che resta un riquadro. Il lato alto non ha
-       bordo: tocca il media sopra (altrimenti doppia linea). */
+    /* Nessun bordo nemmeno qui: il passaggio col media sopra e' la
+       sfumatura che scende dal titolo. */
     .content-row__text,
     .content-row:nth-child(even) .content-row__text {
       order: 3;
-      border: 2px solid var(--color-black);
-      border-top: none;
       background: var(--bg-light-soft);
       padding: var(--space-md) clamp(1.25rem, 4vw, 2.5rem);
     }
