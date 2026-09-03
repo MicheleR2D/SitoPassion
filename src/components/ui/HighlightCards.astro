@@ -49,7 +49,11 @@ const { items } = Astro.props;
     /* Una colonna per card, qualunque sia il numero (3 o 4 nelle pagine di
        questo sito). Sotto i 1100px scende a 2 per non comprimere il testo. */
     grid-template-columns: repeat(var(--cols, 3), 1fr);
-    min-height: 34rem;
+    /* Mezza schermata: con i box a tutta altezza si scorreva troppo prima
+       di arrivare al contenuto della pagina. In dvh (non vh) per non
+       sforare quando la barra del browser mobile e' visibile. */
+    min-height: 50vh;
+    min-height: 50dvh;
     /* Separatori ottenuti con il gap sul fondo nero invece che con i bordi:
        restano corretti anche quando le card vanno a capo (tablet/mobile),
        dove un border-left finirebbe sul bordo sinistro della fascia. */
