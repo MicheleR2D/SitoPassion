@@ -352,15 +352,6 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
       border-left: none;
       border-top: 2px solid var(--color-black);
     }
-    /* Niente hover su touch: il paragrafo (che altrove si rivela solo al
-       passaggio del mouse) qui resta sempre visibile, gia' nel colore
-       bianco della versione "in hover" di desktop. */
-    .quicklinks__body {
-      opacity: 1;
-      max-height: none;
-      margin-block: var(--space-2xs);
-      color: var(--color-white);
-    }
   }
 
   /* Regole solo-desktop specifiche della home. Il comportamento mobile
