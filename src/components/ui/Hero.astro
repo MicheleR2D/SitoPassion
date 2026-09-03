@@ -212,9 +212,11 @@ const { title, image, video, videoEndBuffer = 3, eyebrow, soft = false } = Astro
       border-top: none;
     }
     .hero--soft:has(.hero-media, .hero-photo) .hero-inner::before {
+      /* inset-inline:0 azzera anche il right:100% del desktop: se lo si
+         rimette a `auto` l'elemento resta senza larghezza (left:0 +
+         right:auto + width:auto = 0px) e la sfumatura sparisce. */
       inset-block: auto;
       inset-inline: 0;
-      right: auto;
       bottom: 100%;
       width: auto;
       height: min(9rem, 18vh);
@@ -240,11 +242,13 @@ const { title, image, video, videoEndBuffer = 3, eyebrow, soft = false } = Astro
       flex-wrap: nowrap;
       gap: var(--space-3xs);
     }
+    /* Su mobile la hero mostra una sola CTA (vedi global.css), quindi non
+       serve piu' stringere font e padding per far stare due bottoni
+       affiancati: resta solo il riempimento della riga. Le dimensioni le
+       decidono global.css e, se serve, la pagina. */
     .hero:has(.hero-media, .hero-photo) :global(.hero-ctas) :global(.button) {
       flex: 1 1 auto;
       justify-content: center;
-      font-size: 0.62rem;
-      padding: 0.6rem 0.5rem;
       border-width: 2px;
     }
   }

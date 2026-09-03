@@ -227,18 +227,6 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     :global(.hero:has(.hero-media) .hero-title-group) {
       display: none;
     }
-    /* Un solo CTA, piu' grande: "Scopri i Corsi" e' secondario e sulla
-       larghezza di un telefono affiancare due bottoni li rende entrambi
-       troppo piccoli per essere il gesto principale della hero. */
-    .hero-ctas :global(a:last-child) {
-      display: none;
-    }
-    .hero-ctas :global(a:first-child) {
-      width: 100%;
-      justify-content: center;
-      font-size: 0.95rem;
-      padding: 1.15rem 2rem;
-    }
   }
 
   .quicklinks-section {
