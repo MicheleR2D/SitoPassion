@@ -5,6 +5,7 @@ import Section from '../components/ui/Section.astro';
 import Button from '../components/ui/Button.astro';
 import CtaSplit from '../components/ui/CtaSplit.astro';
 import FeatureShowcase from '../components/ui/FeatureShowcase.astro';
+import HighlightCards from '../components/ui/HighlightCards.astro';
 import ContentRows from '../components/ui/ContentRows.astro';
 import ContentRow from '../components/ui/ContentRow.astro';
 
@@ -18,7 +19,6 @@ const QUICKLINKS = [
     body: "Oltre 250 lezioni al mese tra Rebalance, Energy, Pilates e Reformer, distribuite su più sale e studi dedicati. Consulta gli orari aggiornati in tempo reale e organizza la tua settimana di allenamento in pochi secondi.",
     href: '/orari-corsi/',
     cta: 'Scopri il planning',
-    icon: 'calendar',
     image: '/images/uploads/2025/01/corso-di-step-min-1168x600-1.jpg',
   },
   {
@@ -26,7 +26,6 @@ const QUICKLINKS = [
     body: 'Dalla sala pesi in accesso libero ai pacchetti di Personal Training, fino alle formule Open pensate per chi si allena senza vincoli di orario. Scegli la soluzione più adatta al tuo obiettivo e al tuo budget.',
     href: ABBONAMENTI_URL,
     cta: 'Scopri gli abbonamenti',
-    icon: 'dumbbell',
     image: '/images/uploads/2024/10/Palestra-11920x.jpg',
   },
   {
@@ -34,12 +33,10 @@ const QUICKLINKS = [
     body: "Vieni a scoprire di persona sala pesi, corsi fitness e studi Reformer con un accesso gratuito e senza impegno. Il nostro staff ti guida nella scelta del percorso più adatto a te fin dal primo allenamento.",
     href: PROVA_URL,
     cta: 'Prova ora',
-    icon: 'heart-arm',
     image: '/images/uploads/2024/11/MRZ01857-scaled.jpeg',
   },
 ];
 
-const QUICKLINK_ICONS = {
   calendar:
     '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="8" width="30" height="34" rx="3"/><rect x="17" y="4" width="14" height="8" rx="2"/><line x1="15" y1="21" x2="33" y2="21"/><line x1="15" y1="28" x2="33" y2="28"/><line x1="15" y1="35" x2="25" y2="35"/></svg>',
   dumbbell:
@@ -88,8 +85,7 @@ const QUICKLINK_ICONS = {
     </div>
   </Section>
 
-  <div class="programmi-band">
-    <ContentRows>
+  <ContentRows>
       <ContentRow
         title="Sala Pesi"
         video="/videos/2024/11/Sala-Pesi_Passion-Fitness.mp4"
@@ -130,7 +126,6 @@ const QUICKLINK_ICONS = {
         <Button href="/pilates-reformer/" variant="white">Vai al Reformer</Button>
       </ContentRow>
     </ContentRows>
-  </div>
 
   <FeatureShowcase
     title="Perché scegliere noi?"
@@ -173,128 +168,6 @@ const QUICKLINK_ICONS = {
   @media (max-width: 860px) {
     :global(.hero:has(.hero-media) .hero-title-group) {
       display: none;
-    }
-  }
-
-  .quicklinks-section {
-    /* dvh come l'hero: con vh la fascia sfora oltre lo schermo reale
-       quando la barra degli indirizzi del browser mobile e' visibile. */
-    height: 50vh;
-    height: 50dvh;
-    border-top: 2px solid var(--color-black);
-  }
-  .quicklinks {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    height: 100%;
-  }
-  .quicklinks__card {
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .quicklinks__card:not(:first-child) {
-    border-left: 2px solid var(--color-black);
-  }
-  .quicklinks__bg {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
-  }
-  .quicklinks__overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-    transition: background-color 0.3s ease;
-  }
-  .quicklinks__card:hover .quicklinks__overlay {
-    background: var(--accent);
-  }
-  .quicklinks__content {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: var(--space-2xs);
-    padding: var(--space-lg) var(--space-md);
-    max-width: 26rem;
-  }
-  /* Il box e' meta' altezza di prima: niente piu' spazio per l'icona,
-     tolta del tutto invece di continuare a riservarle un posto vuoto. */
-  .quicklinks__icon {
-    display: none;
-  }
-  .quicklinks__content h3 {
-    color: var(--color-white);
-    font-size: clamp(1.8rem, 3vw, 2.4rem);
-  }
-  .quicklinks__body {
-    color: var(--text-on-dark-muted);
-    font-size: 0.95rem;
-    line-height: 1.5;
-    opacity: 0;
-    max-height: 0;
-    margin: 0;
-    overflow: hidden;
-    transition: opacity 0.25s ease, max-height 0.25s ease, margin-block 0.25s ease, color 0.25s ease;
-  }
-  .quicklinks__card:hover .quicklinks__body {
-    opacity: 1;
-    max-height: 12rem;
-    margin-block: var(--space-2xs);
-    color: var(--color-white);
-  }
-  /* Solo scritta, nessun box: sottolineato bianco con freccia, come gli
-     altri link testuali del sito ma senza il rosso (qui e' gia' su fondo
-     rosso in hover). */
-  .quicklinks__cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4em;
-    width: fit-content;
-    margin-top: var(--space-sm);
-    color: var(--color-white);
-    font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
-  }
-  .quicklinks__cta span {
-    transition: transform 0.15s ease;
-  }
-  .quicklinks__cta:hover span {
-    transform: translateX(3px);
-  }
-  .quicklinks__link {
-    display: inline-block;
-    font-size: 0.78rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: var(--color-red);
-  }
-  @media (max-width: 760px) {
-    .quicklinks-section {
-      height: auto;
-    }
-    .quicklinks {
-      grid-template-columns: 1fr;
-    }
-    .quicklinks__card {
-      /* Meta' di prima, come la versione desktop. */
-      min-height: 12rem;
-      border-left: none;
-    }
-    .quicklinks__card:not(:first-child) {
-      border-left: none;
-      border-top: 2px solid var(--color-black);
     }
   }
 
