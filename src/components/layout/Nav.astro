@@ -11,20 +11,30 @@ import { NAV_ITEMS } from '../../data/nav.ts';
           { "has-children": item.children, "site-nav__item--standalone": item.standalone },
         ]}
       >
-        <a href={item.href}>{item.label}</a>
-        {item.children && (
-          <ul class="site-nav__dropdown">
-            {item.children.map((child) => (
-              <li><a href={child.href}>{child.label}</a></li>
-            ))}
-          </ul>
-        )}
+        {/* .site-nav__card serve solo al menu mobile, dove e' il piano che
+            ruota: su desktop e' display:contents, quindi il layout della
+            barra e del dropdown resta esattamente quello di prima. */}
+        <div class="site-nav__card">
+          <a href={item.href}>{item.label}</a>
+          {item.children && (
+            <ul class="site-nav__dropdown">
+              {item.children.map((child) => (
+                <li><a href={child.href}>{child.label}</a></li>
+              ))}
+            </ul>
+          )}
+        </div>
       </li>
     ))}
   </ul>
 </nav>
 
 <style>
+  /* Su desktop il wrapper non esiste ai fini del layout: figli promossi. */
+  .site-nav__card {
+    display: contents;
+  }
+
   .site-nav > ul {
     display: flex;
     flex-wrap: wrap;
@@ -36,7 +46,7 @@ import { NAV_ITEMS } from '../../data/nav.ts';
   .site-nav__item {
     position: relative;
   }
-  .site-nav__item > a {
+  .site-nav__card > a {
     display: inline-block;
     padding-block: 0.4rem;
     font-size: 0.8rem;
@@ -46,10 +56,10 @@ import { NAV_ITEMS } from '../../data/nav.ts';
     color: var(--text-on-dark);
     border-bottom: 2px solid transparent;
   }
-  .site-nav__item > a:hover {
+  .site-nav__card > a:hover {
     border-color: var(--color-red);
   }
-  .site-nav__item.has-children > a::after {
+  .site-nav__item.has-children .site-nav__card > a::after {
     content: "";
     display: inline-block;
     margin-left: 0.4rem;
@@ -97,9 +107,10 @@ import { NAV_ITEMS } from '../../data/nav.ts';
   /* --- Menu mobile ---
      Non una lista di link ma una griglia 2x2 di riquadri rossi (Palestra,
      Discipline, Orari Corsi, Abbonamenti): bersagli grandi da toccare col
-     pollice, con i sotto-link elencati dentro il riquadro del rispettivo
-     gruppo. Le voci marcate `standalone` (Blog) restano fuori dalla
-     griglia, in una fascia nera a piena larghezza sotto. */
+     pollice. I riquadri con sotto-pagine mostrano solo il titolo e si
+     girano in hover, rivelando sul retro i nomi delle pagine. Le voci
+     marcate `standalone` (Blog) restano fuori dalla griglia, in una fascia
+     nera a piena larghezza sotto. */
   @media (max-width: 900px) {
     /* Il menu riempie la schermata: il pannello ha un'altezza definita
        (vedi Header) e qui la griglia la eredita, cosi' le due righe di
@@ -117,16 +128,38 @@ import { NAV_ITEMS } from '../../data/nav.ts';
       height: 100%;
       padding: 2px 0 0;
     }
+    /* Il riquadro e' il contenitore della prospettiva: il piano che ruota
+       e' .site-nav__card al suo interno. */
     .site-nav__item {
+      position: relative;
+      border: 2px solid var(--color-black);
+      background: var(--accent);
+      perspective: 60rem;
+    }
+    .site-nav__card {
+      display: block;
+      position: absolute;
+      inset: 0;
+      transform-style: preserve-3d;
+      transition: transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
+    }
+    /* Le due facce occupano lo stesso spazio, contenuto centrato; il retro
+       parte girato di 180deg, cosi' ruotando la card diventa fronte. */
+    .site-nav__card > a,
+    .site-nav__dropdown {
+      position: absolute;
+      inset: 0;
       display: flex;
       flex-direction: column;
+      align-items: center;
       justify-content: center;
-      background: var(--accent);
-      border: 2px solid var(--color-black);
-      padding: var(--space-md) var(--space-sm);
+      text-align: center;
+      gap: var(--space-2xs);
+      padding: var(--space-sm);
+      backface-visibility: hidden;
     }
-    .site-nav__item > a {
-      padding-block: 0;
+    .site-nav__card > a {
+      padding-block: var(--space-sm);
       font-family: var(--font-display);
       font-size: clamp(1.5rem, 7vw, 2.2rem);
       font-weight: 400;
@@ -135,41 +168,66 @@ import { NAV_ITEMS } from '../../data/nav.ts';
       color: var(--color-white);
       border-bottom: none;
     }
-    /* La freccetta del dropdown non serve: i figli sono già visibili. */
-    .site-nav__item.has-children > a::after {
+    /* La freccetta del dropdown non serve: il retro si rivela girando. */
+    .site-nav__item.has-children .site-nav__card > a::after {
       display: none;
     }
+    /* Retro: inversione dei colori del fronte (rosso su bianco), cosi' i
+       nomi in rosso richiesti restano leggibili. */
     .site-nav__dropdown {
-      position: static;
-      display: flex;
-      flex-direction: column;
       opacity: 1;
       visibility: visible;
-      transform: none;
-      background: transparent;
-      border: none;
       min-width: 0;
-      margin-top: var(--space-xs);
-      padding: 0;
+      margin: 0;
+      background: var(--color-white);
+      border: none;
+      transform: rotateY(180deg);
     }
     .site-nav__dropdown a {
-      padding: 0.28rem 0;
-      font-size: 0.95rem;
-      color: var(--color-white);
-      opacity: 0.85;
+      padding: 0.15rem 0;
+      font-family: var(--font-display);
+      text-transform: uppercase;
+      font-size: clamp(1.05rem, 4.4vw, 1.4rem);
+      line-height: 1.1;
+      color: var(--color-red);
     }
     .site-nav__dropdown a:hover {
       background: transparent;
       color: var(--color-black);
-      opacity: 1;
+    }
+    /* Il giro: hover col mouse, focus-within da tastiera/tap. */
+    .site-nav__item.has-children:hover .site-nav__card,
+    .site-nav__item.has-children:focus-within .site-nav__card {
+      transform: rotateY(180deg);
+    }
+    /* Il retro deve restare girato di 180deg anche in hover: la regola
+       desktop del dropdown (translateY(0), piu' specifica di una classe
+       sola) altrimenti vince e lo raddrizza, e con backface-visibility
+       nascosta il retro non si vedrebbe mai - si vedrebbe solo il rosso
+       del riquadro sotto. */
+    .site-nav__item.has-children:hover .site-nav__dropdown,
+    .site-nav__item.has-children:focus-within .site-nav__dropdown {
+      transform: rotateY(180deg);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .site-nav__card {
+        transition: none;
+      }
     }
     /* Fascia a se': fondo nero come il pannello, quindi il bordo nero
        sparirebbe. Bordo rosso per farla leggere come area toccabile. */
     .site-nav__item--standalone {
       grid-column: 1 / -1;
-      align-items: center;
       background: var(--color-black);
       border-color: var(--color-red);
+    }
+    /* La fascia Blog e' alta quanto il suo contenuto (riga `auto` della
+       griglia): con la faccia in position:absolute non avrebbe altezza, qui
+       torna nel flusso (non deve girarsi, non ha sotto-pagine). */
+    .site-nav__item--standalone .site-nav__card,
+    .site-nav__item--standalone .site-nav__card > a {
+      position: static;
+      inset: auto;
     }
   }
 </style>
