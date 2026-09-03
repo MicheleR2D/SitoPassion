@@ -96,37 +96,43 @@ const { items } = Astro.props;
   /* Selettore doppio di proposito: la regola sui <p> di PostBody e' un
      discendente (.post-body p) e batterebbe una singola classe qui. */
   .highlights__content .highlights__body {
-    color: var(--color-white);
+    color: var(--text-on-dark-muted);
     font-size: 0.95rem;
     line-height: 1.5;
     opacity: 0;
     max-height: 0;
     margin: 0;
     overflow: hidden;
-    transition: opacity 0.25s ease, max-height 0.25s ease, margin-block 0.25s ease;
+    transition: opacity 0.25s ease, max-height 0.25s ease, margin-block 0.25s ease,
+      color 0.25s ease;
   }
   .highlights__card:hover .highlights__body {
     opacity: 1;
     max-height: 14rem;
     margin-block: var(--space-2xs);
+    color: var(--color-white);
   }
+  /* Solo scritta, nessun box: sottolineato bianco con freccia. Un riquadro
+     bianco qui si leggerebbe come un box dentro il box della card. */
   .highlights__cta {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
     width: fit-content;
     margin-top: var(--space-sm);
-    padding: 0.85rem 1.5rem;
-    background: var(--color-white);
-    color: var(--text-on-light);
+    color: var(--color-white);
     font-size: 0.8rem;
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    border-radius: 8px;
-    transition: background-color 0.15s ease, color 0.15s ease;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
   }
-  .highlights__cta:hover {
-    background: var(--color-black);
-    color: var(--color-white);
+  .highlights__cta span {
+    transition: transform 0.15s ease;
+  }
+  .highlights__cta:hover span {
+    transform: translateX(3px);
   }
 
   /* Con 4 card lo spazio per colonna scende sotto i ~270px: passa a 2 per
