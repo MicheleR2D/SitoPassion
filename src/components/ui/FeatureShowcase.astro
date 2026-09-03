@@ -112,6 +112,9 @@ const { title, images, features, mergeCta = false } = Astro.props;
        posto): il riquadro di testo riempie da solo tutta la colonna. */
     .showcase--merge-cta .showcase__cta :global(.cta-split) {
       grid-template-columns: 1fr;
+      /* Il componente base ha height:100vh (fascia a schermo intero): va
+         azzerato esplicitamente, non basta min-height a farlo restringere. */
+      height: auto;
       min-height: 18rem;
     }
     .showcase--merge-cta .showcase__cta :global(.cta-split__media) {
