@@ -14,6 +14,12 @@
 // fascia a se' sotto la sezione (come se fosse un fratello), su mobile si
 // infila tra l'elenco dei punti di forza e la gallery, cosi' testo + CTA
 // stanno in una schermata e le foto restano per ultime.
+//
+// `mergeCta` (solo desktop): invece di una fascia a tutta larghezza sotto,
+// il riquadro di testo della CTA prende il posto della sua immagine (che
+// viene nascosta) nella colonna destra, alla stessa altezza dell'elenco.
+// La gallery si allunga a coprire l'intera colonna sinistra (elenco + CTA)
+// e passa da 3x2 a 2x3, per restare proporzionata alla nuova altezza.
 interface ImageItem {
   src: string;
   alt?: string;
@@ -23,12 +29,13 @@ interface Props {
   title: string;
   images: ImageItem[];
   features: string[];
+  mergeCta?: boolean;
 }
 
-const { title, images, features } = Astro.props;
+const { title, images, features, mergeCta = false } = Astro.props;
 ---
 
-<section class="showcase" data-reveal>
+<section class:list={["showcase", { "showcase--merge-cta": mergeCta }]} data-reveal>
   <div class="showcase__gallery">
     {images.map((img) => (
       <div class="showcase__gallery-item">
@@ -72,6 +79,43 @@ const { title, images, features } = Astro.props;
   /* Nota: lo slot non impone altezza ne' bordi alla CTA su desktop, cosi'
      ogni pagina mantiene l'aspetto che aveva prima (100vh di default dal
      componente, oppure una fascia piu' bassa se la pagina lo richiede). */
+
+  /* --- Variante mergeCta (solo desktop: sotto gli 861px il layout torna
+     quello impilato del media query in fondo al file, che gia' resetta
+     grid-template-columns/rows per l'intera .showcase). --- */
+  @media (min-width: 861px) {
+    .showcase--merge-cta {
+      grid-template-rows: minmax(34rem, auto) auto;
+    }
+    .showcase--merge-cta .showcase__gallery {
+      /* Copre entrambe le righe (elenco + CTA): la stessa colonna sinistra
+         che prima si fermava alla prima riga. */
+      grid-row: 1 / -1;
+      /* 2x3 invece di 3x2: colonne piu' larghe, proporzionate alla nuova
+         altezza doppia della gallery. */
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .showcase--merge-cta .showcase__features {
+      grid-row: 1;
+    }
+    .showcase--merge-cta .showcase__cta {
+      /* Non piu' una fascia a tutta larghezza: solo la colonna destra,
+         seconda riga - dove prima c'era l'immagine della CTA. */
+      grid-column: 2;
+      grid-row: 2;
+    }
+    /* L'immagine della CTA sparisce (la gallery ne prende visivamente il
+       posto): il riquadro di testo riempie da solo tutta la colonna. */
+    .showcase--merge-cta .showcase__cta :global(.cta-split) {
+      grid-template-columns: 1fr;
+    }
+    .showcase--merge-cta .showcase__cta :global(.cta-split__media) {
+      display: none;
+    }
+    .showcase--merge-cta .showcase__cta :global(.cta-split__copy) {
+      border-right: none;
+    }
+  }
 
   .showcase__gallery {
     display: grid;
