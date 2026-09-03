@@ -84,8 +84,11 @@ const { title, images, features, mergeCta = false } = Astro.props;
      quello impilato del media query in fondo al file, che gia' resetta
      grid-template-columns/rows per l'intera .showcase). --- */
   @media (min-width: 861px) {
+    /* Le due righe insieme (elenco + CTA) devono stare in una schermata:
+       molto meno dei 34rem di partenza (pensati per una sezione con la
+       sola gallery a tutta altezza sopra), ridotte anche nella riga CTA. */
     .showcase--merge-cta {
-      grid-template-rows: minmax(34rem, auto) auto;
+      grid-template-rows: minmax(22rem, auto) auto;
     }
     .showcase--merge-cta .showcase__gallery {
       /* Copre entrambe le righe (elenco + CTA): la stessa colonna sinistra
@@ -97,6 +100,7 @@ const { title, images, features, mergeCta = false } = Astro.props;
     }
     .showcase--merge-cta .showcase__features {
       grid-row: 1;
+      padding-block: var(--space-md);
     }
     .showcase--merge-cta .showcase__cta {
       /* Non piu' una fascia a tutta larghezza: solo la colonna destra,
@@ -108,12 +112,27 @@ const { title, images, features, mergeCta = false } = Astro.props;
        posto): il riquadro di testo riempie da solo tutta la colonna. */
     .showcase--merge-cta .showcase__cta :global(.cta-split) {
       grid-template-columns: 1fr;
+      min-height: 18rem;
     }
     .showcase--merge-cta .showcase__cta :global(.cta-split__media) {
       display: none;
     }
     .showcase--merge-cta .showcase__cta :global(.cta-split__copy) {
       border-right: none;
+      padding-block: var(--space-md);
+    }
+  }
+
+  @media (max-width: 860px) {
+    /* Su mobile, invece, questa sezione deve coprire un'intera schermata
+       (non piu' stare compatta insieme ad altro): padding molto piu'
+       generosi sui due box, cosi' la coppia elenco+CTA si allunga a
+       occupare tutto lo spazio verticale disponibile. */
+    .showcase--merge-cta .showcase__features {
+      padding-block: 6rem;
+    }
+    .showcase--merge-cta .showcase__cta :global(.cta-split__copy) {
+      padding-block: 7rem;
     }
   }
 

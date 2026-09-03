@@ -26,7 +26,7 @@ export const NAV_ITEMS: NavItem[] = [
     href: "/orari-corsi/",
     children: [
       { label: "Hyrox", href: "/hyrox/" },
-      { label: "Personal Training", href: "/i-love-my-trainer/" },
+      { label: "Personal Training", href: "/personal-training/" },
       { label: "Pilates Reformer", href: "/pilates-reformer/" },
     ],
   },

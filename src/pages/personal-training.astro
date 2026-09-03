@@ -2,7 +2,7 @@
 import { getEntry, render } from 'astro:content';
 import PageLayout from '../layouts/PageLayout.astro';
 
-const page = await getEntry('pages', 'i-love-my-trainer');
+const page = await getEntry('pages', 'personal-training');
 const { Content } = await render(page);
 ---
 

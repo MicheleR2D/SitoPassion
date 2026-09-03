@@ -136,13 +136,13 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
       </ContentRow>
 
       <ContentRow
-        title="I Love My Trainer"
+        title="Personal Training"
         video="/videos/2024/11/I-love-my-trainer-2.mp4"
         alt="Personal training Passion Fitness"
       >
-        <p>Con la formula <strong>I Love My Trainer</strong> acquisti lezioni individuali con uno dei nostri Personal Trainer, ricevendo in omaggio l'abbonamento in palestra.</p>
+        <p>Con il <strong>Personal Training</strong> acquisti lezioni individuali con uno dei nostri trainer, ricevendo in omaggio l'abbonamento in palestra.</p>
         <p>Un percorso su misura, a partire da <strong>65€/mese</strong>, pensato per chi vuole risultati concreti con la massima attenzione e personalizzazione.</p>
-        <Button href="/i-love-my-trainer/" variant="white">Vai al Personal Training</Button>
+        <Button href="/personal-training/" variant="white">Vai al Personal Training</Button>
       </ContentRow>
 
       <ContentRow
@@ -377,9 +377,14 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
   }
   @media (max-width: 860px) {
     /* Stesso discorso del desktop: nessun bordo nero sul riquadro di testo
-       sotto al video (nel componente base ce l'ha, qui no). */
+       sotto al video (nel componente base ce l'ha, qui no). !important
+       perche' sulle righe pari il componente base ha una regola piu'
+       specifica (.content-row:nth-child(even) .content-row__text) che
+       altrimenti vince: e' la stessa causa del bug gia' visto sull'order
+       del media, qui si manifestava come una riga nera visibile sopra il
+       titolo della riga successiva (Corsi Fitness -> Personal Training). */
     .programmi-band :global(.content-row__text) {
-      border: none;
+      border: none !important;
     }
     /* Stessa idea della hero "soft": invece di un confine netto, una
        sfumatura rossa che esce dal titolo e si stende sul video sotto.
@@ -387,6 +392,10 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
        corta (meta' dell'altezza usata nella hero). */
     .programmi-band.programmi-band :global(.content-row__copy h2) {
       position: relative;
+      /* Il video (fratello successivo nella griglia) dipinge sopra a
+         chiunque non abbia un proprio z-index: senza questo, la sfumatura
+         qui sotto resta sempre coperta e invisibile. */
+      z-index: 2;
     }
     .programmi-band.programmi-band :global(.content-row__copy h2)::after {
       content: "";
