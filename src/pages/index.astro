@@ -65,25 +65,7 @@ const QUICKLINK_ICONS = {
     </div>
   </Hero>
 
-  <section class="quicklinks-section">
-    <div class="quicklinks">
-      {QUICKLINKS.map((item) => (
-        <article class="quicklinks__card">
-          <div class="quicklinks__bg" style={`background-image: url(${item.image})`}></div>
-          <div class="quicklinks__overlay"></div>
-          <div class="quicklinks__content">
-            <div class="quicklinks__icon" set:html={QUICKLINK_ICONS[item.icon]} />
-            <h3>{item.title}</h3>
-            <p class="quicklinks__body">{item.body}</p>
-            <a class="quicklinks__cta" href={item.href}>
-              {item.cta}
-              <span aria-hidden="true">→</span>
-            </a>
-          </div>
-        </article>
-      ))}
-    </div>
-  </section>
+  <HighlightCards items={QUICKLINKS} />
 
   <Section tone="dark">
     <div class="stats">

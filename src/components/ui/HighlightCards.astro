@@ -152,20 +152,12 @@ const { items } = Astro.props;
       grid-template-columns: 1fr;
       min-height: 0;
     }
+    /* Meta' altezza anche qui: tre card impilate a 22rem erano tre
+       schermate di scorrimento prima del resto della pagina. */
     .highlights__card {
-      min-height: 22rem;
+      min-height: 12rem;
     }
-    /* Su mobile non c'e' hover: icona e testo sempre visibili. */
-    .highlights__icon {
-      opacity: 1;
-      max-height: 4rem;
-      margin-bottom: var(--space-2xs);
-    }
-    /* Stessa specificita' della regola base sopra, altrimenti non la scavalca. */
-    .highlights__content .highlights__body {
-      opacity: 1;
-      max-height: none;
-      margin-block: var(--space-2xs);
-    }
+    /* Nota: il paragrafo resta rivelato solo in hover anche su mobile,
+       come su desktop (nessun override qui). */
   }
 </style>
