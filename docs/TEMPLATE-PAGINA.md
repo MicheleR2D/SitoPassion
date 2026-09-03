@@ -67,14 +67,16 @@ Import: `import X from '../../../components/ui/X.astro';`
   { title: 'Sempre aperti',
     body: 'Testo rivelato in hover.',
     image: '/images/...jpg',
-    icon: 'clock',                  // vedi icons.ts
     href: '/orari-corsi/',
     cta: 'Scopri gli orari' },
 ]} />
 ```
-- `icon`, `href`, `cta` sono opzionali (senza `href`+`cta` la card non è cliccabile).
+- `href`+`cta` sono opzionali (senza, la card non ha il link in fondo).
 - Le colonne si adattano al numero di card (3 o 4). Non toccare il CSS.
-- Titolo sempre visibile; icona e paragrafo compaiono in hover; su mobile sempre visibili.
+- Titolo sempre visibile; paragrafo e CTA compaiono in hover, anche su mobile.
+- Altezza `50dvh`: mezza schermata, non una intera.
+- Niente icone: il set `icons.ts` è stato rimosso quando il design è passato
+  a card più basse, dove l'icona non entrava più.
 
 ### ContentRows / ContentRow — righe alternate immagine/testo
 ```jsx
@@ -156,11 +158,6 @@ Import: `import X from '../../../components/ui/X.astro';`
 ```
 - `<details>` nativo, nessuno script. Le risposte accettano HTML inline.
 
-### icons.ts — icone disponibili
-`clock` `area` `dumbbell` `calendar` `heart-arm` `trainer` `group` `trophy`
-`sparkle` `shield` `reformer` `running`
-Per aggiungerne: una voce in `src/components/ui/icons.ts`, stesso `viewBox` e attributi.
-
 ---
 
 ## 4. Design — valori esatti
@@ -205,6 +202,29 @@ il bordo schermo. Le immagini a contatto tra righe non hanno raggio.
 
 ---
 
+## 4-ter. Il "passaggio morbido" (desktop e mobile)
+
+Nessun blocco confina con un altro tramite una **linea nera**: il confine è
+sempre una **sfumatura** che esce dal blocco colorato e si stende su quello
+adiacente. Vale per hero (pannello rosso → media), righe `ContentRow`
+(testo → media) e fascia titolo su mobile.
+
+Due regole da rispettare quando si aggiunge una sfumatura:
+
+1. **Parte dal colore pieno del blocco da cui esce.** Se parte da una
+   versione già attenuata (es. rosso al 55%) si vede uno scalino esattamente
+   sul confine — l'effetto "bordo squadrato" che si voleva evitare. La
+   leggerezza si ottiene con la curva (stop intermedio che scende in fretta),
+   non tagliando l'opacità di partenza.
+2. **Serve `z-index` sul blocco da cui esce.** Media e testo sono item della
+   stessa griglia: senza `z-index` vince l'ordine di pittura (`order`) e il
+   media copre la sfumatura, che sembra non esserci.
+   Token pronti: `--accent-transparent`, `--accent-quarter`,
+   `--bg-light-soft-half`, `--bg-light-soft-transparent` — mai `transparent`
+   generico, che alcuni browser interpolano passando dal nero (banda grigia).
+
+---
+
 ## 4-bis. Mobile (≤860px) — comportamento dei componenti
 
 Il mobile **non si scrive nelle pagine**: ogni componente porta con sé il
@@ -213,10 +233,11 @@ ottimizzata. Cosa cambia sotto gli 860px:
 
 | Componente | Comportamento mobile |
 |---|---|
-| `Hero` | altezza `100dvh` (non `vh`: con la barra del browser visibile sforerebbe); delle `heroCtas` resta **solo la prima**, a tutta larghezza e più grande |
-| `ContentRow` | ordine **titolo → media → paragrafo**. Il titolo diventa una fascia rossa a piena larghezza (testo bianco) sopra al media; il paragrafo resta un riquadro bordato sotto |
-| `FeatureShowcase` | ordine **elenco → CTA slottata → gallery**; gallery a 2 colonne con celle `2/1`, spaziature compatte |
-| `CtaSplit` | immagine nascosta, altezza sul contenuto, padding compatto |
+| `Hero` | altezza `100dvh` (non `vh`: con la barra del browser visibile sforerebbe); delle `heroCtas` resta **solo la prima**, a tutta larghezza e più grande; la sfumatura del pannello sale sul media invece di uscire di lato |
+| `HighlightCards` | una card per riga, `min-height: 12rem`; paragrafo e CTA restano rivelati **solo in hover**, come su desktop |
+| `ContentRow` | ordine **titolo → media → paragrafo**. Il titolo diventa una fascia rossa a piena larghezza (testo bianco) sopra al media, con la sfumatura che scende sul media; il paragrafo sta sotto, senza bordi |
+| `FeatureShowcase` | ordine **elenco → CTA slottata → gallery**; gallery a 2 colonne con celle `2/1`. Elenco e CTA si spartiscono l'altezza dello schermo (**55dvh + 45dvh**), così la coppia copre una schermata esatta a prescindere da quanto testo ha la pagina |
+| `CtaSplit` | immagine nascosta, altezza sul contenuto |
 | `RelatedCard` | card orizzontale compatta: miniatura quadrata + barra col titolo |
 | `RelatedSection` | una card per riga, altezza sul contenuto |
 
