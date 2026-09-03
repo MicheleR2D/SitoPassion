@@ -369,17 +369,10 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
   .programmi-band {
     background: var(--bg-light-soft);
   }
-  /* Il lato testo forma un blocco uguale e opposto a quello del video: il
-     lato attaccato al video perde il proprio bordo (il video ha gia' il
-     suo su quel confine), altrimenti si legge una linea doppia. */
-  .programmi-band :global(.content-row__copy) {
-    border: 2px solid var(--color-black);
-  }
-  .programmi-band :global(.content-row:nth-child(odd) .content-row__copy) {
-    border-left: none;
-  }
-  .programmi-band :global(.content-row:nth-child(even) .content-row__copy) {
-    border-right: none;
+  /* Niente bordi neri in questa sezione (ne' sul video ne' sul testo): il
+     passaggio tra le due meta' e' morbido, non un confine netto. */
+  .programmi-band :global(.content-row__media) {
+    border: none;
   }
   /* Il pulsante non deve leggersi come un box dentro il box del testo:
      nessuno sfondo, nessun bordo, solo scritta e freccia. */
@@ -390,9 +383,29 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     border-color: transparent;
     padding-inline: 0;
   }
-  /* Su mobile .content-row__copy diventa display:contents (vedi
-     ContentRow): senza box non ha bordi da mostrare, quindi le regole qui
-     sopra si disattivano da sole. */
+  @media (max-width: 860px) {
+    /* Stesso discorso del desktop: nessun bordo nero sul riquadro di testo
+       sotto al video (nel componente base ce l'ha, qui no). */
+    .programmi-band :global(.content-row__text) {
+      border: none;
+    }
+    /* Stessa idea della hero "soft": invece di un confine netto, una
+       sfumatura rossa che esce dal titolo e si stende sul video sotto.
+       Qui piu' leggera (rosso a meta' opacita' invece che pieno) e piu'
+       corta (meta' dell'altezza usata nella hero). */
+    .programmi-band.programmi-band :global(.content-row__copy h2) {
+      position: relative;
+    }
+    .programmi-band.programmi-band :global(.content-row__copy h2)::after {
+      content: "";
+      position: absolute;
+      inset-inline: 0;
+      top: 100%;
+      height: min(4rem, 8vh);
+      background: linear-gradient(to bottom, rgba(227, 3, 45, 0.55), var(--accent-transparent));
+      pointer-events: none;
+    }
+  }
 
   /* Solo qui la fascia rossa di chiusura e' alta come una riga video+testo
      invece di una schermata intera, e ha un bordo tra le due meta'. Le
