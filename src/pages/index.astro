@@ -186,16 +186,18 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     />
   </FeatureShowcase>
 
-  <RelatedSection title="Leggi il nostro Blog">
-    {latestPosts.map((post) => (
-      <RelatedCard
-        title={post.data.title}
-        href={`/${post.data.slug}/`}
-        image={post.data.coverImage}
-        alt={post.data.title}
-      />
-    ))}
-  </RelatedSection>
+  <div class="blog-home">
+    <RelatedSection title="Leggi il nostro Blog">
+      {latestPosts.map((post) => (
+        <RelatedCard
+          title={post.data.title}
+          href={`/${post.data.slug}/`}
+          image={post.data.coverImage}
+          alt={post.data.title}
+        />
+      ))}
+    </RelatedSection>
+  </div>
 </BaseLayout>
 
 <style>
@@ -408,20 +410,15 @@ const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
     }
   }
 
-  /* Solo qui la fascia rossa di chiusura e' alta come una riga video+testo
-     invece di una schermata intera, e ha un bordo tra le due meta'. Le
-     altre pagine tengono il 100vh di default del componente. Limitato al
-     desktop: su mobile la fascia si dimensiona sul testo (vedi CtaSplit). */
+  /* L'altezza della CTA qui la decide gia' la variante mergeCta di
+     FeatureShowcase (vedi il componente): niente da aggiungere per la home. */
+
+  /* Box del blog piu' piccoli, solo qui: altrove (RelatedSection e'
+     condivisa da "potrebbe interessarti anche" su tutte le pagine) restano
+     al default. */
   @media (min-width: 861px) {
-    /* Tre classi: la regola `height:100vh` del componente CtaSplit ne ha
-       due (classe + attributo di scope) e a parita' vincerebbe in base al
-       solo ordine di caricamento dei file CSS. */
-    :global(.showcase .showcase__cta .cta-split) {
-      height: auto;
-      min-height: 30rem;
-    }
-    :global(.showcase .showcase__cta .cta-split__copy) {
-      border-right: 2px solid var(--color-black);
+    .blog-home :global(.related-section__grid) {
+      min-height: 16rem;
     }
   }
 
