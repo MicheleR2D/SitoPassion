@@ -42,6 +42,14 @@ const { title, open = false } = Astro.props;
     /* Aria tra i blocchi, come le fasce prezzi. */
     margin-block: var(--space-sm);
   }
+  /* Due fascie consecutive (es. Accessi e Pacchetti + Personal Training) si
+     toccano: sono voci dello stesso elenco, non due sezioni distinte. */
+  .collapsible + .collapsible {
+    margin-top: 0;
+  }
+  .collapsible:has(+ .collapsible) {
+    margin-bottom: 0;
+  }
   /* Angoli squadrati e fascia a tutta larghezza: chiusa si legge come le
      altre bande nere del sito (fascia Blog del menu, barra dei giorni). */
   .collapsible__bar {

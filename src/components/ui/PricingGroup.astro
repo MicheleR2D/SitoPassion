@@ -222,7 +222,7 @@ const {
   }
   .pricing__suffix {
     font-size: 0.82rem;
-    color: var(--text-on-light-muted);
+    color: var(--text-on-light);
     transition: color 0.2s ease;
   }
   /* In hover la cella e' rossa: rosso su rosso sparirebbe. */
@@ -234,9 +234,9 @@ const {
 
   .pricing__cta {
     margin-top: var(--space-sm);
-    background: var(--color-black);
+    background: var(--accent);
     color: var(--color-white);
-    border: 2px solid var(--color-black);
+    border: 2px solid var(--accent);
     padding: 0.8rem 1.3rem;
     font-family: var(--font-body);
     font-size: 0.78rem;
@@ -252,71 +252,62 @@ const {
     border-color: var(--color-white);
   }
   .pricing__cta:hover {
-    background: var(--color-red);
+    background: var(--color-black);
     color: var(--color-white);
-    border-color: var(--color-white);
+    border-color: var(--color-black);
   }
 
   @media (max-width: 860px) {
     .pricing {
       padding-block: var(--space-sm);
     }
-    /* La 2x2 resta anche su mobile: due celle da ~45vw restano leggibili e
-       tengono il blocco compatto invece di allungarlo su quattro righe. */
     .pricing__grid {
+      /* Una cella per riga: gli abbonamenti si leggono uno sotto l'altro. */
+      grid-template-columns: 1fr;
       /* 18px e non 20: il rientro della griglia e' cell-pad + 2 di bordo e
          non deve superare il padding del container (20px sui telefoni),
          altrimenti la pagina scorre in orizzontale. */
       --cell-pad: 1.125rem;
     }
     .pricing__head {
-      /* La cella nera prende la riga intera: titolo, elenco e condizioni non
-         starebbero in mezza larghezza di telefono. */
-      grid-column: 1 / -1;
       padding: var(--space-sm) var(--cell-pad);
     }
     .pricing__plan {
-      padding: var(--space-sm) var(--space-2xs);
+      /* Box piu' alti: a piena larghezza il contenuto e' poco e senza
+         un'altezza minima le celle si schiacciano su tre righe di testo. */
+      min-height: 13rem;
+      padding: var(--space-md) var(--cell-pad);
     }
-    /* Qui la cella nera prende tutta la riga, quindi il totale e' dispari
-       quando i piani sono dispari: si sposta la regola di conseguenza. */
+    /* In colonna singola non ci sono buchi da riempire. */
     .pricing__plan:last-child:nth-child(odd) {
       grid-column: auto;
     }
-    .pricing__plan:last-child:nth-child(even) {
-      grid-column: 1 / -1;
-    }
     .pricing__duration {
-      font-size: 1.1rem;
+      font-size: 1.3rem;
     }
     .pricing__price {
-      font-size: 2.3rem;
+      font-size: 2.8rem;
     }
     .pricing__cta {
       width: 100%;
-      margin-top: var(--space-2xs);
-      padding-inline: var(--space-2xs);
-      font-size: 0.72rem;
-      letter-spacing: 0.04em;
+      max-width: 22rem;
     }
     /* L'hover su touch resta agganciato al dito: la cella rossa rimarrebbe
        rossa dopo il tap. Il feedback lo da' :active. */
     .pricing__plan:hover {
       background: var(--bg-light-soft);
     }
-    .pricing__plan:hover .pricing__duration {
+    .pricing__plan:hover .pricing__duration,
+    .pricing__plan:hover .pricing__suffix {
       color: var(--text-on-light);
     }
     .pricing__plan:hover .pricing__price {
       color: var(--color-red);
     }
-    .pricing__plan:hover .pricing__suffix {
-      color: var(--text-on-light-muted);
-    }
     .pricing__plan:hover .pricing__cta {
-      background: var(--color-black);
+      background: var(--accent);
       color: var(--color-white);
-      border-color: var(--color-black);
+      border-color: var(--accent);
     }
     .pricing__plan:active {
       background: var(--accent);
