@@ -126,41 +126,58 @@ Scegli se iscriverti con abbonamenti **annuali** o **mensili**, oppure prenota e
 
 ## Altri servizi
 
-### Prenota, paga, allenati
+Non vuoi un abbonamento? Scegli di pagare solo quello che usi: singolo accesso o pacchetti di sedute Personal Training.
 
-Scegli di prenotare e pagare una lezione alla volta. Per accedere dovrai acquistare il **Badge di Accesso al costo di 5€**: non è richiesta la quota di attivazione.
-
-| Prodotto | Prezzo |
-| --- | --- |
-| [Sala Pesi](https://passion.perfectgym.com/ClientPortal2/Registration/Start?clubID=1&productId=23) | 15€ |
-| [Corso Fitness](https://passion.perfectgym.com/ClientPortal2/Registration/Start?clubID=1&productId=18) | 15€ |
-| [Reformer (5 accessi)](https://passion.perfectgym.com/ClientPortal2/Registration/Start?clubID=1&productId=145) | 99€ |
+<PricingGroup
+  title="Prenota, paga, allenati"
+  subtitle="Prenota e paga una lezione alla volta"
+  priceSuffix=""
+  buttonLabel="Acquista"
+  plans={[
+    { duration: 'Sala Pesi', price: '15', href: 'https://passion.perfectgym.com/ClientPortal2/Registration/Start?clubID=1&productId=23' },
+    { duration: 'Corso Fitness', price: '15', href: 'https://passion.perfectgym.com/ClientPortal2/Registration/Start?clubID=1&productId=18' },
+    { duration: 'Reformer (5 accessi)', price: '99', href: 'https://passion.perfectgym.com/ClientPortal2/Registration/Start?clubID=1&productId=145' },
+  ]}
+  note="Per accedere dovrai acquistare il Badge di Accesso al costo di 5€: non è richiesta la quota di attivazione."
+/>
 
 ### Personal Training
 
-Pacchetti da **10 sedute**, utilizzabili entro 365 giorni dalla data di acquisto.
+<PricingGroup
+  title="10 sedute"
+  subtitle="Utilizzabili entro 365 giorni dalla data di acquisto"
+  priceSuffix=""
+  buttonLabel="Acquista"
+  plans={[
+    { duration: "60'", price: '500', href: 'https://passion.perfectgym.com/ClientPortal2/Registration/Start?clubID=1&productId=95' },
+    { duration: "40'", price: '400', href: 'https://passion.perfectgym.com/ClientPortal2/Registration/Start?clubID=1&productId=98' },
+    { duration: "30'", price: '300', href: 'https://passion.perfectgym.com/ClientPortal2/Registration/Start?clubID=1&productId=95' },
+  ]}
+/>
 
-| Durata seduta | Prezzo |
-| --- | --- |
-| [60'](https://passion.perfectgym.com/ClientPortal2/Registration/Start?clubID=1&productId=95) | 500€ |
-| [40'](https://passion.perfectgym.com/ClientPortal2/Registration/Start?clubID=1&productId=98) | 400€ |
-| [30'](https://passion.perfectgym.com/ClientPortal2/Registration/Start?clubID=1&productId=95) | 300€ |
+<PricingGroup
+  title="5 sedute"
+  subtitle="Utilizzabili entro 180 giorni dalla data di acquisto"
+  priceSuffix=""
+  buttonLabel="Acquista"
+  plans={[
+    { duration: "60'", price: '250', href: 'https://passion.perfectgym.com/ClientPortal2/Registration/Start?clubID=1&productId=100' },
+    { duration: "40'", price: '200', href: 'https://passion.perfectgym.com/ClientPortal2/Registration/Start?clubID=1&productId=97' },
+    { duration: "30'", price: '150', href: 'https://passion.perfectgym.com/ClientPortal2/Registration/Start?clubID=1&productId=94' },
+  ]}
+/>
 
-Pacchetti da **5 sedute**, utilizzabili entro 180 giorni dalla data di acquisto.
-
-| Durata seduta | Prezzo |
-| --- | --- |
-| [60'](https://passion.perfectgym.com/ClientPortal2/Registration/Start?clubID=1&productId=100) | 250€ |
-| [40'](https://passion.perfectgym.com/ClientPortal2/Registration/Start?clubID=1&productId=97) | 200€ |
-| [30'](https://passion.perfectgym.com/ClientPortal2/Registration/Start?clubID=1&productId=94) | 150€ |
-
-**Seduta singola**, utilizzabile entro 30 giorni dalla data di acquisto.
-
-| Durata seduta | Prezzo |
-| --- | --- |
-| [60'](https://passion.perfectgym.com/ClientPortal2/Registration/Start?clubID=1&productId=99) | 60€ |
-| [40'](https://passion.perfectgym.com/ClientPortal2/Registration/Start?clubID=1&productId=96) | 50€ |
-| [30'](https://passion.perfectgym.com/ClientPortal2/Registration/Start?clubID=1&productId=93) | 40€ |
+<PricingGroup
+  title="Seduta singola"
+  subtitle="Utilizzabile entro 30 giorni dalla data di acquisto"
+  priceSuffix=""
+  buttonLabel="Acquista"
+  plans={[
+    { duration: "60'", price: '60', href: 'https://passion.perfectgym.com/ClientPortal2/Registration/Start?clubID=1&productId=99' },
+    { duration: "40'", price: '50', href: 'https://passion.perfectgym.com/ClientPortal2/Registration/Start?clubID=1&productId=96' },
+    { duration: "30'", price: '40', href: 'https://passion.perfectgym.com/ClientPortal2/Registration/Start?clubID=1&productId=93' },
+  ]}
+/>
 
 ## Domande frequenti
 

@@ -4,15 +4,21 @@
 // affiancate con prezzo e CTA, condizioni comuni in fondo. Non e' full-bleed:
 // resta nella colonna di lettura, come una tabella.
 //
+// Stesso componente anche per prodotti a prezzo secco (accesso singolo,
+// pacchetti Personal Training): `duration` diventa l'etichetta del prodotto
+// e `priceSuffix=""` toglie il "al mese" (di default per gli abbonamenti).
+//
 //   <PricingGroup
 //     title="Open"
 //     subtitle="Reformer, Sala Pesi, Corsi Fitness"
-//     features={['Accesso senza limiti orari', ...]}
+//     features={['Accesso senza limiti orari', ...]}   (opzionale)
 //     plans={[
 //       { duration: '12 mesi', price: '87', href: '...' },
 //       { duration: '4 mesi', price: '97', href: '...' },
 //       { duration: 'Flex', price: '119', href: '...' },
 //     ]}
+//     priceSuffix="al mese"                              (opzionale, default "al mese")
+//     buttonLabel="Iscriviti Ora"                         (opzionale)
 //     note="Quota di attivazione una tantum 60€. Sospensioni mensili illimitate a 15€ al mese solare."
 //   />
 import Button from './Button.astro';
@@ -26,30 +32,45 @@ interface Plan {
 interface Props {
   title: string;
   subtitle?: string;
-  features: string[];
+  features?: string[];
   plans: Plan[];
+  priceSuffix?: string;
+  buttonLabel?: string;
   note?: string;
 }
 
-const { title, subtitle, features, plans, note } = Astro.props;
+const {
+  title,
+  subtitle,
+  features = [],
+  plans,
+  priceSuffix = 'al mese',
+  buttonLabel = 'Iscriviti Ora',
+  note,
+} = Astro.props;
 ---
 
 <div class="pricing-group">
   <div class="pricing-group__head">
     <h3>{title}</h3>
     {subtitle && <p class="pricing-group__subtitle">{subtitle}</p>}
-    <ul class="pricing-group__features">
-      {features.map((feature) => (
-        <li>{feature}</li>
-      ))}
-    </ul>
+    {features.length > 0 && (
+      <ul class="pricing-group__features">
+        {features.map((feature) => (
+          <li>{feature}</li>
+        ))}
+      </ul>
+    )}
   </div>
   <div class="pricing-group__plans" style={`--plan-count: ${plans.length}`}>
     {plans.map((plan) => (
       <div class="pricing-group__plan">
         <span class="pricing-group__duration">{plan.duration}</span>
-        <span class="pricing-group__price"><strong>{plan.price}€</strong> al mese</span>
-        <Button href={plan.href} variant="dark-red" arrow={false}>Iscriviti Ora</Button>
+        <span class="pricing-group__price">
+          <strong>{plan.price}€</strong>
+          {priceSuffix && ` ${priceSuffix}`}
+        </span>
+        <Button href={plan.href} variant="dark-red" arrow={false}>{buttonLabel}</Button>
       </div>
     ))}
   </div>
