@@ -21,9 +21,13 @@ const { title, open = false } = Astro.props;
 
 <details class="collapsible" open={open}>
   <summary class="collapsible__bar">
-    <span class="collapsible__title">{title}</span>
-    <span class="collapsible__icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    {/* .container: il titolo si incolonna con quelli delle altre sezioni e
+        con le celle dei blocchi prezzi, che stanno nel container. */}
+    <span class="container collapsible__bar-inner">
+      <span class="collapsible__title">{title}</span>
+      <span class="collapsible__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </span>
     </span>
   </summary>
   <div class="collapsible__body">
@@ -35,18 +39,23 @@ const { title, open = false } = Astro.props;
   .collapsible {
     border-block: 2px solid var(--color-black);
     background: var(--color-black);
+    /* Aria tra i blocchi, come le fasce prezzi. */
+    margin-block: var(--space-sm);
   }
   /* Angoli squadrati e fascia a tutta larghezza: chiusa si legge come le
      altre bande nere del sito (fascia Blog del menu, barra dei giorni). */
   .collapsible__bar {
+    display: block;
+    padding-block: var(--space-sm);
+    background: var(--color-black);
+    cursor: pointer;
+    list-style: none;
+  }
+  .collapsible__bar-inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: var(--space-sm);
-    padding: var(--space-sm) clamp(1.5rem, 4vw, 3rem);
-    background: var(--color-black);
-    cursor: pointer;
-    list-style: none;
   }
   .collapsible__bar::-webkit-details-marker {
     display: none;

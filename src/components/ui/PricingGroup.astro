@@ -1,11 +1,12 @@
 ---
-// Fascia prezzi a piena larghezza: pannello nero con il nome del gruppo e le
-// attività comprese, poi una cella per ogni durata/prodotto con prezzo e CTA,
-// condizioni comuni nella striscia in fondo.
+// Blocco prezzi di una categoria: griglia 2x2 dentro il container del sito.
+// Prima cella nera col nome della categoria, le attività comprese e le
+// condizioni; le altre tre celle sono le durate (o i prodotti) con prezzo e
+// CTA.
 //
-// Stessa impaginazione delle altre fasce del sito (HighlightCards,
-// ScheduleSection): full-bleed, angoli squadrati, separatori dati dal gap di
-// 2px sul fondo nero, cella che diventa rossa in hover.
+// La griglia sta nel container (non full-bleed) perche' titoli e paragrafi
+// delle sezioni sono allineati li': una fascia edge-to-edge partirebbe piu' a
+// sinistra e romperebbe l'incolonnamento della pagina.
 //
 // Serve sia per gli abbonamenti sia per i prodotti a prezzo secco (accesso
 // singolo, pacchetti Personal Training): `duration` diventa l'etichetta del
@@ -18,10 +19,11 @@
 //     plans={[
 //       { duration: '12 mesi', price: '87', href: '...' },
 //       { duration: '4 mesi', price: '97', href: '...' },
+//       { duration: 'Flex', price: '119', href: '...' },
 //     ]}
 //     priceSuffix="al mese"                            (opzionale, default "al mese")
 //     buttonLabel="Iscriviti Ora"                      (opzionale)
-//     note="Quota di attivazione una tantum 60€."      (opzionale)
+//     note="Quota di attivazione una tantum 60€. ..."  (opzionale, va nella cella nera)
 //   />
 interface Plan {
   duration: string;
@@ -50,59 +52,74 @@ const {
 } = Astro.props;
 ---
 
-<section class="pricing" style={`--plan-count: ${plans.length}`}>
-  <div class="pricing__head">
-    <h3 class="pricing__title">{title}</h3>
-    {subtitle && <p class="pricing__subtitle">{subtitle}</p>}
-    {features.length > 0 && (
-      <>
-        <p class="eyebrow pricing__label">Attività comprese</p>
-        <ul class="pricing__features">
-          {features.map((feature) => (
-            <li>
-              <span class="pricing__mark" aria-hidden="true">✓</span>
-              <span>{feature}</span>
-            </li>
-          ))}
-        </ul>
-      </>
-    )}
-  </div>
+<section class="pricing">
+  <div class="container">
+    <div class="pricing__grid">
+      <div class="pricing__head">
+        <h3 class="pricing__title">{title}</h3>
+        {subtitle && <p class="pricing__subtitle">{subtitle}</p>}
+        {features.length > 0 && (
+          <>
+            <p class="eyebrow pricing__label">Attività comprese</p>
+            <ul class="pricing__features">
+              {features.map((feature) => (
+                <li>
+                  <span class="pricing__mark" aria-hidden="true">✓</span>
+                  <span>{feature}</span>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+        {note && <p class="pricing__note">{note}</p>}
+      </div>
 
-  {plans.map((plan) => (
-    <div class="pricing__plan">
-      <span class="pricing__duration">{plan.duration}</span>
-      <span class="pricing__amount">
-        <span class="pricing__price">{plan.price}<span class="pricing__currency">€</span></span>
-        {priceSuffix && <span class="pricing__suffix">{priceSuffix}</span>}
-      </span>
-      <a class="pricing__cta" href={plan.href}>{buttonLabel}</a>
+      {plans.map((plan) => (
+        <div class="pricing__plan">
+          <span class="pricing__duration">{plan.duration}</span>
+          <span class="pricing__amount">
+            <span class="pricing__price">{plan.price}<span class="pricing__currency">€</span></span>
+            {priceSuffix && <span class="pricing__suffix">{priceSuffix}</span>}
+          </span>
+          <a class="pricing__cta" href={plan.href}>{buttonLabel}</a>
+        </div>
+      ))}
     </div>
-  ))}
-
-  {note && <p class="pricing__note">{note}</p>}
+  </div>
 </section>
 
 <style>
+  /* Aria attorno al blocco: le categorie si susseguono e senza respiro la
+     pagina diventa un muro di riquadri. */
   .pricing {
+    padding-block: var(--space-md);
+  }
+  .pricing__grid {
     display: grid;
-    /* Pannello nero piu' largo delle celle prezzo: contiene titolo ed elenco. */
-    grid-template-columns: minmax(0, 1.3fr) repeat(var(--plan-count, 3), minmax(0, 1fr));
-    /* Separatori col gap sul fondo nero, come nelle altre fasce del sito:
-       restano corretti anche quando le celle vanno a capo. */
+    /* 2x2: cella nera + tre durate. */
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    /* Separatori dati dal gap sul fondo nero, come nelle altre fasce. */
     gap: 2px;
     background: var(--color-black);
-    border-block: 2px solid var(--color-black);
+    border: 2px solid var(--color-black);
+    /* Padding interno delle celle. La griglia esce dal container esattamente
+       di questo valore (margin-inline negativo): cosi' il TESTO delle celle
+       cade sulla colonna del container, dove stanno titoli e paragrafi delle
+       sezioni. Con un container piu' strettodel padding la griglia arriva al
+       massimo a filo schermo, senza mai sfondare. */
+    --cell-pad: var(--space-md);
+    /* +2px: anche il bordo della griglia sta fuori dal container, altrimenti
+       il testo delle celle resterebbe indietro di 2px. */
+    margin-inline: calc(-1 * (var(--cell-pad) + 2px));
   }
 
   .pricing__head {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     gap: var(--space-2xs);
     background: var(--color-black);
     color: var(--color-white);
-    padding: var(--space-md) clamp(1.5rem, 4vw, 3rem);
+    padding: var(--space-md) var(--cell-pad);
   }
   .pricing .pricing__title {
     color: var(--color-red);
@@ -117,8 +134,8 @@ const {
     margin-top: var(--space-2xs);
     color: var(--color-red);
   }
-  /* Elenco in colonna, non in linea: nel pannello c'e' altezza in abbondanza
-     e le voci non si spezzano piu' a meta' riga. */
+  /* Elenco in colonna: nella cella c'e' altezza in abbondanza e le voci non
+     si spezzano piu' a meta' riga. */
   .pricing__features {
     list-style: none;
     margin: 0;
@@ -147,6 +164,16 @@ const {
     color: var(--color-red);
     font-weight: 700;
   }
+  /* Condizioni in fondo alla cella: margin-top:auto le tiene incollate al
+     bordo inferiore anche quando la cella si allunga per pareggiare la riga. */
+  .pricing .pricing__note {
+    margin: 0;
+    margin-top: auto;
+    padding-top: var(--space-sm);
+    color: var(--text-on-dark-muted);
+    font-size: 0.78rem;
+    line-height: 1.55;
+  }
 
   .pricing__plan {
     display: flex;
@@ -159,13 +186,19 @@ const {
     padding: var(--space-md) var(--space-sm);
     transition: background-color 0.2s ease;
   }
+  /* Numero dispari di celle: l'ultima si allarga sulla riga, altrimenti resta
+     un buco nero nella griglia. Qui la cella nera occupa una colonna, quindi
+     il totale e' dispari quando i piani sono pari. */
+  .pricing__plan:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
   .pricing__plan:hover {
     background: var(--accent);
   }
   .pricing__duration {
     font-family: var(--font-display);
     text-transform: uppercase;
-    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    font-size: clamp(1.05rem, 1.6vw, 1.3rem);
     line-height: 1.1;
     color: var(--text-on-light);
     transition: color 0.2s ease;
@@ -174,7 +207,6 @@ const {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0;
   }
   .pricing__price {
     font-family: var(--font-display);
@@ -225,33 +257,47 @@ const {
     border-color: var(--color-white);
   }
 
-  /* Striscia delle condizioni: chiude la fascia sul nero del pannello. */
-  .pricing .pricing__note {
-    grid-column: 1 / -1;
-    background: var(--color-black);
-    color: var(--text-on-dark-muted);
-    padding: var(--space-sm) clamp(1.5rem, 4vw, 3rem);
-    font-size: 0.78rem;
-    line-height: 1.6;
-    margin: 0;
-  }
-
   @media (max-width: 860px) {
     .pricing {
-      grid-template-columns: 1fr;
+      padding-block: var(--space-sm);
+    }
+    /* La 2x2 resta anche su mobile: due celle da ~45vw restano leggibili e
+       tengono il blocco compatto invece di allungarlo su quattro righe. */
+    .pricing__grid {
+      /* 18px e non 20: il rientro della griglia e' cell-pad + 2 di bordo e
+         non deve superare il padding del container (20px sui telefoni),
+         altrimenti la pagina scorre in orizzontale. */
+      --cell-pad: 1.125rem;
     }
     .pricing__head {
-      padding: var(--space-sm) clamp(1.25rem, 4vw, 2.5rem);
+      /* La cella nera prende la riga intera: titolo, elenco e condizioni non
+         starebbero in mezza larghezza di telefono. */
+      grid-column: 1 / -1;
+      padding: var(--space-sm) var(--cell-pad);
     }
-    /* Da colonna a riga: durata a sinistra, prezzo a destra, CTA a piena
-       larghezza sotto (bersaglio comodo per il pollice). */
     .pricing__plan {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      align-items: center;
-      text-align: left;
-      gap: var(--space-2xs) var(--space-sm);
-      padding: var(--space-sm) clamp(1.25rem, 4vw, 2.5rem);
+      padding: var(--space-sm) var(--space-2xs);
+    }
+    /* Qui la cella nera prende tutta la riga, quindi il totale e' dispari
+       quando i piani sono dispari: si sposta la regola di conseguenza. */
+    .pricing__plan:last-child:nth-child(odd) {
+      grid-column: auto;
+    }
+    .pricing__plan:last-child:nth-child(even) {
+      grid-column: 1 / -1;
+    }
+    .pricing__duration {
+      font-size: 1.1rem;
+    }
+    .pricing__price {
+      font-size: 2.3rem;
+    }
+    .pricing__cta {
+      width: 100%;
+      margin-top: var(--space-2xs);
+      padding-inline: var(--space-2xs);
+      font-size: 0.72rem;
+      letter-spacing: 0.04em;
     }
     /* L'hover su touch resta agganciato al dito: la cella rossa rimarrebbe
        rossa dopo il tap. Il feedback lo da' :active. */
@@ -272,18 +318,13 @@ const {
       color: var(--color-white);
       border-color: var(--color-black);
     }
-    .pricing__duration {
-      font-size: 1.3rem;
+    .pricing__plan:active {
+      background: var(--accent);
     }
-    .pricing__amount {
-      align-items: flex-end;
-    }
-    .pricing__price {
-      font-size: 2.4rem;
-    }
-    .pricing__cta {
-      grid-column: 1 / -1;
-      margin-top: var(--space-2xs);
+    .pricing__plan:active .pricing__duration,
+    .pricing__plan:active .pricing__price,
+    .pricing__plan:active .pricing__suffix {
+      color: var(--color-white);
     }
   }
 </style>
