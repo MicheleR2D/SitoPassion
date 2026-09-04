@@ -4,7 +4,7 @@
 //
 //   <FeatureShowcase
 //     title="Perché scegliere la Sala Pesi di Passion"
-//     images={[{ src: '/images/...', alt: '...' }, ...]}   (6 immagini)
+//     images={[{ src: '/images/...', alt: '...' }, ...]}   (6 immagini, opzionale)
 //     features={['Aperti tutti i giorni dalle 5:00 alle 24:00', ...]}
 //   >
 //     <CtaSplit slot="cta" ... />      (opzionale)
@@ -16,6 +16,10 @@
 //   a coprire tutta la colonna sinistra passando da 3x2 a 2x3;
 // - su mobile si infila tra l'elenco e la gallery, cosi' elenco + CTA
 //   coprono una schermata e le foto restano per ultime.
+//
+// Senza `images` (pagina Orari Corsi: niente foto, la sezione le ha gia'
+// avute prima nei planning) la gallery non c'e': su desktop elenco e CTA
+// stanno affiancati sulla stessa riga invece che impilati in colonna.
 interface ImageItem {
   src: string;
   alt?: string;
@@ -23,7 +27,7 @@ interface ImageItem {
 
 interface Props {
   title: string;
-  images: ImageItem[];
+  images?: ImageItem[];
   features: string[];
 }
 
@@ -31,13 +35,15 @@ const { title, images, features } = Astro.props;
 ---
 
 <section class="showcase" data-reveal>
-  <div class="showcase__gallery">
-    {images.map((img) => (
-      <div class="showcase__gallery-item">
-        <img src={img.src} alt={img.alt ?? ''} loading="lazy" />
-      </div>
-    ))}
-  </div>
+  {images && images.length > 0 && (
+    <div class="showcase__gallery">
+      {images.map((img) => (
+        <div class="showcase__gallery-item">
+          <img src={img.src} alt={img.alt ?? ''} loading="lazy" />
+        </div>
+      ))}
+    </div>
+  )}
   <div class="showcase__features">
     <h2>{title}</h2>
     <ul>
@@ -105,6 +111,23 @@ const { title, images, features } = Astro.props;
     .showcase .showcase__cta :global(.cta-split__copy) {
       border-right: none;
       padding-block: var(--space-md);
+    }
+
+    /* Senza gallery: niente colonna sinistra da riempire, elenco e CTA
+       stanno affiancati sulla stessa riga invece che impilati. */
+    .showcase:not(:has(.showcase__gallery)) {
+      grid-template-rows: auto;
+    }
+    .showcase:not(:has(.showcase__gallery)) .showcase__features {
+      grid-column: 1;
+      grid-row: 1;
+    }
+    .showcase:not(:has(.showcase__gallery)) .showcase__cta {
+      grid-column: 2;
+      grid-row: 1;
+    }
+    .showcase:not(:has(.showcase__gallery)) .showcase__cta :global(.cta-split) {
+      min-height: 100%;
     }
   }
 

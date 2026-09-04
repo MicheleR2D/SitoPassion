@@ -11,7 +11,7 @@
 //
 //   <ScheduleSection
 //     title="Corsi Energy"
-//     text="Paragrafo introduttivo (opzionale)"
+//     text="Paragrafo introduttivo (opzionale). Accetta <strong> per il grassetto rosso."
 //     tone="blush"                                   (opzionale)
 //     days={[
 //       { label: 'Lunedì', slots: [{ time: 'H. 07:00', name: 'Hyrox' }, ...] },
@@ -47,7 +47,7 @@ const { title, text, days, tone = 'plain' } = Astro.props;
 >
   <div class="container">
     <h2 class="schedule__title">{title}</h2>
-    {text && <p class="schedule__intro">{text}</p>}
+    {text && <p class="schedule__intro" set:html={text} />}
 
     {/* Solo mobile: selettore del giorno. */}
     <div class="schedule__tabs">
@@ -136,9 +136,13 @@ const { title, text, days, tone = 'plain' } = Astro.props;
   .schedule__intro {
     max-width: 46rem;
     margin-top: var(--space-xs);
-    color: var(--text-on-light-muted);
+    color: var(--text-on-light);
     font-size: 1.05rem;
     line-height: 1.65;
+  }
+  .schedule__intro :global(strong) {
+    color: var(--color-red);
+    font-weight: 700;
   }
 
   /* Ingresso allo scroll: titolo, testo e planning salgono insieme. */
@@ -242,6 +246,23 @@ const { title, text, days, tone = 'plain' } = Astro.props;
 
   /* --- Mobile: un giorno per volta --- */
   @media (max-width: 860px) {
+    .schedule {
+      /* Leggermente piu' compatto tra una categoria e l'altra. */
+      padding-block: 2.5rem;
+      /* Contiene lo scorrimento laterale di titolo/box qui sotto: senza
+         questo, l'elemento traslato sforerebbe dal proprio riquadro e
+         allargherebbe il layout viewport, con la pagina che scorre in
+         orizzontale (bug gia' visto altrove sul sito). */
+      overflow: hidden;
+    }
+    /* Fascia rossa col titolo bianco, come i titoli di ContentRow su mobile. */
+    .schedule__title {
+      background: var(--accent);
+      color: var(--color-white);
+      padding: var(--space-sm) var(--space-md);
+      margin-inline: calc(-1 * clamp(1.25rem, 4vw, 2.5rem));
+    }
+
     .schedule__tabs {
       display: flex;
       margin-top: var(--space-md);
@@ -285,7 +306,7 @@ const { title, text, days, tone = 'plain' } = Astro.props;
       display: none;
       gap: 0;
       border-inline: 2px solid var(--color-black);
-      background: var(--color-white);
+      background: var(--color-black);
     }
     .schedule__day.is-active {
       display: flex;
@@ -296,35 +317,44 @@ const { title, text, days, tone = 'plain' } = Astro.props;
       display: none;
     }
     /* Da riquadro a riga: ora a sinistra su colonna fissa, nome del corso
-       accanto, cosi' gli orari restano incolonnati e leggibili di fila. */
+       accanto, cosi' gli orari restano incolonnati e leggibili di fila.
+       Box nero, corso rosso, orario bianco: l'hover (che su touch resta
+       agganciato al dito) e' disattivato, il tocco usa :active. */
     .schedule__slot {
       flex-direction: row;
       align-items: center;
       gap: var(--space-sm);
-      background: var(--color-white);
-      color: var(--text-on-light);
-      border-bottom: 1px solid var(--border-on-light);
+      background: var(--color-black);
+      color: var(--color-white);
+      border-bottom: 1px solid var(--border-on-dark);
       padding: 0.9rem var(--space-sm);
     }
     .schedule__slot:last-child {
       border-bottom: none;
     }
-    /* Nessuno "stacco" al tocco: su mobile l'hover resta agganciato al dito
-       e la riga rimarrebbe rossa dopo il tap. */
     .schedule__slot:hover {
-      background: var(--color-white);
+      background: var(--color-black);
       transform: none;
     }
     .schedule__slot-time {
       flex-shrink: 0;
       width: 4.75rem;
       font-size: 0.95rem;
+      color: var(--color-white);
     }
     .schedule__slot:hover .schedule__slot-time {
-      color: var(--color-red);
+      color: var(--color-white);
     }
     .schedule__slot-name {
       font-size: 1.15rem;
+      color: var(--color-red);
+    }
+    /* "Attivi" (il tocco) restano rossi, come l'hover desktop. */
+    .schedule__slot:active {
+      background: var(--accent);
+    }
+    .schedule__slot:active .schedule__slot-name {
+      color: var(--color-white);
     }
 
     .schedule__nav {
@@ -357,6 +387,26 @@ const { title, text, days, tone = 'plain' } = Astro.props;
       font-size: 1.25rem;
       line-height: 1;
       color: var(--color-white);
+    }
+
+    /* Ingresso laterale: il titolo scorre da sinistra, il planning (tab +
+       box + barra dei giorni) da destra. L'overflow:hidden qui sopra su
+       .schedule contiene lo sbordamento durante l'animazione. */
+    @media (prefers-reduced-motion: no-preference) {
+      .schedule__title {
+        transform: translateX(-3.5rem);
+      }
+      .schedule__tabs,
+      .schedule__grid,
+      .schedule__nav {
+        transform: translateX(3.5rem);
+      }
+      .schedule.is-visible .schedule__title,
+      .schedule.is-visible .schedule__tabs,
+      .schedule.is-visible .schedule__grid,
+      .schedule.is-visible .schedule__nav {
+        transform: none;
+      }
     }
   }
 </style>
