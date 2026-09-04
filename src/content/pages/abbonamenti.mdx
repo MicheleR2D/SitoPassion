@@ -19,6 +19,7 @@ draft: false
 import HighlightCards from '../../components/ui/HighlightCards.astro';
 import PricingGroup from '../../components/ui/PricingGroup.astro';
 import Collapsible from '../../components/ui/Collapsible.astro';
+import SectionIntro from '../../components/ui/SectionIntro.astro';
 import FaqAccordion from '../../components/ui/FaqAccordion.astro';
 import CtaSplit from '../../components/ui/CtaSplit.astro';
 import RelatedSection from '../../components/ui/RelatedSection.astro';
@@ -57,9 +58,10 @@ import RelatedCard from '../../components/ui/RelatedCard.astro';
   ]}
 />
 
-## Abbonamenti e lezioni
-
-Scegli se iscriverti con abbonamenti **annuali** o **mensili**, oppure prenota e paga la **singola lezione o il singolo accesso**. Per tutti i nostri abbonamenti è prevista la possibilità di **sospensione**.
+<SectionIntro
+  title="Abbonamenti e lezioni"
+  text="Scegli se iscriverti con abbonamenti <strong>annuali</strong> o <strong>mensili</strong>, oppure prenota e paga la <strong>singola lezione o il singolo accesso</strong>. Per tutti i nostri abbonamenti è prevista la possibilità di <strong>sospensione</strong>."
+/>
 
 <PricingGroup
   title="Open"
@@ -127,9 +129,10 @@ Scegli se iscriverti con abbonamenti **annuali** o **mensili**, oppure prenota e
   />
 </Collapsible>
 
-## Altri servizi
-
-Non vuoi un abbonamento? Paghi solo quello che usi: singolo accesso oppure pacchetti di sedute con un Personal Trainer.
+<SectionIntro
+  title="Altri servizi"
+  text="Non vuoi un abbonamento? Paghi solo quello che usi: <strong>singolo accesso</strong> oppure <strong>pacchetti di sedute</strong> con un Personal Trainer."
+/>
 
 <Collapsible title="Accessi e pacchetti">
   <PricingGroup
@@ -182,7 +185,7 @@ Non vuoi un abbonamento? Paghi solo quello che usi: singolo accesso oppure pacch
   />
 </Collapsible>
 
-## Domande frequenti
+<SectionIntro title="Domande frequenti" />
 
 <FaqAccordion
   items={[

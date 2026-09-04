@@ -1,0 +1,48 @@
+---
+// Testata di sezione: titolo (e paragrafo opzionale) allineati al container
+// del sito, come fa ScheduleSection. Serve nelle pagine che alternano fasce
+// full-bleed e testo: un <h2> scritto direttamente nel .mdx finirebbe nella
+// colonna di lettura (piu' stretta) e resterebbe rientrato rispetto alle
+// fasce, rompendo l'allineamento verticale della pagina.
+//
+//   <SectionIntro
+//     title="Abbonamenti e lezioni"
+//     text="Paragrafo introduttivo. Accetta <strong> per il grassetto rosso."
+//   />
+interface Props {
+  title: string;
+  text?: string;
+}
+
+const { title, text } = Astro.props;
+---
+
+<section class="section-intro">
+  <div class="container">
+    <h2 class="section-intro__title">{title}</h2>
+    {text && <p class="section-intro__text" set:html={text} />}
+  </div>
+</section>
+
+<style>
+  .section-intro {
+    padding-block: var(--space-lg) var(--space-md);
+  }
+  .section-intro__text {
+    max-width: 46rem;
+    margin-top: var(--space-xs);
+    color: var(--text-on-light);
+    font-size: 1.05rem;
+    line-height: 1.65;
+  }
+  .section-intro__text :global(strong) {
+    color: var(--color-red);
+    font-weight: 700;
+  }
+
+  @media (max-width: 860px) {
+    .section-intro {
+      padding-block: var(--space-md) var(--space-sm);
+    }
+  }
+</style>

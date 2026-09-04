@@ -51,6 +51,10 @@
   .post-body > :global(.related-section),
   .post-body > :global(.showcase),
   .post-body > :global(.schedule),
+  .post-body > :global(.pricing),
+  .post-body > :global(.collapsible),
+  .post-body > :global(.section-intro),
+  .post-body > :global(.faq),
   .post-body > :global(p:has(img + img)),
   .post-body > :global(p:has(video)),
   .post-body > :global(.full-bleed) {
@@ -69,6 +73,8 @@
   .post-body > :global(.related-section):last-child,
   .post-body > :global(.showcase):last-child,
   .post-body > :global(.schedule):last-child,
+  .post-body > :global(.pricing):last-child,
+  .post-body > :global(.collapsible):last-child,
   .post-body > :global(.full-bleed):last-child {
     margin-bottom: calc(-1 * var(--space-xl));
   }
@@ -112,14 +118,17 @@
     color: var(--color-red);
   }
 
-  /* --- Paragrafi --- */
+  /* --- Paragrafi ---
+     Testo nero e grassetto rosso, come nei paragrafi dei componenti
+     (ContentRow, ScheduleSection): il grassetto e' un accento di marca, non
+     solo un peso tipografico. */
   .post-body > :global(p) {
-    color: var(--text-on-light-muted);
+    color: var(--text-on-light);
     line-height: 1.75;
     font-size: 1.05rem;
   }
   .post-body > :global(p) :global(strong) {
-    color: var(--text-on-light);
+    color: var(--color-red);
   }
 
   /* --- Liste ---

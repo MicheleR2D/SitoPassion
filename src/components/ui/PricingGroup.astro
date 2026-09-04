@@ -1,12 +1,15 @@
 ---
-// Card prezzi per un gruppo di abbonamento (es. "Open", "Sala Pesi"): testata
-// nera con attività comprese, poi le durate disponibili (12 mesi/4 mesi/flex)
-// affiancate con prezzo e CTA, condizioni comuni in fondo. Non e' full-bleed:
-// resta nella colonna di lettura, come una tabella.
+// Fascia prezzi a piena larghezza: pannello nero con il nome del gruppo e le
+// attività comprese, poi una cella per ogni durata/prodotto con prezzo e CTA,
+// condizioni comuni nella striscia in fondo.
 //
-// Stesso componente anche per prodotti a prezzo secco (accesso singolo,
-// pacchetti Personal Training): `duration` diventa l'etichetta del prodotto
-// e `priceSuffix=""` toglie il "al mese" (di default per gli abbonamenti).
+// Stessa impaginazione delle altre fasce del sito (HighlightCards,
+// ScheduleSection): full-bleed, angoli squadrati, separatori dati dal gap di
+// 2px sul fondo nero, cella che diventa rossa in hover.
+//
+// Serve sia per gli abbonamenti sia per i prodotti a prezzo secco (accesso
+// singolo, pacchetti Personal Training): `duration` diventa l'etichetta del
+// prodotto e `priceSuffix=""` toglie il "al mese".
 //
 //   <PricingGroup
 //     title="Open"
@@ -15,14 +18,11 @@
 //     plans={[
 //       { duration: '12 mesi', price: '87', href: '...' },
 //       { duration: '4 mesi', price: '97', href: '...' },
-//       { duration: 'Flex', price: '119', href: '...' },
 //     ]}
-//     priceSuffix="al mese"                              (opzionale, default "al mese")
-//     buttonLabel="Iscriviti Ora"                         (opzionale)
-//     note="Quota di attivazione una tantum 60€. Sospensioni mensili illimitate a 15€ al mese solare."
+//     priceSuffix="al mese"                            (opzionale, default "al mese")
+//     buttonLabel="Iscriviti Ora"                      (opzionale)
+//     note="Quota di attivazione una tantum 60€."      (opzionale)
 //   />
-import Button from './Button.astro';
-
 interface Plan {
   duration: string;
   price: string;
@@ -50,127 +50,240 @@ const {
 } = Astro.props;
 ---
 
-<div class="pricing-group">
-  <div class="pricing-group__head">
-    <h3>{title}</h3>
-    {subtitle && <p class="pricing-group__subtitle">{subtitle}</p>}
+<section class="pricing" style={`--plan-count: ${plans.length}`}>
+  <div class="pricing__head">
+    <h3 class="pricing__title">{title}</h3>
+    {subtitle && <p class="pricing__subtitle">{subtitle}</p>}
     {features.length > 0 && (
       <>
-        <p class="eyebrow pricing-group__label">Attività comprese</p>
-        <ul class="pricing-group__features">
+        <p class="eyebrow pricing__label">Attività comprese</p>
+        <ul class="pricing__features">
           {features.map((feature) => (
-            <li>{feature}</li>
+            <li>
+              <span class="pricing__mark" aria-hidden="true">✓</span>
+              <span>{feature}</span>
+            </li>
           ))}
         </ul>
       </>
     )}
   </div>
-  <div class="pricing-group__plans" style={`--plan-count: ${plans.length}`}>
-    {plans.map((plan) => (
-      <div class="pricing-group__plan">
-        <span class="pricing-group__duration">{plan.duration}</span>
-        <span class="pricing-group__price">
-          <strong>{plan.price}€</strong>
-          {priceSuffix && ` ${priceSuffix}`}
-        </span>
-        <Button href={plan.href} variant="dark-red" arrow={false}>{buttonLabel}</Button>
-      </div>
-    ))}
-  </div>
-  {note && <p class="pricing-group__note">{note}</p>}
-</div>
+
+  {plans.map((plan) => (
+    <div class="pricing__plan">
+      <span class="pricing__duration">{plan.duration}</span>
+      <span class="pricing__amount">
+        <span class="pricing__price">{plan.price}<span class="pricing__currency">€</span></span>
+        {priceSuffix && <span class="pricing__suffix">{priceSuffix}</span>}
+      </span>
+      <a class="pricing__cta" href={plan.href}>{buttonLabel}</a>
+    </div>
+  ))}
+
+  {note && <p class="pricing__note">{note}</p>}
+</section>
 
 <style>
-  .pricing-group {
-    border: 2px solid var(--color-black);
-    border-radius: 12px;
-    overflow: hidden;
+  .pricing {
+    display: grid;
+    /* Pannello nero piu' largo delle celle prezzo: contiene titolo ed elenco. */
+    grid-template-columns: minmax(0, 1.3fr) repeat(var(--plan-count, 3), minmax(0, 1fr));
+    /* Separatori col gap sul fondo nero, come nelle altre fasce del sito:
+       restano corretti anche quando le celle vanno a capo. */
+    gap: 2px;
+    background: var(--color-black);
+    border-block: 2px solid var(--color-black);
   }
-  .pricing-group__head {
+
+  .pricing__head {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-2xs);
     background: var(--color-black);
     color: var(--color-white);
-    padding: var(--space-md);
+    padding: var(--space-md) clamp(1.5rem, 4vw, 3rem);
   }
-  .pricing-group__head h3 {
+  .pricing .pricing__title {
     color: var(--color-red);
+    font-size: clamp(1.7rem, 3vw, 2.5rem);
   }
-  .pricing-group__subtitle {
+  .pricing .pricing__subtitle {
     color: var(--text-on-dark-muted);
-    margin-top: var(--space-3xs);
+    font-size: 0.95rem;
+    line-height: 1.4;
   }
-  .pricing-group__label {
-    margin-top: var(--space-sm);
+  .pricing__label {
+    margin-top: var(--space-2xs);
     color: var(--color-red);
   }
-  .pricing-group__features {
+  /* Elenco in colonna, non in linea: nel pannello c'e' altezza in abbondanza
+     e le voci non si spezzano piu' a meta' riga. */
+  .pricing__features {
     list-style: none;
+    margin: 0;
     padding: 0;
-    margin: 0;
-    margin-top: var(--space-2xs);
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2xs) var(--space-sm);
+    flex-direction: column;
+    gap: var(--space-3xs);
   }
-  .pricing-group .pricing-group__features li {
-    font-size: 0.85rem;
-    line-height: 1.4;
-    color: var(--color-white);
-    position: relative;
-    padding-inline-start: 1.1em;
+  .pricing .pricing__features li {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2xs);
     margin: 0;
+    padding-inline-start: 0;
+    font-size: 0.9rem;
+    line-height: 1.35;
+    color: var(--color-white);
   }
-  .pricing-group .pricing-group__features li::before {
-    content: "✓";
-    position: absolute;
-    left: 0;
+  /* La spunta e' l'unico marcatore: neutralizza il pallino delle liste di
+     PostBody, che vincerebbe per specificita'. */
+  .pricing .pricing__features li::before {
+    content: none;
+  }
+  .pricing__mark {
+    flex-shrink: 0;
     color: var(--color-red);
     font-weight: 700;
   }
-  .pricing-group__plans {
-    display: grid;
-    grid-template-columns: repeat(var(--plan-count, 3), 1fr);
-    background: var(--color-black);
-    gap: 2px;
-  }
-  .pricing-group__plan {
-    background: var(--bg-light-soft);
-    padding: var(--space-md);
+
+  .pricing__plan {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     text-align: center;
-    gap: var(--space-2xs);
+    gap: var(--space-3xs);
+    background: var(--bg-light-soft);
+    padding: var(--space-md) var(--space-sm);
+    transition: background-color 0.2s ease;
   }
-  .pricing-group__duration {
+  .pricing__plan:hover {
+    background: var(--accent);
+  }
+  .pricing__duration {
     font-family: var(--font-display);
     text-transform: uppercase;
+    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    line-height: 1.1;
     color: var(--text-on-light);
-    font-size: 1.1rem;
+    transition: color 0.2s ease;
   }
-  .pricing-group__price {
-    color: var(--text-on-light-muted);
-    font-size: 0.9rem;
+  .pricing__amount {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
   }
-  .pricing-group__price strong {
-    display: block;
-    color: var(--color-red);
+  .pricing__price {
     font-family: var(--font-display);
-    font-size: 1.9rem;
+    font-size: clamp(2.6rem, 4.5vw, 3.6rem);
     line-height: 1;
+    color: var(--color-red);
+    transition: color 0.2s ease;
   }
-  .pricing-group__note {
-    padding: var(--space-sm) var(--space-md);
-    background: var(--bg-light);
-    border-top: 2px solid var(--color-black);
-    font-size: 0.8rem;
-    line-height: 1.5;
+  .pricing__currency {
+    font-size: 0.55em;
+    vertical-align: 0.35em;
+    margin-inline-start: 0.05em;
+  }
+  .pricing__suffix {
+    font-size: 0.82rem;
     color: var(--text-on-light-muted);
+    transition: color 0.2s ease;
+  }
+  /* In hover la cella e' rossa: rosso su rosso sparirebbe. */
+  .pricing__plan:hover .pricing__duration,
+  .pricing__plan:hover .pricing__price,
+  .pricing__plan:hover .pricing__suffix {
+    color: var(--color-white);
+  }
+
+  .pricing__cta {
+    margin-top: var(--space-sm);
+    background: var(--color-black);
+    color: var(--color-white);
+    border: 2px solid var(--color-black);
+    padding: 0.8rem 1.3rem;
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-align: center;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+  .pricing__plan:hover .pricing__cta {
+    background: var(--color-white);
+    color: var(--color-red);
+    border-color: var(--color-white);
+  }
+  .pricing__cta:hover {
+    background: var(--color-red);
+    color: var(--color-white);
+    border-color: var(--color-white);
+  }
+
+  /* Striscia delle condizioni: chiude la fascia sul nero del pannello. */
+  .pricing .pricing__note {
+    grid-column: 1 / -1;
+    background: var(--color-black);
+    color: var(--text-on-dark-muted);
+    padding: var(--space-sm) clamp(1.5rem, 4vw, 3rem);
+    font-size: 0.78rem;
+    line-height: 1.6;
     margin: 0;
   }
 
-  @media (max-width: 760px) {
-    .pricing-group__plans {
+  @media (max-width: 860px) {
+    .pricing {
       grid-template-columns: 1fr;
+    }
+    .pricing__head {
+      padding: var(--space-sm) clamp(1.25rem, 4vw, 2.5rem);
+    }
+    /* Da colonna a riga: durata a sinistra, prezzo a destra, CTA a piena
+       larghezza sotto (bersaglio comodo per il pollice). */
+    .pricing__plan {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      text-align: left;
+      gap: var(--space-2xs) var(--space-sm);
+      padding: var(--space-sm) clamp(1.25rem, 4vw, 2.5rem);
+    }
+    /* L'hover su touch resta agganciato al dito: la cella rossa rimarrebbe
+       rossa dopo il tap. Il feedback lo da' :active. */
+    .pricing__plan:hover {
+      background: var(--bg-light-soft);
+    }
+    .pricing__plan:hover .pricing__duration {
+      color: var(--text-on-light);
+    }
+    .pricing__plan:hover .pricing__price {
+      color: var(--color-red);
+    }
+    .pricing__plan:hover .pricing__suffix {
+      color: var(--text-on-light-muted);
+    }
+    .pricing__plan:hover .pricing__cta {
+      background: var(--color-black);
+      color: var(--color-white);
+      border-color: var(--color-black);
+    }
+    .pricing__duration {
+      font-size: 1.3rem;
+    }
+    .pricing__amount {
+      align-items: flex-end;
+    }
+    .pricing__price {
+      font-size: 2.4rem;
+    }
+    .pricing__cta {
+      grid-column: 1 / -1;
+      margin-top: var(--space-2xs);
     }
   }
 </style>
