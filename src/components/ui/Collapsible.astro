@@ -1,0 +1,87 @@
+---
+// Blocco richiudibile (<details> nativo, nessuno script): titolo sempre
+// visibile, contenuto rivelato al clic. Serve per i contenuti secondari di
+// una pagina lunga - nella pagina Abbonamenti tiene chiusi Under 25,
+// accessi singoli e pacchetti Personal Training, come sul sito attuale.
+//
+// A differenza di FaqAccordion (che prende risposte come stringa) qui il
+// contenuto e' slottato: dentro puoi mettere altri componenti.
+//
+//   <Collapsible title="Abbonamenti Under 25">
+//     <PricingGroup ... />
+//   </Collapsible>
+interface Props {
+  title: string;
+  open?: boolean;
+}
+
+const { title, open = false } = Astro.props;
+---
+
+<details class="collapsible" open={open}>
+  <summary class="collapsible__title">
+    <span>{title}</span>
+    <span class="collapsible__icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </span>
+  </summary>
+  <div class="collapsible__body">
+    <slot />
+  </div>
+</details>
+
+<style>
+  .collapsible {
+    border: 2px solid var(--color-black);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--bg-light);
+  }
+  /* Testata nera come quella di PricingGroup: chiuso, il blocco si legge
+     come la riga di intestazione di una card. */
+  .collapsible__title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    background: var(--color-black);
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-size: clamp(1.35rem, 2.4vw, 1.8rem);
+    line-height: 1.1;
+    color: var(--color-white);
+    cursor: pointer;
+    list-style: none;
+    transition: color 0.2s ease;
+  }
+  .collapsible__title::-webkit-details-marker {
+    display: none;
+  }
+  .collapsible__title:hover,
+  .collapsible[open] .collapsible__title {
+    color: var(--color-red);
+  }
+  .collapsible__icon {
+    flex-shrink: 0;
+    display: inline-flex;
+    width: 1.4rem;
+    height: 1.4rem;
+    color: var(--color-red);
+    transition: transform 0.2s ease;
+  }
+  .collapsible[open] .collapsible__icon {
+    transform: rotate(180deg);
+  }
+  /* Le card interne hanno un bordo proprio: qui basta lo spazio attorno,
+     senza raddoppiare i bordi.
+     Solo su [open]: un `display` dichiarato qui vincerebbe sul display:none
+     con cui il browser nasconde il contenuto di un <details> chiuso, e il
+     blocco resterebbe sempre aperto. */
+  .collapsible[open] .collapsible__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: var(--space-sm);
+  }
+</style>
