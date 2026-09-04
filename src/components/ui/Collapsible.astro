@@ -14,12 +14,14 @@
 interface Props {
   title: string;
   open?: boolean;
+  // Ancora per i link diretti alla fascia (usata dal menu mobile).
+  id?: string;
 }
 
-const { title, open = false } = Astro.props;
+const { title, open = false, id } = Astro.props;
 ---
 
-<details class="collapsible" open={open}>
+<details class="collapsible" id={id} open={open}>
   <summary class="collapsible__bar">
     {/* .container: il titolo si incolonna con quelli delle altre sezioni e
         con le celle dei blocchi prezzi, che stanno nel container. */}

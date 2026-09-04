@@ -32,16 +32,19 @@ interface Props {
   title: string;
   text?: string;
   days: Day[];
+  // Ancora per i link diretti al planning (usata dal menu mobile).
+  id?: string;
   // L'alternanza bianco/rosa e' decisa dalla pagina e non da :nth-of-type:
   // il conteggio dipenderebbe da quante altre <section> ci sono attorno.
   tone?: 'plain' | 'blush';
 }
 
-const { title, text, days, tone = 'plain' } = Astro.props;
+const { title, text, days, id, tone = 'plain' } = Astro.props;
 ---
 
 <section
   class:list={["schedule", { "schedule--blush": tone === 'blush' }]}
+  id={id}
   data-schedule
   data-reveal
 >

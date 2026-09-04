@@ -20,7 +20,10 @@ import { NAV_ITEMS } from '../../data/nav.ts';
                titolo apre il dropdown (desktop) o gira la card (mobile).
                <button> e non <span> perche' e' focalizzabile: al tocco
                riceve il focus e :focus-within fa scattare il giro. */
-            <button class="site-nav__title" type="button">{item.label}</button>
+            <button class="site-nav__title" type="button">
+              {item.label}
+              {item.tagline && <span class="site-nav__tagline">{item.tagline}</span>}
+            </button>
           ) : (
             <a class="site-nav__title" href={item.href}>{item.label}</a>
           )}
@@ -82,6 +85,10 @@ import { NAV_ITEMS } from '../../data/nav.ts';
     border: 4px solid transparent;
     border-top-color: currentColor;
     vertical-align: middle;
+  }
+  /* La riga d'invito serve solo ai riquadri del menu mobile. */
+  .site-nav__tagline {
+    display: none;
   }
 
   .site-nav__dropdown {
@@ -176,6 +183,7 @@ import { NAV_ITEMS } from '../../data/nav.ts';
     }
     .site-nav__title {
       padding-block: var(--space-sm);
+      gap: var(--space-2xs);
       font-family: var(--font-display);
       font-size: clamp(1.5rem, 7vw, 2.2rem);
       font-weight: 400;
@@ -183,6 +191,18 @@ import { NAV_ITEMS } from '../../data/nav.ts';
       line-height: 1;
       color: var(--color-white);
       border-bottom: none;
+    }
+    /* Dice cosa c'e' dietro la card, cosi' il riquadro non e' solo un nome. */
+    .site-nav__tagline {
+      display: block;
+      font-family: var(--font-body);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      line-height: 1.25;
+      color: var(--color-white);
+      opacity: 0.75;
     }
     /* La freccetta del dropdown non serve: il retro si rivela girando. */
     .site-nav__item.has-children .site-nav__title::after {
@@ -199,12 +219,17 @@ import { NAV_ITEMS } from '../../data/nav.ts';
       border: none;
       transform: rotateY(180deg);
     }
+    /* Le voci del retro sono bersagli da toccare: piu' grandi e piu'
+       distanziate, cosi' non si sbaglia link col pollice. */
+    .site-nav__dropdown {
+      gap: var(--space-xs);
+    }
     .site-nav__dropdown a {
-      padding: 0.15rem 0;
+      padding: 0.35rem 0;
       font-family: var(--font-display);
       text-transform: uppercase;
-      font-size: clamp(1.05rem, 4.4vw, 1.4rem);
-      line-height: 1.1;
+      font-size: clamp(1.2rem, 5vw, 1.7rem);
+      line-height: 1.05;
       color: var(--color-red);
     }
     .site-nav__dropdown a:hover {

@@ -39,6 +39,8 @@ interface Props {
   priceSuffix?: string;
   buttonLabel?: string;
   note?: string;
+  // Ancora per i link diretti al gruppo (usata dal menu mobile).
+  id?: string;
 }
 
 const {
@@ -49,10 +51,11 @@ const {
   priceSuffix = 'al mese',
   buttonLabel = 'Iscriviti Ora',
   note,
+  id,
 } = Astro.props;
 ---
 
-<section class="pricing">
+<section class="pricing" id={id}>
   <div class="container">
     <div class="pricing__grid">
       <div class="pricing__head">
