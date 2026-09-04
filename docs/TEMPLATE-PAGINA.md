@@ -129,14 +129,25 @@ Import: `import X from '../../../components/ui/X.astro';`
 
 ### ScheduleSection — orario settimanale (pagina Orari Corsi)
 ```jsx
-<ScheduleSection title="Corsi Energy" days={[
-  { label: 'Lunedì', slots: [{ time: 'H. 07:00', name: 'Hyrox' }] },
-]} />
+<ScheduleSection
+  title="Corsi Energy"
+  text="Paragrafo introduttivo (opzionale)"
+  tone="blush"                                   {/* opzionale */}
+  days={[
+    { label: 'Lunedì', slots: [{ time: 'H. 07:00', name: 'Hyrox' }] },
+  ]}
+/>
 ```
-- Una colonna per giorno; ogni giorno impila i propri slot, senza allinearli in
-  riga con gli altri (i giorni hanno un numero diverso di lezioni).
-- Full-bleed, alterna sfondo rosa/bianco tra fasce consecutive.
-- Sotto i 760px passa a scroll orizzontale invece di comprimere le colonne.
+- **Desktop**: una colonna per giorno; ogni giorno impila i propri slot, senza
+  allinearli in riga con gli altri (i giorni hanno un numero diverso di lezioni).
+  Riquadri neri squadrati, ora in rosso sopra il nome del corso, hover rosso.
+- **Mobile (≤860px)**: un giorno per volta. Tab dei giorni in alto (LUN…SAB),
+  righe `ora | corso` a piena larghezza, barra nera in basso con frecce e nome
+  del giorno. Niente scroll orizzontale: sei colonne su un telefono sono
+  illeggibili e metà del planning resta fuori schermo.
+- `tone="blush"` dà lo sfondo rosa: l'alternanza si dichiara nella pagina, non
+  con `:nth-of-type` (il conteggio dipenderebbe dalle altre `<section>` attorno).
+- `data-reveal`: titolo, testo e planning salgono insieme all'ingresso in viewport.
 
 ### PricingGroup — card prezzi (pagina Abbonamenti)
 ```jsx
@@ -238,6 +249,7 @@ ottimizzata. Cosa cambia sotto gli 860px:
 | `ContentRow` | ordine **titolo → media → paragrafo**. Il titolo diventa una fascia rossa a piena larghezza (testo bianco) sopra al media, con la sfumatura che scende sul media; il paragrafo sta sotto, senza bordi |
 | `FeatureShowcase` | ordine **elenco → CTA slottata → gallery**; gallery a 2 colonne con celle `2/1`. Elenco e CTA si spartiscono l'altezza dello schermo (**55dvh + 45dvh**), così la coppia copre una schermata esatta a prescindere da quanto testo ha la pagina |
 | `CtaSplit` | immagine nascosta, altezza sul contenuto |
+| `ScheduleSection` | **un giorno per volta**: tab dei giorni in alto, righe `ora \| corso` a piena larghezza, barra con frecce e nome del giorno in basso. Nessuno scroll orizzontale |
 | `RelatedCard` | card orizzontale compatta: miniatura quadrata + barra col titolo |
 | `RelatedSection` | una card per riga, altezza sul contenuto |
 

@@ -1,12 +1,18 @@
 ---
-// Fascia full-bleed con l'orario settimanale di un corso/attivita': una
-// colonna per giorno, ogni giorno impila i propri slot (nome corso + ora)
-// senza doverli allineare in riga con gli altri giorni (esattamente come nel
-// planning cartaceo della palestra, dove i giorni hanno un numero diverso di
-// lezioni).
+// Fascia con l'orario settimanale di un corso/attivita'.
+//
+// Due letture dello stesso markup, senza duplicare i contenuti:
+// - desktop: una colonna per giorno, ogni giorno impila i propri slot
+//   (esattamente come nel planning cartaceo della palestra, dove i giorni
+//   hanno un numero diverso di lezioni);
+// - mobile: un giorno per volta, scelto dalle tab in alto o dalle frecce in
+//   basso. Sei colonne su un telefono sono illeggibili, e lo scroll
+//   orizzontale nasconde meta' del planning.
 //
 //   <ScheduleSection
 //     title="Corsi Energy"
+//     text="Paragrafo introduttivo (opzionale)"
+//     tone="blush"                                   (opzionale)
 //     days={[
 //       { label: 'Lunedì', slots: [{ time: 'H. 07:00', name: 'Hyrox' }, ...] },
 //       ...
@@ -24,60 +30,173 @@ interface Day {
 
 interface Props {
   title: string;
+  text?: string;
   days: Day[];
+  // L'alternanza bianco/rosa e' decisa dalla pagina e non da :nth-of-type:
+  // il conteggio dipenderebbe da quante altre <section> ci sono attorno.
+  tone?: 'plain' | 'blush';
 }
 
-const { title, days } = Astro.props;
+const { title, text, days, tone = 'plain' } = Astro.props;
 ---
 
-<section class="schedule">
+<section
+  class:list={["schedule", { "schedule--blush": tone === 'blush' }]}
+  data-schedule
+  data-reveal
+>
   <div class="container">
     <h2 class="schedule__title">{title}</h2>
+    {text && <p class="schedule__intro">{text}</p>}
+
+    {/* Solo mobile: selettore del giorno. */}
+    <div class="schedule__tabs">
+      {days.map((day, i) => (
+        <button
+          class:list={["schedule__tab", { "is-active": i === 0 }]}
+          type="button"
+          data-day={i}
+          aria-pressed={i === 0}
+        >
+          {day.label.slice(0, 3)}
+        </button>
+      ))}
+    </div>
+
     <div class="schedule__grid" style={`--cols: ${days.length}`}>
-      {days.map((day) => (
-        <div class="schedule__day">
+      {days.map((day, i) => (
+        <div
+          class:list={["schedule__day", { "is-active": i === 0 }]}
+          data-label={day.label}
+        >
           <span class="schedule__day-label">{day.label}</span>
           {day.slots.map((slot) => (
             <div class="schedule__slot">
-              <span class="schedule__slot-name">{slot.name}</span>
               <span class="schedule__slot-time">{slot.time}</span>
+              <span class="schedule__slot-name">{slot.name}</span>
             </div>
           ))}
         </div>
       ))}
     </div>
+
+    {/* Solo mobile: giorno corrente e frecce per scorrere. */}
+    <div class="schedule__nav">
+      <button class="schedule__nav-btn" type="button" data-dir="-1" aria-label="Giorno precedente">
+        <span aria-hidden="true">‹</span>
+      </button>
+      <span class="schedule__nav-label" aria-live="polite">{days[0]?.label}</span>
+      <button class="schedule__nav-btn" type="button" data-dir="1" aria-label="Giorno successivo">
+        <span aria-hidden="true">›</span>
+      </button>
+    </div>
   </div>
 </section>
+
+<script>
+  // Un solo script per tutti gli orari della pagina (Astro lo raggruppa una
+  // volta sola): ogni sezione tiene il proprio giorno attivo.
+  document.querySelectorAll('[data-schedule]').forEach((root) => {
+    const tabs = Array.from(root.querySelectorAll('.schedule__tab'));
+    const days = Array.from(root.querySelectorAll('.schedule__day'));
+    const label = root.querySelector('.schedule__nav-label');
+    if (days.length === 0) return;
+
+    let current = 0;
+
+    const show = (next) => {
+      // Modulo con offset: dalle frecce si passa da sabato a lunedi' e
+      // viceversa senza vicoli ciechi.
+      current = (next + days.length) % days.length;
+      tabs.forEach((tab, i) => {
+        tab.classList.toggle('is-active', i === current);
+        tab.setAttribute('aria-pressed', String(i === current));
+      });
+      days.forEach((day, i) => day.classList.toggle('is-active', i === current));
+      if (label) label.textContent = days[current].dataset.label ?? '';
+    };
+
+    tabs.forEach((tab, i) => tab.addEventListener('click', () => show(i)));
+    root.querySelectorAll('.schedule__nav-btn').forEach((btn) => {
+      btn.addEventListener('click', () => show(current + Number(btn.dataset.dir)));
+    });
+  });
+</script>
 
 <style>
   .schedule {
     padding-block: var(--space-lg);
   }
-  /* Alternanza chiaro/rosa come il resto del sito: qui non c'e' bordo tra le
-     fasce (a differenza di .highlights) perche' il cambio di sfondo basta
-     gia' a separarle visivamente. */
-  .schedule:nth-of-type(even) {
-    background: var(--bg-light);
+  .schedule--blush {
+    background: var(--bg-light-soft);
   }
   .schedule__title {
     color: var(--color-red);
   }
+  .schedule__intro {
+    max-width: 46rem;
+    margin-top: var(--space-xs);
+    color: var(--text-on-light-muted);
+    font-size: 1.05rem;
+    line-height: 1.65;
+  }
+
+  /* Ingresso allo scroll: titolo, testo e planning salgono insieme. */
+  .schedule__title,
+  .schedule__intro,
+  .schedule__grid,
+  .schedule__tabs,
+  .schedule__nav {
+    opacity: 0;
+    transform: translateY(1.25rem);
+    transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .schedule__intro {
+    transition-delay: 0.08s;
+  }
+  .schedule__tabs,
+  .schedule__grid,
+  .schedule__nav {
+    transition-delay: 0.16s;
+  }
+  .schedule.is-visible .schedule__title,
+  .schedule.is-visible .schedule__intro,
+  .schedule.is-visible .schedule__grid,
+  .schedule.is-visible .schedule__tabs,
+  .schedule.is-visible .schedule__nav {
+    opacity: 1;
+    transform: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .schedule__title,
+    .schedule__intro,
+    .schedule__grid,
+    .schedule__tabs,
+    .schedule__nav {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+
   .schedule__grid {
     display: grid;
     grid-template-columns: repeat(var(--cols), 1fr);
-    gap: var(--space-sm);
+    /* Gap strettissimo tra le colonne: lo spazio guadagnato va ai riquadri,
+       che devono restare leggibili anche con sei giorni affiancati. */
+    gap: var(--space-2xs);
     margin-top: var(--space-md);
   }
   .schedule__day {
     display: flex;
     flex-direction: column;
-    gap: var(--space-3xs);
+    gap: 2px;
   }
   .schedule__day-label {
     font-family: var(--font-display);
     text-transform: uppercase;
     color: var(--text-on-light);
-    font-size: clamp(0.9rem, 1.4vw, 1.1rem);
+    font-size: clamp(1rem, 1.6vw, 1.25rem);
     padding-bottom: var(--space-2xs);
     margin-bottom: var(--space-3xs);
     border-bottom: 2px solid var(--color-black);
@@ -85,37 +204,159 @@ const { title, days } = Astro.props;
   .schedule__slot {
     display: flex;
     flex-direction: column;
-    gap: 0.15em;
+    gap: 0.1em;
     background: var(--color-black);
     color: var(--color-white);
-    border-radius: 8px;
-    padding: 0.55em 0.7em;
+    /* Angoli squadrati come il resto del sito (bordi, card, bottoni). */
+    border-radius: 0;
+    padding: 0.75em 0.8em;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+  .schedule__slot:hover {
+    background: var(--accent);
+    transform: translateY(-2px);
+  }
+  .schedule__slot-time {
+    color: var(--color-red);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    transition: color 0.2s ease;
+  }
+  /* In hover il riquadro e' rosso: l'ora in rosso sparirebbe. */
+  .schedule__slot:hover .schedule__slot-time {
+    color: var(--color-white);
   }
   .schedule__slot-name {
     font-family: var(--font-display);
     text-transform: uppercase;
-    font-size: 0.82rem;
-    line-height: 1.15;
-  }
-  .schedule__slot-time {
-    color: var(--color-red);
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.02em;
+    font-size: clamp(0.95rem, 1.35vw, 1.15rem);
+    line-height: 1.1;
   }
 
-  /* Con 5-6 colonne il layout in griglia diventa illeggibile sotto un certo
-     punto: passa a scroll orizzontale con colonne di larghezza fissa,
-     invece di comprimere nomi corso e orari. */
-  @media (max-width: 760px) {
+  /* Tab e frecce servono solo alla vista mobile. */
+  .schedule__tabs,
+  .schedule__nav {
+    display: none;
+  }
+
+  /* --- Mobile: un giorno per volta --- */
+  @media (max-width: 860px) {
+    .schedule__tabs {
+      display: flex;
+      margin-top: var(--space-md);
+      border: 2px solid var(--color-black);
+      border-bottom: none;
+    }
+    .schedule__tab {
+      flex: 1 1 0;
+      min-width: 0;
+      appearance: none;
+      background: var(--color-white);
+      border: none;
+      border-right: 1px solid var(--color-black);
+      padding: 0.85rem 0.2rem;
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-on-light);
+      cursor: pointer;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+    .schedule__tab:last-child {
+      border-right: none;
+    }
+    .schedule__tab.is-active {
+      background: var(--accent);
+      color: var(--color-white);
+    }
+
     .schedule__grid {
-      grid-template-columns: none;
-      grid-auto-flow: column;
-      grid-auto-columns: minmax(7.5rem, 1fr);
-      overflow-x: auto;
-      padding-bottom: var(--space-2xs);
-      margin-inline: calc(-1 * var(--gutter));
-      padding-inline: var(--gutter);
+      grid-template-columns: 1fr;
+      gap: 0;
+      margin-top: 0;
+    }
+    /* Fuori dal giorno attivo niente e' visibile: il planning del giorno
+       riempie la larghezza dello schermo invece di stare in una colonna da
+       7rem con lo scroll orizzontale. */
+    .schedule__day {
+      display: none;
+      gap: 0;
+      border-inline: 2px solid var(--color-black);
+      background: var(--color-white);
+    }
+    .schedule__day.is-active {
+      display: flex;
+    }
+    /* Il giorno e' scritto nelle tab e nella barra sotto: qui sarebbe la
+       terza volta. */
+    .schedule__day-label {
+      display: none;
+    }
+    /* Da riquadro a riga: ora a sinistra su colonna fissa, nome del corso
+       accanto, cosi' gli orari restano incolonnati e leggibili di fila. */
+    .schedule__slot {
+      flex-direction: row;
+      align-items: center;
+      gap: var(--space-sm);
+      background: var(--color-white);
+      color: var(--text-on-light);
+      border-bottom: 1px solid var(--border-on-light);
+      padding: 0.9rem var(--space-sm);
+    }
+    .schedule__slot:last-child {
+      border-bottom: none;
+    }
+    /* Nessuno "stacco" al tocco: su mobile l'hover resta agganciato al dito
+       e la riga rimarrebbe rossa dopo il tap. */
+    .schedule__slot:hover {
+      background: var(--color-white);
+      transform: none;
+    }
+    .schedule__slot-time {
+      flex-shrink: 0;
+      width: 4.75rem;
+      font-size: 0.95rem;
+    }
+    .schedule__slot:hover .schedule__slot-time {
+      color: var(--color-red);
+    }
+    .schedule__slot-name {
+      font-size: 1.15rem;
+    }
+
+    .schedule__nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      border: 2px solid var(--color-black);
+      background: var(--color-black);
+      padding: var(--space-2xs);
+    }
+    .schedule__nav-btn {
+      appearance: none;
+      width: 2.5rem;
+      height: 2.5rem;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-white);
+      border: none;
+      color: var(--color-black);
+      font-size: 1.5rem;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .schedule__nav-label {
+      font-family: var(--font-display);
+      text-transform: uppercase;
+      font-size: 1.25rem;
+      line-height: 1;
+      color: var(--color-white);
     }
   }
 </style>

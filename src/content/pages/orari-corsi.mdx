@@ -1,6 +1,7 @@
 ---
 title: Orari Corsi
 slug: orari-corsi
+heroImage: /images/uploads/2024/10/sale_fitness.jpg
 heroEyebrow: Aperti 365 giorni l'anno
 heroText: Dalle 05:00 alle 24:00, incluse le feste.<br />Il planning di Reformer, Studio Reform Plus, Corsi Energy e Corsi Rebalance.
 heroCtas:
@@ -15,13 +16,42 @@ updatedAt: 2026-09-02T00:00:00.000Z
 draft: false
 ---
 
+import HighlightCards from '../../components/ui/HighlightCards.astro';
 import ScheduleSection from '../../components/ui/ScheduleSection.astro';
+import FeatureShowcase from '../../components/ui/FeatureShowcase.astro';
 import CtaSplit from '../../components/ui/CtaSplit.astro';
 import RelatedSection from '../../components/ui/RelatedSection.astro';
 import RelatedCard from '../../components/ui/RelatedCard.astro';
 
+<HighlightCards
+  items={[
+    {
+      title: '+130 lezioni a settimana',
+      body: 'Quattro planning distinti tra Reformer, Studio Reform Plus, Corsi Energy e Corsi Rebalance: ad ogni ora trovi una lezione.',
+      image: '/images/uploads/2024/10/Palestra-11920x.jpg',
+      href: 'https://automazione.n8ndevelop.it/form/8ce36c5e-0cc4-4813-9a0f-2da2a7605fb0?source=SitoWeb&medium=Btn_Orari_Corsi',
+      cta: 'Prova ora',
+    },
+    {
+      title: 'Due studi Reformer',
+      body: 'Reformer Club e Studio Reform Plus lavorano in Small Class, dalla prima mattina alla sera: 66 turni a settimana.',
+      image: '/images/uploads/2024/11/reform_1-1.jpeg',
+      href: '/pilates-reformer/',
+      cta: 'Scopri il Reformer',
+    },
+    {
+      title: "Tutto incluso nell'abbonamento",
+      body: 'I corsi Energy e Rebalance sono compresi: nessun costo extra, nessuna lezione a pagamento a parte.',
+      image: '/images/uploads/2024/10/palestra_1920x.jpg',
+      href: '/abbonamenti/',
+      cta: 'Scopri gli abbonamenti',
+    },
+  ]}
+/>
+
 <ScheduleSection
   title="Reformer Club"
+  text="Lezioni Small Class sui Reformer dal lunedì al sabato, dalle 7:00 alle 20:00: sette turni al giorno nei giorni infrasettimanali, due al sabato mattina. Pochi posti per turno, così l'istruttore segue tutti da vicino."
   days={[
     { label: 'Lunedì', slots: [
       { time: 'H. 7:00', name: 'Small Class' },
@@ -77,6 +107,8 @@ import RelatedCard from '../../components/ui/RelatedCard.astro';
 
 <ScheduleSection
   title="Studio Reform Plus"
+  tone="blush"
+  text="Il secondo studio dedicato al Reformer, con turni distribuiti tra prima mattina, pausa pranzo e sera: fino a sei fasce al giorno dalle 8:00 alle 19:30, sabato compreso. Ideale se cerchi un orario fuori dai picchi."
   days={[
     { label: 'Lunedì', slots: [
       { time: 'H. 9:00', name: 'Small Class' },
@@ -124,6 +156,7 @@ import RelatedCard from '../../components/ui/RelatedCard.astro';
 
 <ScheduleSection
   title="Corsi Energy"
+  text="Hyrox, Met-Con, Pump, Booty Pump, Functional, Zumba, Strong Nation e Prepugilistica: la sala Energy propone lezioni ad alta intensità ogni ora, dalle 7:00 alle 20:30, con tre turni anche il sabato mattina."
   days={[
     { label: 'Lunedì', slots: [
       { time: 'H. 07:00', name: 'Hyrox' },
@@ -182,6 +215,8 @@ import RelatedCard from '../../components/ui/RelatedCard.astro';
 
 <ScheduleSection
   title="Corsi Rebalance"
+  tone="blush"
+  text="Pilates, Flow Pilates, Yoga, Posturale, Barre e Dance 4Fun: la sala Rebalance lavora su postura, mobilità e respirazione, dal lunedì al venerdì dalle 7:00 alle 20:30."
   days={[
     { label: 'Lunedì', slots: [
       { time: 'H. 09:00', name: 'Pilates' },
@@ -226,14 +261,34 @@ import RelatedCard from '../../components/ui/RelatedCard.astro';
   ]}
 />
 
-<CtaSplit
-  heading="Pronto a iniziare?"
-  text="Il primo allenamento è gratuito e senza impegno: vieni a scoprire Passion Fitness."
-  buttonLabel="Prova Ora"
-  buttonHref="https://automazione.n8ndevelop.it/form/8ce36c5e-0cc4-4813-9a0f-2da2a7605fb0?source=SitoWeb&medium=Btn_Orari_Corsi"
-  image="/images/uploads/2024/11/MRZ08075.jpeg"
-  alt="Passion Fitness Tuscolana"
-/>
+<FeatureShowcase
+  title="Perché allenarti con i corsi di Passion"
+  images={[
+    { src: '/images/uploads/2024/10/sale_fitness.jpg', alt: 'Sala corsi fitness Passion Fitness' },
+    { src: '/images/uploads/2025/01/corso-pump-roma-min.jpg', alt: 'Lezione di pump' },
+    { src: '/images/uploads/2025/01/corso-di-yoga-roma-min.jpg', alt: 'Lezione di yoga' },
+    { src: '/images/uploads/2024/11/reform_1-1.jpeg', alt: 'Studio Pilates Reformer' },
+    { src: '/images/uploads/2025/01/PassionFitness-areaboxing.jpg', alt: 'Area boxing' },
+    { src: '/images/uploads/2025/01/corso-di-step-min-1168x600-1.jpg', alt: 'Lezione di step' },
+  ]}
+  features={[
+    'Oltre 130 lezioni a settimana in quattro planning',
+    '70 turni Energy e Rebalance ogni settimana',
+    '66 turni Small Class nei due studi Reformer',
+    'Lezioni dalle 7:00 alle 20:30, sabato compreso',
+    'Sala pesi aperta dalle 5:00 alle 24:00, tutti i giorni',
+  ]}
+>
+  <CtaSplit
+    slot="cta"
+    heading="Pronto a iniziare?"
+    text="Scegli la lezione che preferisci e vieni a provarla: il primo allenamento è gratuito e senza impegno."
+    buttonLabel="Prova Ora"
+    buttonHref="https://automazione.n8ndevelop.it/form/8ce36c5e-0cc4-4813-9a0f-2da2a7605fb0?source=SitoWeb&medium=Btn_Orari_Corsi"
+    image="/images/uploads/2024/11/MRZ08075.jpeg"
+    alt="Passion Fitness Tuscolana"
+  />
+</FeatureShowcase>
 
 <RelatedSection title="Potrebbe interessarti anche">
   <RelatedCard
