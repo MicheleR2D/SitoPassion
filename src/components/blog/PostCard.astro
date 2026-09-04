@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { summaryFromBody } from '../../lib/summary.ts';
 
 interface Props {
   post: CollectionEntry<'blog'>;
@@ -7,6 +8,10 @@ interface Props {
 
 const { post } = Astro.props;
 const { title, slug, excerpt, coverImage, categories, publishedAt } = post.data;
+
+// Senza questo le card mostrano solo titolo e data: nessun articolo migrato
+// da WordPress ha `excerpt` nel frontmatter.
+const summary = excerpt || summaryFromBody(post.body);
 ---
 
 <article class="post-card">
@@ -17,7 +22,7 @@ const { title, slug, excerpt, coverImage, categories, publishedAt } = post.data;
     <div class="post-card__body">
       {categories[0] && <p class="eyebrow post-card__category">{categories[0]}</p>}
       <h3 class="post-card__title">{title}</h3>
-      {excerpt && <p class="post-card__excerpt">{excerpt}</p>}
+      {summary && <p class="post-card__excerpt">{summary}</p>}
       <time class="post-card__date" datetime={publishedAt.toISOString()}>
         {publishedAt.toLocaleDateString('it-IT')}
       </time>

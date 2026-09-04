@@ -1,10 +1,91 @@
 ---
 title: Fitness
 slug: palestra
+heroImage: /images/uploads/2024/10/palestra_1920x.jpg
+heroEyebrow: 1000 mq di palestra a Roma Tuscolana
+heroText: Sala pesi, due sale corsi e tre studi Reformer.<br />Aperti tutti i giorni dalle 5:00 alle 24:00, anche a Natale e Ferragosto.
+heroCtas:
+  - label: Prova Ora
+    href: https://automazione.n8ndevelop.it/form/8ce36c5e-0cc4-4813-9a0f-2da2a7605fb0?source=SitoWeb&medium=Btn_Palestra
+  - label: Scopri gli Abbonamenti
+    href: /abbonamenti/
+    variant: ghost-dark
 wpId: 3969
 publishedAt: 2024-09-17T03:26:27.000Z
-updatedAt: 2025-03-04T05:20:04.000Z
+updatedAt: 2026-09-04T00:00:00.000Z
 draft: false
 ---
 
+import HighlightCards from '../../components/ui/HighlightCards.astro';
+import SectionIntro from '../../components/ui/SectionIntro.astro';
+import CtaSplit from '../../components/ui/CtaSplit.astro';
+import RelatedSection from '../../components/ui/RelatedSection.astro';
+import RelatedCard from '../../components/ui/RelatedCard.astro';
 
+<HighlightCards
+  items={[
+    {
+      title: 'Sala Pesi',
+      body: 'Oltre 1000 mq attrezzati con macchinari Technogym e Panatta di ultima generazione, aree cardio, free weight, calisthenics e booty training.',
+      image: '/images/uploads/2024/11/Sala-Pesi-1.jpeg',
+      href: '/palestra/sala-pesi/',
+      cta: 'Scopri la Sala Pesi',
+    },
+    {
+      title: 'Corsi Fitness',
+      body: 'Due sale dedicate con oltre 120 ore di lezioni Rebalance e oltre 130 ore di lezioni Energy ogni mese, dalle 7:00 alle 21:30.',
+      image: '/images/uploads/2024/10/sale_fitness.jpg',
+      href: '/palestra/corsi-fitness/',
+      cta: 'Scopri i Corsi',
+    },
+    {
+      title: 'Reformer',
+      body: 'Tre sale interamente dedicate: Studio Reformer, Studio Reformer Plus e Studio Reformer Individuale con trainer dedicato.',
+      image: '/images/uploads/2024/11/reform_1-1.jpeg',
+      href: '/pilates-reformer/',
+      cta: 'Scopri il Reformer',
+    },
+    {
+      title: 'Personal Training',
+      body: 'Allenati con un Personal Trainer dedicato per raggiungere i tuoi obiettivi, in pacchetti da 5 o 10 sedute oppure a seduta singola.',
+      image: '/images/uploads/2024/11/MRZ08109.jpeg',
+      href: '/personal-training/',
+      cta: 'Scopri il Personal Training',
+    },
+  ]}
+/>
+
+<SectionIntro
+  title="La palestra più grande della zona"
+  text="Passion Fitness è la palestra più grande ed attrezzata dei quartieri <strong>Tuscolana, Cinecittà, Don Bosco e San Policarpo</strong>. Sala pesi, corsi fitness, Reformer e personal training in un unico posto, con <strong>oltre 130 lezioni a settimana</strong> e apertura <strong>dalle 5:00 alle 24:00 tutti i giorni</strong>, feste incluse."
+/>
+
+<CtaSplit
+  heading="Vieni a provarla"
+  text="Il primo allenamento è gratuito e senza impegno: scegli l'attività che preferisci e vieni a conoscerci."
+  buttonLabel="Prova Ora"
+  buttonHref="https://automazione.n8ndevelop.it/form/8ce36c5e-0cc4-4813-9a0f-2da2a7605fb0?source=SitoWeb&medium=Btn_Palestra"
+  image="/images/uploads/2024/11/MRZ08075.jpeg"
+  alt="Passion Fitness Tuscolana"
+/>
+
+<RelatedSection title="Potrebbe interessarti anche">
+  <RelatedCard
+    title="Orari Corsi"
+    href="/orari-corsi/"
+    image="/images/uploads/2025/01/corso-di-step-min-1168x600-1.jpg"
+    alt="Planning dei corsi di Passion Fitness"
+  />
+  <RelatedCard
+    title="Abbonamenti"
+    href="/abbonamenti/"
+    image="/images/uploads/2024/10/Palestra-11920x.jpg"
+    alt="Abbonamenti Passion Fitness"
+  />
+  <RelatedCard
+    title="Hyrox"
+    href="/hyrox/"
+    image="/images/uploads/2025/01/PassionFitness-areaboxing.jpg"
+    alt="Allenamento Hyrox"
+  />
+</RelatedSection>

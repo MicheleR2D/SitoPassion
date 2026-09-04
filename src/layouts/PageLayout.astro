@@ -4,6 +4,7 @@ import BaseLayout from './BaseLayout.astro';
 import Hero from '../components/ui/Hero.astro';
 import Button from '../components/ui/Button.astro';
 import PostBody from '../components/blog/PostBody.astro';
+import { summaryFromBody, textFromHtml } from '../lib/summary.ts';
 
 interface Props {
   page: CollectionEntry<'pages'>;
@@ -11,11 +12,15 @@ interface Props {
 
 const { page } = Astro.props;
 const { title, heroImage, heroVideo, heroEyebrow, heroText, heroCtas, seo } = page.data;
+
+// Nessuna pagina compila `seo.description`: in mancanza si usa il testo
+// dell'hero e, se non c'e' nemmeno quello, il primo paragrafo del corpo.
+const description = seo?.description || textFromHtml(heroText) || summaryFromBody(page.body);
 ---
 
 <BaseLayout
   title={seo?.title || title}
-  description={seo?.description}
+  description={description}
   ogImage={seo?.ogImage}
   noindex={seo?.noindex}
 >

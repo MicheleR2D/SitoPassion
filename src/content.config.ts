@@ -86,36 +86,10 @@ const blog = defineCollection({
   }),
 });
 
-const team = defineCollection({
-  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/team' }),
-  schema: z.object({
-    name: z.string(),
-    role: z.string(),
-    photo: z.string().optional(),
-    bio: z.string().optional(),
-    order: z.number().default(0),
-    socials: z
-      .object({
-        instagram: z.string().url().optional(),
-        facebook: z.string().url().optional(),
-      })
-      .optional(),
-    active: z.boolean().default(true),
-  }),
-});
-
-const services = defineCollection({
-  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/services' }),
-  schema: z.object({
-    title: z.string(),
-    category: z
-      .enum(['fitness', 'personal-training', 'pilates', 'hyrox', 'sala-pesi'])
-      .optional(),
-    icon: z.string().optional(),
-    order: z.number().default(0),
-    linkedPage: z.string().optional(),
-  }),
-});
+// Nota: le collection `team` e `services` sono state rimosse. Erano dichiarate
+// senza alcun file dentro (due warning del glob-loader a ogni build) e nessuna
+// pagina le interrogava. Se in futuro servissero, si ridichiarano qui insieme
+// ai contenuti.
 
 const footerSettings = defineCollection({
   loader: singletonFile('./src/content/settings/footer.json', 'footer'),
@@ -150,4 +124,4 @@ const siteSettings = defineCollection({
   }),
 });
 
-export const collections = { pages, blog, team, services, footerSettings, siteSettings };
+export const collections = { pages, blog, footerSettings, siteSettings };

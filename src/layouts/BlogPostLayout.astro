@@ -7,6 +7,7 @@ import PostBody from '../components/blog/PostBody.astro';
 import CtaSplit from '../components/ui/CtaSplit.astro';
 import RelatedSection from '../components/ui/RelatedSection.astro';
 import RelatedCard from '../components/ui/RelatedCard.astro';
+import { summaryFromBody } from '../lib/summary.ts';
 
 interface Props {
   post: CollectionEntry<'blog'>;
@@ -22,11 +23,15 @@ const relatedPosts = (await getCollection('blog', ({ data }) => !data.draft))
   .filter((entry) => entry.data.slug !== slug)
   .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf())
   .slice(0, 3);
+
+// Nessun articolo migrato da WordPress ha `excerpt`: in mancanza si usa il
+// primo paragrafo del testo.
+const description = seo?.description || excerpt || summaryFromBody(post.body);
 ---
 
 <BaseLayout
   title={seo?.title || title}
-  description={seo?.description || excerpt}
+  description={description}
   ogImage={seo?.ogImage || coverImage}
 >
   <Hero title={title} image={coverImage} eyebrow={categories[0]} />

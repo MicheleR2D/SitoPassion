@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Pannello di amministrazione Decap CMS: non e' contenuto pubblico.
+Disallow: /admin/
+
+Sitemap: https://www.passionfitness.it/sitemap-index.xml

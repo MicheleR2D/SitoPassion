@@ -2,12 +2,19 @@
 // Route root-level per i singoli articoli blog: permalink_structure WP verificato e' flat
 // "/%postname%/" (NON "/blog/<slug>/") - solo l'indice vive su /blog/, vedi content.config.ts
 // e slug-map.js per i dettagli.
+import type { CollectionEntry } from 'astro:content';
 import { getCollection, render } from 'astro:content';
 import BlogPostLayout from '../layouts/BlogPostLayout.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog', ({ data }) => !data.draft);
   return posts.map((post) => ({ params: { slug: post.data.slug }, props: { post } }));
+}
+
+// Senza questa interfaccia Astro.props e' `any`: il post arriva da
+// getStaticPaths e il tipo va dichiarato a mano.
+interface Props {
+  post: CollectionEntry<'blog'>;
 }
 
 const { post } = Astro.props;
