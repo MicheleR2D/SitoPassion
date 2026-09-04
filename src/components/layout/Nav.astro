@@ -29,6 +29,11 @@ import { NAV_ITEMS } from '../../data/nav.ts';
           )}
           {item.children && (
             <ul class="site-nav__dropdown">
+              {/* Ripete l'invito del fronte anche sul retro: girata la card,
+                  il titolo non si vede piu' e resterebbe solo un elenco di
+                  nomi senza contesto. <li> e non <p> per non infilare un
+                  elemento non ammesso dentro la <ul>. */}
+              {item.tagline && <li class="site-nav__dropdown-title">{item.tagline}</li>}
               {item.children.map((child) => (
                 <li><a href={child.href}>{child.label}</a></li>
               ))}
@@ -86,8 +91,9 @@ import { NAV_ITEMS } from '../../data/nav.ts';
     border-top-color: currentColor;
     vertical-align: middle;
   }
-  /* La riga d'invito serve solo ai riquadri del menu mobile. */
-  .site-nav__tagline {
+  /* Le righe d'invito servono solo ai riquadri del menu mobile. */
+  .site-nav__tagline,
+  .site-nav__dropdown-title {
     display: none;
   }
 
@@ -223,6 +229,18 @@ import { NAV_ITEMS } from '../../data/nav.ts';
        distanziate, cosi' non si sbaglia link col pollice. */
     .site-nav__dropdown {
       gap: var(--space-xs);
+    }
+    /* Invito in cima al retro, in nero sul fondo bianco della card. */
+    .site-nav .site-nav__dropdown-title {
+      display: block;
+      margin-bottom: var(--space-2xs);
+      font-family: var(--font-body);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      line-height: 1.25;
+      color: var(--color-black);
     }
     .site-nav__dropdown a {
       padding: 0.35rem 0;

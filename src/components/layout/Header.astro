@@ -30,6 +30,43 @@ import Nav from './Nav.astro';
   };
   updateHeaderState();
   window.addEventListener('scroll', updateHeaderState, { passive: true });
+
+  const scrollToHash = (hash, behavior) => {
+    const target = document.getElementById(decodeURIComponent(hash.slice(1)));
+    if (!target) return false;
+    // scrollIntoView e non un offset a mano: rispetta lo scroll-margin-top
+    // dichiarato in global.css, che tiene conto dell'header fisso.
+    target.scrollIntoView({ block: 'start', behavior });
+    return true;
+  };
+
+  // Il menu mobile e' un checkbox CSS: un link al suo interno non lo chiude.
+  // Sulle ancore della pagina corrente questo lo rendeva inservibile (il
+  // pannello copre lo schermo, lo scroll avviene dietro e sembra che il tocco
+  // non abbia fatto niente).
+  const toggle = /** @type {HTMLInputElement | null} */ (document.getElementById('nav-toggle'));
+  document.querySelector('.nav-panel')?.addEventListener('click', (event) => {
+    const link = /** @type {HTMLElement} */ (event.target)?.closest?.('a[href]');
+    if (!link) return;
+    if (toggle) toggle.checked = false;
+
+    const url = new URL(/** @type {HTMLAnchorElement} */ (link).href, location.href);
+    const samePage = url.pathname === location.pathname && url.search === location.search;
+    if (!samePage || !url.hash) return;
+
+    // Stessa pagina: se l'hash e' identico a quello corrente il browser non
+    // rifarebbe alcun salto, quindi lo si fa qui.
+    event.preventDefault();
+    if (location.hash !== url.hash) location.hash = url.hash;
+    scrollToHash(url.hash, 'smooth');
+  });
+
+  // Arrivo su una pagina con l'ancora nell'URL: al load l'altezza puo' essere
+  // cambiata (font, banner cookie, immagini) e il salto iniziale del browser
+  // finisce fuori bersaglio. Qui si riassesta.
+  window.addEventListener('load', () => {
+    if (location.hash) scrollToHash(location.hash, 'auto');
+  });
 </script>
 
 <style>
