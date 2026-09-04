@@ -56,10 +56,20 @@
   .post-body > :global(.full-bleed) {
     grid-column: 1 / -1;
   }
-  /* .related-section chiude sempre la pagina: deve toccare anche il footer,
-     annullando il padding-bottom (che serve solo quando l'ultimo elemento e'
-     testo scorrevole). */
-  .post-body > :global(.related-section) {
+  /* Quando l'ultimo blocco della pagina e' full-bleed (related-section,
+     showcase, cta-split, ...) deve toccare il footer: annulla il
+     padding-bottom di .post-body, che serve solo quando l'ultimo elemento
+     e' testo scorrevole. Su :last-child, non su una classe fissa: la pagina
+     Orari Corsi ad esempio finisce con .showcase, non con .related-section. */
+  .post-body > :global(.section):last-child,
+  .post-body > :global(.cta):last-child,
+  .post-body > :global(.highlights):last-child,
+  .post-body > :global(.content-rows):last-child,
+  .post-body > :global(.cta-split):last-child,
+  .post-body > :global(.related-section):last-child,
+  .post-body > :global(.showcase):last-child,
+  .post-body > :global(.schedule):last-child,
+  .post-body > :global(.full-bleed):last-child {
     margin-bottom: calc(-1 * var(--space-xl));
   }
 
