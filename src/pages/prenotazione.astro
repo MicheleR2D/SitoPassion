@@ -1,0 +1,473 @@
+---
+/**
+ * Pagina di prova: il calendario vero di PerfectGym dentro il sito.
+ *
+ * Oggi `/orari-corsi/` mostra un planning **ricopiato a mano** nei contenuti:
+ * si scrive due volte — sul gestionale e nel sito — e la seconda copia e'
+ * quella che il socio legge. Qui il calendario e' quello del portale, quindi
+ * un orario spostato in PerfectGym e' spostato anche sul sito, senza che
+ * nessuno tocchi niente.
+ *
+ * Non e' ancora al posto del planning: sta su un indirizzo suo perche' e' da
+ * guardare e da decidere. Per questo la pagina e' `noindex` — un doppione di
+ * `/orari-corsi/` nell'indice di Google farebbe concorrenza a se stesso.
+ *
+ * ## L'embed, e perche' oggi non si vede
+ *
+ * Con `@perfectgym/client-portal`, la libreria ufficiale
+ * (github.com/PerfectGym/ClientPortal.Embed): monta un iframe e ci parla
+ * sopra, e l'altezza la gestisce `iframe-resizer` — senza, il calendario
+ * resterebbe in una finestrella con lo scorrimento interno.
+ *
+ * **PerfectGym pero' serve il Client Portal con `Content-Security-Policy:
+ * frame-ancestors 'self'`**, cioe' accetta di essere incorniciato solo da se
+ * stesso: il browser blocca l'iframe prima che carichi. Non e' una cosa
+ * sistemabile da qui — e' un header sul loro server, e serve che aggiungano
+ * il nostro dominio fra quelli autorizzati. Finche' non lo fanno, la pagina
+ * mostra il ripiego: il link al calendario filtrato sul portale. Il codice
+ * resta quello giusto e funziona il giorno che sbloccano il dominio.
+ *
+ * Due opzioni fanno il lavoro che serviva qui:
+ *
+ * - `navigation: { hide: true }` toglie la barra del portale col logo e le
+ *   voci del menu: il socio e' gia' dentro il nostro sito, e vedere due
+ *   intestazioni una sotto l'altra fa sembrare la pagina rotta.
+ * - `calendarPage: { hideBookingIfNotLogged: true }` toglie «Prenota» a chi
+ *   non ha fatto l'accesso. Quindi per chi arriva dal sito questa e' una
+ *   pagina di sola consultazione, e chi e' loggato prenota da qui.
+ *
+ * La categoria si passa con `forceUrl`, che e' l'indirizzo completo del
+ * portale comprensivo di stato e parametri — `defaultStateParams` non
+ * documenta `categoryId`, e tirare a indovinare su un parametro che decide
+ * *quali corsi si vedono* voleva dire rischiare tre calendari identici.
+ *
+ * ## Le schede
+ *
+ * Tre calendari impilati erano tre schermate di pagina per una cosa di cui se
+ * ne guarda una: con le schede si carica **solo** quello aperto, e le altre
+ * partono la prima volta che le si tocca. Una volta montata, una scheda resta
+ * montata: tornarci non ricarica niente, si nasconde e si mostra.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+/** L'indirizzo base del portale, senza frammento: lo vuole cosi' la libreria. */
+const PORTALE = 'https://passion.perfectgym.com/ClientPortal2/';
+
+/* Le tre categorie, con l'id che usa PerfectGym. Gli id non sono deducibili
+   dal nome — 3, 4 e 8 — e vengono dagli indirizzi del portale: se un domani
+   in gestionale nasce una categoria nuova, si aggiunge una riga qui. */
+const CATEGORIE = [
+  {
+    id: 3,
+    slug: 'corsi-fitness',
+    titolo: 'Corsi Fitness',
+    nota: 'Energy e Rebalance: dal metabolico alla tonificazione, dal Pilates Barre allo Yoga.',
+  },
+  {
+    id: 4,
+    slug: 'reformer-club',
+    titolo: 'Reformer Club',
+    nota: 'Le lezioni in Small Group negli Studi Reformer, sette postazioni per volta.',
+  },
+  {
+    id: 8,
+    slug: 'formula-8',
+    titolo: 'Formula 8',
+    nota: 'Small Group in sala pesi: si lavora in pochi, con un istruttore che segue tutto il gruppo.',
+  },
+];
+---
+
+<BaseLayout
+  title="Prenota una lezione"
+  description="Il calendario delle lezioni di Passion Fitness Tuscolana, aggiornato in tempo reale: corsi fitness, Reformer Club e Formula 8."
+  noindex={true}
+>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@perfectgym/client-portal@latest/dist/ClientPortal.css"
+  />
+
+  <section class="prenota">
+    <div class="container">
+      <span class="eyebrow">Pagina di prova</span>
+      <h1>Prenota una lezione</h1>
+      <p class="prenota__lede">
+        Gli orari arrivano direttamente dal nostro gestionale: quello che vedi qui è quello che c'è in
+        palestra, aggiornato nel momento in cui lo aggiorniamo noi. Per prenotare serve l'accesso al
+        portale.
+      </p>
+      <a class="button button--primary" href={`${PORTALE}#/Login`}>
+        Accedi per prenotare
+        <span class="button__arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="calendari">
+    <div class="container">
+      {/* `role="tablist"` e i suoi `aria-*` non sono decorazione: senza, per
+          uno screen reader questi sono tre pulsanti sciolti e non tre schede
+          fra cui si sceglie, e non si capisce quale sia quella aperta. */}
+      <div class="schede" role="tablist" aria-label="Categorie di lezioni">
+        {
+          CATEGORIE.map((cat, i) => (
+            <button
+              type="button"
+              class:list={['schede__tab', { 'is-active': i === 0 }]}
+              role="tab"
+              id={`tab-${cat.slug}`}
+              aria-controls={`pannello-${cat.slug}`}
+              aria-selected={i === 0 ? 'true' : 'false'}
+              tabindex={i === 0 ? 0 : -1}
+              data-scheda={cat.slug}
+            >
+              {cat.titolo}
+            </button>
+          ))
+        }
+      </div>
+
+      {
+        CATEGORIE.map((cat, i) => (
+          <div
+            class="pannello"
+            role="tabpanel"
+            id={`pannello-${cat.slug}`}
+            aria-labelledby={`tab-${cat.slug}`}
+            data-pannello={cat.slug}
+            hidden={i !== 0}
+          >
+            <p class="pannello__nota">{cat.nota}</p>
+
+            {/* Il riquadro dove la libreria monta l'iframe. `data-categoria`
+                porta l'id fino allo script, cosi' il markup resta uno e le
+                categorie restano dati. */}
+            <div class="pannello__riquadro">
+              <div class="pannello__embed" data-pg-calendario data-categoria={cat.id}>
+                {/* Quello che si vede prima che l'iframe sia pronto, e quello
+                    che resta quando non arriva: non un riquadro vuoto, ma un
+                    collegamento che porta comunque all'orario. */}
+                <p class="pannello__ripiego">
+                  <span class="pannello__attesa" aria-hidden="true"></span>
+                  Sto caricando il calendario…
+                  <a href={`${PORTALE}#/Classes/1/Calendar?categoryId=${cat.id}`}>
+                    Aprilo sul portale
+                  </a>
+                </p>
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  import type { CalendarioPg } from '../types/perfectgym';
+
+  const PORTALE = 'https://passion.perfectgym.com/ClientPortal2/';
+
+  /* Gli script del portale, caricati una volta sola e solo quando serve
+     davvero un calendario. `iframe-resizer` va prima: la libreria di
+     PerfectGym lo cerca al momento di montare l'iframe, e se non lo trova
+     l'altezza resta quella iniziale. */
+  const SCRIPT = [
+    'https://cdn.jsdelivr.net/npm/@iframe-resizer/parent@5.5.7/index.umd.min.js',
+    'https://cdn.jsdelivr.net/npm/@perfectgym/client-portal@latest/dist/ClientPortal.min.js',
+  ];
+
+  function carica(src: string) {
+    return new Promise<void>((risolvi, rifiuta) => {
+      const gia = document.querySelector<HTMLScriptElement>(`script[src="${src}"]`);
+      if (gia) {
+        gia.dataset.pronto ? risolvi() : gia.addEventListener('load', () => risolvi());
+        gia.addEventListener('error', () => rifiuta(new Error(src)));
+        return;
+      }
+      const s = document.createElement('script');
+      s.src = src;
+      s.addEventListener('load', () => {
+        s.dataset.pronto = 'si';
+        risolvi();
+      });
+      s.addEventListener('error', () => rifiuta(new Error(src)));
+      document.head.appendChild(s);
+    });
+  }
+
+  let pronti: Promise<void> | null = null;
+  function scriptPronti() {
+    // In sequenza e non in parallelo, per l'ordine detto sopra.
+    if (!pronti) pronti = SCRIPT.reduce((p, src) => p.then(() => carica(src)), Promise.resolve());
+    return pronti;
+  }
+
+  /**
+   * Il calendario non si vede: dillo, e dai la strada che funziona.
+   *
+   * Serve in due casi diversi. Il primo e' che gli script non si carichino.
+   * Il secondo — quello che si verifica davvero oggi — e' che si carichino
+   * benissimo e l'iframe venga **rifiutato dal portale**: PerfectGym serve il
+   * Client Portal con `frame-ancestors 'self'`, il browser blocca la cornice,
+   * e `new ClientPortal()` non solleva nessun errore. Senza questo la pagina
+   * resterebbe a dire «sto caricando» per sempre.
+   *
+   * **Rimette in pagina il paragrafo che c'era, non uno nuovo.** Un `<p>`
+   * creato da qui non porta l'attributo di scope che Astro appende ai
+   * selettori di questo file, quindi `.pannello__ripiego` non lo troverebbe:
+   * il messaggio compariva senza stile, in alto a sinistra di un riquadro
+   * alto e vuoto. Il nodo del server ce l'ha, e va conservato prima di
+   * svuotare il riquadro per far posto all'iframe.
+   */
+  function ripiego(riquadro: HTMLElement, nodo: Element | null) {
+    riquadro.querySelector('iframe')?.remove();
+    /* La libreria lascia dietro di se' l'altezza minima che le abbiamo
+       chiesto — non come stile scritto sull'elemento, ma come classe
+       `cp-iframe-wrapper` a cui il suo CSS da' `min-height: 620px`. Senza
+       togliere anche quella, il riquadro resta alto seicento pixel con una
+       riga di testo in mezzo. */
+    riquadro.removeAttribute('style');
+    riquadro.classList.remove('cp-iframe-wrapper');
+    if (!nodo) return;
+    nodo.querySelector('.pannello__attesa')?.remove();
+    const primo = nodo.firstChild;
+    if (primo && primo.nodeType === Node.TEXT_NODE) {
+      primo.textContent = 'Il calendario non si carica dentro il sito. ';
+    }
+    if (!nodo.isConnected) riquadro.append(nodo);
+  }
+
+  function monta(riquadro: HTMLElement) {
+    const categoria = riquadro.dataset.categoria;
+    const ClientPortal = window.PerfectGym?.ClientPortal;
+    const nodoRipiego = riquadro.querySelector('.pannello__ripiego');
+    if (!ClientPortal || !categoria) return ripiego(riquadro, nodoRipiego);
+
+    /* Se entro dieci secondi l'iframe non ha dato segno di vita, non lo dara'
+       piu': il caso normale sono due o tre secondi. Dieci sono larghi apposta,
+       per non tagliare le gambe a una connessione lenta. */
+    let connesso = false;
+    window.setTimeout(() => {
+      if (!connesso) ripiego(riquadro, nodoRipiego);
+    }, 10000);
+
+    nodoRipiego?.remove();
+    new ClientPortal(riquadro, {
+      onConnect: () => {
+        connesso = true;
+      },
+      url: PORTALE,
+      /* L'indirizzo completo: stato `Classes/1/Calendar` e la categoria. Il
+         `1` e' il club, e Passion ne ha uno — lo stesso `clubId: 1` che il
+         form della prova usa quando crea il lead. */
+      forceUrl: `${PORTALE}#/Classes/1/Calendar?categoryId=${categoria}`,
+      language: 'it',
+      /* Via la barra del portale: l'intestazione di questa pagina e' la
+         nostra, e due una sotto l'altra fanno sembrare la pagina rotta. */
+      navigation: { hide: true, logo: false },
+      calendarPage: {
+        /* Niente «Prenota» per chi non ha fatto l'accesso: da qui e' una
+           pagina di consultazione, e il comando per entrare sta in cima. */
+        hideBookingIfNotLogged: true,
+      },
+      /* Sotto questa misura il calendario si apre accartocciato per un
+         istante, prima che `iframe-resizer` misuri il contenuto vero. */
+      minHeight: 620,
+    } as CalendarioPg);
+  }
+
+  const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-scheda]'));
+  const pannelli = Array.from(document.querySelectorAll<HTMLElement>('[data-pannello]'));
+
+  /* Le schede gia' montate. Una volta caricato, un calendario non si rimonta:
+     si nasconde e si rimostra, cosi' tornare su una scheda e' immediato e non
+     rifa' partire l'applicazione del portale. */
+  const montate = new Set<string>();
+
+  function avvia(slug: string) {
+    if (montate.has(slug)) return;
+    montate.add(slug);
+    const riquadro = document
+      .querySelector(`[data-pannello="${slug}"]`)
+      ?.querySelector<HTMLElement>('[data-pg-calendario]');
+    if (!riquadro) return;
+    scriptPronti()
+      .then(() => monta(riquadro))
+      .catch(() => ripiego(riquadro, riquadro.querySelector('.pannello__ripiego')));
+  }
+
+  function mostra(slug: string, spostaFuoco = false) {
+    tabs.forEach((t) => {
+      const attiva = t.dataset.scheda === slug;
+      t.classList.toggle('is-active', attiva);
+      t.setAttribute('aria-selected', attiva ? 'true' : 'false');
+      /* Una sola scheda nell'ordine di tabulazione, e le altre si raggiungono
+         con le frecce: e' come funziona un `tablist`, e senza questo per
+         arrivare al calendario si passa da tutte le schede. */
+      t.tabIndex = attiva ? 0 : -1;
+      if (attiva && spostaFuoco) t.focus();
+    });
+    pannelli.forEach((p) => {
+      p.hidden = p.dataset.pannello !== slug;
+    });
+    avvia(slug);
+
+    /* L'indirizzo ricorda la scheda, cosi' un link a una categoria precisa si
+       puo' mandare. `replaceState` e non `location.hash =`: cambiare l'hash
+       farebbe saltare la pagina all'elemento con quell'id. */
+    history.replaceState(null, '', `#${slug}`);
+  }
+
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => mostra(tab.dataset.scheda!));
+    tab.addEventListener('keydown', (e) => {
+      const i = tabs.indexOf(tab);
+      const passo = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+      if (!passo) return;
+      e.preventDefault();
+      // Circolare: dall'ultima si torna alla prima.
+      mostra(tabs[(i + passo + tabs.length) % tabs.length].dataset.scheda!, true);
+    });
+  });
+
+  /* All'apertura: la scheda nell'indirizzo se c'e' e se esiste, altrimenti la
+     prima. Cosi' `/prenotazione/#reformer-club` apre quella giusta. */
+  const richiesta = decodeURIComponent(location.hash.slice(1));
+  const iniziale = tabs.some((t) => t.dataset.scheda === richiesta)
+    ? richiesta
+    : tabs[0]?.dataset.scheda;
+  if (iniziale) mostra(iniziale);
+</script>
+
+<style>
+  .prenota {
+    background: var(--bg-dark);
+    color: var(--text-on-dark);
+    padding-block: var(--space-lg);
+  }
+  .prenota .eyebrow {
+    color: var(--accent);
+  }
+  .prenota h1 {
+    margin-top: var(--space-2xs);
+  }
+  .prenota__lede {
+    max-width: 46ch;
+    margin-block: var(--space-sm) var(--space-md);
+    color: var(--text-on-dark-muted);
+  }
+
+  .calendari {
+    padding-block: var(--space-lg);
+  }
+
+  /* Le schede: la stessa striscia di pulsanti affiancati del planning, cosi'
+     chi conosce `/orari-corsi/` ritrova il gesto che gia' fa la'. */
+  .schede {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .schede__tab {
+    appearance: none;
+    cursor: pointer;
+    /* 2.75rem: un dito copre circa 9 mm di vetro, e sotto i 44px si sbaglia
+       il bersaglio. Vale per il telefono e a maggior ragione per il totem. */
+    min-height: 2.75rem;
+    padding: 0.6rem 1.3rem;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-on-light);
+    background: transparent;
+    border: 2px solid var(--border-on-light);
+    border-radius: 10px;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+  .schede__tab:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .schede__tab.is-active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--color-white);
+  }
+
+  .pannello__nota {
+    margin-block: var(--space-sm);
+    color: var(--text-on-light-muted);
+    max-width: 52ch;
+  }
+
+  /* Il riquadro intorno all'iframe: fondo bianco perche' il calendario del
+     portale e' su bianco. */
+  .pannello__riquadro {
+    background: var(--bg-light);
+    border: 2px solid var(--border-on-light);
+    border-radius: 12px;
+    padding: var(--space-2xs);
+    /* Il portale e' un'applicazione con le sue misure: sotto una certa
+       larghezza mostra la sua versione stretta, e non va aiutato. */
+    overflow: hidden;
+  }
+  .pannello__embed :global(iframe) {
+    display: block;
+    width: 100%;
+    border: 0;
+  }
+
+  .pannello__ripiego {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    min-height: 12rem;
+    padding: var(--space-md);
+    font-size: 0.9rem;
+    color: var(--text-on-light-muted);
+  }
+  .pannello__ripiego a {
+    font-weight: 700;
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+  .pannello__attesa {
+    width: 1.1rem;
+    height: 1.1rem;
+    border: 2px solid var(--border-on-light);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: gira 0.8s linear infinite;
+  }
+  @keyframes gira {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pannello__attesa {
+      animation-duration: 2.4s;
+    }
+  }
+
+  /* + totem: vedi «Il totem verticale del club» in styles/global.css */
+  @media (max-width: 860px),
+    (min-width: 900px) and (min-height: 1200px) and (max-aspect-ratio: 7/10) {
+    /* Le tre schede in fila si spartiscono la larghezza invece di andare a
+       capo a una per riga: i nomi sono corti e ci stanno. */
+    .schede__tab {
+      flex: 1 1 0;
+      min-width: 0;
+      padding-inline: 0.5rem;
+      font-size: 0.75rem;
+      letter-spacing: 0.02em;
+    }
+  }
+</style>
