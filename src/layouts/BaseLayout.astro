@@ -21,6 +21,24 @@ const { title, description, ogImage, noindex, breadcrumbs, ogTitle } = Astro.pro
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+    {/* Font di titolo (Anton) autoospitato: scoperto tardi, solo dopo che il
+        browser ha letto il CSS e trovato la @font-face. Il preload lo fa
+        partire subito, in parallelo all'HTML, cosi' il testo dei titoli
+        (praticamente sempre above-the-fold) passa dal fallback al font
+        definitivo prima. crossorigin e' richiesto anche se il font e'
+        sulla stessa origine: i font vengono sempre richiesti in modalita'
+        CORS anonima, senza si rischia un doppio download. */}
+    <link rel="preload" href="/fonts/anton-latin.woff2" as="font" type="font/woff2" crossorigin />
+
+    {/* Le connessioni verso i due domini esterni caricati piu' sotto
+        (script bloccanti/eseguiti su ogni pagina): risolvere DNS/TLS in
+        anticipo toglie quel tempo dalla richiesta vera e propria. Niente
+        preconnect per gli altri servizi esterni del sito (mappe, form,
+        PerfectGym, Typeform): sono iframe lazy o link di navigazione, non
+        risorse che servono nei primi secondi di questa pagina. */}
+    <link rel="preconnect" href="https://cdn-cookieyes.com" />
+    <link rel="preconnect" href="https://connect.facebook.net" />
+
     <!-- Start cookieyes banner -->
     {/* Primo script della pagina, prima del Meta Pixel: CookieYes blocca gli
         script di tracciamento fino al consenso, quindi deve caricarsi per

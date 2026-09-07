@@ -1,0 +1,31 @@
+---
+// Pagina 404 statica (non passa da una content collection: non c'e' un
+// .mdx per "una pagina che non esiste"). Astro la riconosce per convenzione
+// di nome file e la build produce dist/404.html, che sia Netlify (l'host di
+// produzione, vedi astro.config.mjs) sia GitHub Pages servono automaticamente
+// per qualunque route non trovata, senza bisogno di configurazione.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/ui/Hero.astro';
+import Button from '../components/ui/Button.astro';
+
+const PROVA_URL =
+  'https://automazione.n8ndevelop.it/form/8ce36c5e-0cc4-4813-9a0f-2da2a7605fb0?source=SitoWeb&medium=Btn_404';
+---
+
+<BaseLayout title="Pagina non trovata" noindex>
+  <Hero title="404" eyebrow="Questa pagina non esiste">
+    <p>
+      Il link che hai seguito potrebbe essere vecchio o scritto male. Trovi tutto quello
+      che cerchi — orari, abbonamenti, corsi — a partire dalla home.
+    </p>
+    <div class="hero-ctas">
+      <Button href="/" variant="white">Torna alla Home</Button>
+      <Button href={PROVA_URL} variant="ghost-dark">Prova Ora</Button>
+      <Button href="/orari-corsi/" variant="ghost-dark">Orari Corsi</Button>
+      <Button href="/contatti/" variant="ghost-dark">Contattaci</Button>
+    </div>
+  </Hero>
+</BaseLayout>
+
+{/* Nessuno stile locale: .hero-ctas e' gia' definito in global.css,
+    identico a come lo usano home e blog listing. */}
