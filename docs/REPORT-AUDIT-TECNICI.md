@@ -250,7 +250,44 @@ Ho passato in rassegna ogni `:hover` sul sito (13 file). Quasi tutti sono effett
 
 ---
 
-## Riepilogo file toccati (cumulativo, tutti e 7 gli audit)
+## 10. Installazione Google Tag Manager + Google Consent Mode v2
+
+**Obiettivo**: installare GTM (container esistente, già in uso sul vecchio sito) con Consent Mode v2 di default negato, coerente col consenso CookieYes. Segue direttamente dai risultati dell'audit 8.
+
+### Implementato
+
+- **Google Consent Mode v2 — stato di default**, in `BaseLayout.astro`, **prima** dello script CookieYes: `gtag('consent', 'default', {...})` con i 4 parametri standard (`ad_storage`, `ad_user_data`, `ad_personalization`, `analytics_storage`) tutti su `'denied'`, più `wait_for_update: 500` (da' a CookieYes fino a mezzo secondo per mandare il suo aggiornamento di consenso prima che i tag Google decidano se sparare). Nessun parametro oltre ai 4 richiesti.
+- **Google Tag Manager**, container `GTM-N68BT5M8` (lo stesso già in uso sul sito WordPress attuale, riportato identico per continuità storica dei dati) — snippet standard, **subito dopo** CookieYes nell'head, più il `<noscript><iframe>` subito dopo l'apertura di `<body>`.
+- **Ordine finale verificato nell'HTML generato**: Consent Mode default → CookieYes → GTM (head) → Meta Pixel → GTM (noscript, inizio body). Esattamente come richiesto.
+- **CookieYes e Meta Pixel non toccati**: verificato via `git diff` che il file ha solo 46 righe aggiunte, zero righe rimosse o modificate — i due blocchi esistenti sono byte-identici a prima.
+- Aggiunto anche `<link rel="preconnect" href="https://www.googletagmanager.com">`, coerente con gli altri preconnect già presenti per CookieYes/Meta (stesso pattern dell'audit performance).
+
+### Verificato
+
+- `npm run build`: 0 errori. `npm run check`: 0 errori, 0 warning.
+- **In locale**, via `dataLayer` (non tramite Network tab — vedi limite sotto): la sequenza registrata è esattamente `consent/default` (con tutti i 4 parametri `denied`) → `gtm.start`/`gtm.js` → `gtm.dom` → `gtm.load`. Il container GTM-N68BT5M8 carica ed esegue correttamente il proprio ciclo di vita completo.
+- Nessun nuovo errore in console — l'unico presente è il consueto "website URL has changed" di CookieYes su un dominio non registrato (atteso, visto in ogni audit precedente su localhost).
+- Verifica visiva: home page invariata, nessun impatto di layout (gli script/noscript aggiunti sono invisibili per natura).
+
+### Limite del test in locale (da fare tu)
+
+**CookieYes rifiuta di inizializzarsi su qualunque dominio diverso da quello registrato** — su localhost non mostra nemmeno il banner, quindi non posso verificare se manda davvero l'aggiornamento di consenso a Google Consent Mode. Il `read_network_requests` del mio browser inoltre non ha catturato le richieste verso `googletagmanager.com` (probabile limite dello strumento su script cross-origin, non un problema reale — il `dataLayer` lo prova comunque in modo più diretto). **Vanno rifatti i test da te, sul dominio vero, appena il sito è online**:
+1. Network tab in incognito, senza toccare il banner → nessuna richiesta verso `google-analytics.com`/`analytics.google.com`.
+2. Accetta il banner → la richiesta parte.
+3. GTM, modalità anteprima (tagmanager.google.com) → il container si carica sulla pagina.
+4. **Nel pannello CookieYes, attivare/verificare la sezione "Google Consent Mode (GCM)"** — passaggio manuale nella loro interfaccia, non risolvibile da codice (come segnalato nel prompt).
+
+### Domanda aperta — GA4 diretto o dentro GTM?
+
+**Non ho installato il tag GA4** (`G-N9QTHSFRXY`): il prompt chiedeva esplicitamente di confermare l'approccio prima di procedere, perché i due metodi si escludono a vicenda (altrimenti GA4 traccia doppio):
+- **Dentro GTM** (consigliato, dato che il container è appena stato installato): si configura interamente su tagmanager.google.com — un Tag "Google Analytics: GA4 Configuration" con Measurement ID `G-N9QTHSFRXY`, trigger "All Pages". Nessun altro codice da toccare qui.
+- **Diretto**: aggiungo un secondo blocco `gtag.js` separato in `BaseLayout.astro`, dopo GTM.
+
+**Risposta: installazione diretta.** Aggiunto lo snippet standard `gtag.js` (Measurement ID `G-N9QTHSFRXY`) subito dopo GTM nell'head, prima del Meta Pixel. Non ripete la dichiarazione di Consent Mode (già fatta più in alto nello stesso head): `gtag`/`dataLayer` sono già definiti, `gtag('js', ...)` e `gtag('config', ...)` si accodano alla stessa coda. Verificato via `dataLayer`: sequenza `consent/default` → `gtm.start` → `js`/timestamp → `config`/`G-N9QTHSFRXY` → `gtm.dom` → `gtm.load` — GA4 si accoda correttamente dopo il consenso di default e dopo l'avvio di GTM. `git diff` ancora puramente additivo (64 righe aggiunte in totale su questo file, zero rimosse). Build e typecheck verdi.
+
+---
+
+## Riepilogo file toccati (cumulativo, tutti e 8 gli audit)
 
 Nuovi: `src/lib/page.ts`, `src/lib/summary.ts`, `src/pages/404.astro`, `public/robots.txt`, `TODO.md`, questo report.
 

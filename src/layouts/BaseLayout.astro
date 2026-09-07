@@ -38,6 +38,28 @@ const { title, description, ogImage, noindex, breadcrumbs, ogTitle } = Astro.pro
         risorse che servono nei primi secondi di questa pagina. */}
     <link rel="preconnect" href="https://cdn-cookieyes.com" />
     <link rel="preconnect" href="https://connect.facebook.net" />
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+
+    <!-- Google Consent Mode v2 - stato di default -->
+    {/* Deve eseguire PRIMA di CookieYes: definisce gtag/dataLayer e nega
+        tutto finche' non arriva un consenso esplicito. wait_for_update da'
+        a CookieYes fino a 500ms per mandare il suo aggiornamento di consenso
+        prima che gli Google tag (caricati dopo, via GTM) decidano se sparare
+        o no. is:inline per lo stesso motivo del blocco CookieYes sotto:
+        Astro trasformerebbe altrimenti lo script in un modulo differito,
+        che partirebbe DOPO CookieYes invece che prima. */}
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag('consent', 'default', {
+        'ad_storage': 'denied',
+        'ad_user_data': 'denied',
+        'ad_personalization': 'denied',
+        'analytics_storage': 'denied',
+        'wait_for_update': 500
+      });
+    </script>
+    <!-- End Google Consent Mode v2 -->
 
     <!-- Start cookieyes banner -->
     {/* Primo script della pagina, prima del Meta Pixel: CookieYes blocca gli
@@ -50,6 +72,41 @@ const { title, description, ogImage, noindex, breadcrumbs, ogTitle } = Astro.pro
       type="text/javascript"
       src="https://cdn-cookieyes.com/client_data/c9442574ff0ef76a81383b99/script.js"></script>
     <!-- End cookieyes banner -->
+
+    <!-- Google Tag Manager -->
+    {/* Subito dopo CookieYes: il container GTM-N68BT5M8 e' lo stesso gia' in
+        uso sul vecchio sito WordPress (via Site Kit), riportato identico per
+        continuita' storica dei dati. GA4 e' installato DIRETTO (vedi blocco
+        gtag.js subito sotto), non come tag dentro questo container: scelta
+        esplicita per evitare la doppia configurazione, i due metodi si
+        escludono a vicenda. */}
+    <script is:inline>
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-N68BT5M8');
+    </script>
+    <!-- End Google Tag Manager -->
+
+    <!-- Google tag (gtag.js) - GA4 diretto -->
+    {/* Installazione diretta scelta invece che dentro GTM: stesso Measurement
+        ID gia' in uso sul vecchio sito WordPress (via Site Kit), riportato
+        identico per continuita' storica dei dati. Rispetta lo stesso Consent
+        Mode dichiarato in cima (default negato finche' CookieYes non
+        aggiorna il consenso) senza bisogno di ripeterlo: gtag/dataLayer sono
+        gia' definiti da quel blocco, gtag('js', ...) e gtag('config', ...)
+        si limitano ad accodarsi alla stessa coda. is:inline su entrambi:
+        devono restare script classici nell'ordine in cui sono scritti, non
+        diventare moduli differiti. */}
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-N9QTHSFRXY"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag('js', new Date());
+      gtag('config', 'G-N9QTHSFRXY');
+    </script>
+    <!-- End Google tag (gtag.js) -->
 
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
@@ -83,6 +140,13 @@ const { title, description, ogImage, noindex, breadcrumbs, ogTitle } = Astro.pro
     <!-- End Meta Pixel Code -->
   </head>
   <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript>
+      <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N68BT5M8"
+        height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
     <Header />
     <main>
       <slot />
