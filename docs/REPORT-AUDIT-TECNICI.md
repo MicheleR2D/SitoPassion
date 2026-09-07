@@ -287,11 +287,52 @@ Ho passato in rassegna ogni `:hover` sul sito (13 file). Quasi tutti sono effett
 
 ---
 
-## Riepilogo file toccati (cumulativo, tutti e 8 gli audit)
+## 11. Redirect vecchio sito → nuovo (con dati reali dal cliente)
+
+**Obiettivo**: confrontare le 88 URL indicizzate del vecchio sito (page-sitemap.xml + post-sitemap.xml di Yoast, fornite dal cliente) con le route del sito nuovo, e integrare `public/_redirects`.
+
+### Ricevuto dal cliente
+
+Solo le **9 URL di `page-sitemap.xml`** (pagine principali). I **79 URL di `post-sitemap.xml`** (articoli blog) erano un placeholder vuoto nel messaggio — non ricevuti.
+
+### Fatto (le 9 pagine)
+
+| Vecchia URL | Nuova URL | Tipo |
+|---|---|---|
+| `/` | `/` | già uguale |
+| `/porta-un-amico/` | `/porta-un-amico/` | già uguale |
+| `/abbonamenti/` | `/abbonamenti/` | già uguale |
+| `/palestra/sala-pesi/` | `/palestra/sala-pesi/` | già uguale |
+| `/palestra/corsi-fitness/` | `/palestra/corsi-fitness/` | già uguale |
+| `/pilates-reformer/` | `/pilates-reformer/` | già uguale |
+| `/hyrox/` | `/hyrox/` | già uguale |
+| `/contatti/` | `/contatti/` | già uguale |
+| `/i-love-my-trainer/` | `/personal-training/` | **redirect aggiunto** |
+
+- **`/i-love-my-trainer/` → `/personal-training/`**: confermato lo slug attuale (`src/content/pages/personal-training.mdx`), aggiunto a mano in `public/_redirects` (non generabile dallo script di migrazione: è un rename avvenuto *dopo* la migrazione, nessuna riga corrispondente nel plugin Redirection del sito WP di origine). Verificato: nessuna catena (`/personal-training/` non è a sua volta origine di un altro redirect), destinazione è una pagina reale (`dist/personal-training/index.html` esiste), build e typecheck verdi.
+- **`/crossfit/` e `/pilates/`** (referenziate in `scripts/migration/lib/slug-map.js`): **confermato dal cliente che non sono più pagine live** — non compaiono nella page-sitemap.xml attuale. Nessun redirect generato, come da vincolo — segnalate in `TODO.md` come "da chiarire col cliente" (destinazione, se serve).
+
+### Aggiornamento — lista dei 78 articoli blog ricevuta (2026-09-07, stesso giorno)
+
+Il cliente ha fornito l'elenco reale (78 URL, non 79 — un URL in meno di quanto dichiarato, non significativo). Confronto fatto slug per slug contro `src/content/blog/*.mdx` (i post vivono a livello radice sul sito nuovo, non sotto `/blog/[slug]/` — vedi `src/pages/[slug].astro`).
+
+- **74 su 78 hanno lo slug identico** sul sito nuovo → **nessun redirect necessario**, risolvono già da soli. Verificato che ognuno dei 74 corrisponde a una pagina realmente generata in `dist/` (0 mancanti), e che nessuno dei 74 è per caso già la *sorgente* di uno dei 53 redirect esistenti (nessun conflitto).
+- **4 su 78 non hanno alcun corrispettivo** sul sito nuovo — **nessun redirect generato**, come da vincolo: `/che-cosa-e-il-crossfit/`, `/crossfit-roma/`, `/crossfit-roma-comunita/`, `/differenza-crossfit-allenamento-funzionale/`. Tutti e 4 a tema Crossfit: coerente col fatto che anche la pagina `/crossfit/` (audit 11, sopra) non è più live — sembra che l'intero tema Crossfit non sia mai stato portato sul sito nuovo, non solo la pagina principale. Segnalati in `TODO.md`, nessuna destinazione inventata.
+- **`public/_redirects` non modificato in questo passaggio**: nessuno dei 78 URL richiedeva un redirect nuovo (i 74 coincidono, i 4 restano senza destinazione).
+
+### Aggiornamento — Crossfit chiarito (2026-09-07, stesso giorno)
+
+Confermato dal cliente: **in palestra non si fanno più corsi di Crossfit**. Aggiunti 5 redirect a mano in `public/_redirects` (stessa sezione manuale di `/i-love-my-trainer/`) verso `/hyrox/`, la disciplina più vicina oggi offerta: `/crossfit/` (la pagina), `/che-cosa-e-il-crossfit/`, `/crossfit-roma/`, `/crossfit-roma-comunita/`, `/differenza-crossfit-allenamento-funzionale/`. Verificato: nessuna catena (`/hyrox/` non è a sua volta origine di un redirect), destinazione reale, build verde.
+
+**`/pilates/` resta non chiarito** — il cliente ha confermato solo il caso Crossfit; `/pilates/` (stessa origine, `slug-map.js`) è ancora in `TODO.md` in attesa di una decisione.
+
+---
+
+## Riepilogo file toccati (cumulativo, tutti e 9 gli audit)
 
 Nuovi: `src/lib/page.ts`, `src/lib/summary.ts`, `src/pages/404.astro`, `public/robots.txt`, `TODO.md`, questo report.
 
-Modificati (principali): `astro.config.mjs` (dominio), `src/content.config.ts`, `src/layouts/{BaseLayout,PageLayout,BlogPostLayout}.astro`, `src/components/layout/SEO.astro`, `src/components/ui/{Hero,HighlightCards,RelatedCard}.astro`, `src/components/blog/PostCard.astro`, `src/pages/{index,blog/[...page]}.astro`, `public/admin/index.html`, `public/robots.txt` (dominio), diverse pagine in `src/content/pages/` (title/seo/immagini), `esercizi-bicipiti-guida.mdx`, `prova-passion-fitness.mdx`.
+Modificati (principali): `astro.config.mjs` (dominio), `src/content.config.ts`, `src/layouts/{BaseLayout,PageLayout,BlogPostLayout}.astro`, `src/components/layout/SEO.astro`, `src/components/ui/{Hero,HighlightCards,RelatedCard}.astro`, `src/components/blog/PostCard.astro`, `src/pages/{index,blog/[...page]}.astro`, `public/admin/index.html`, `public/robots.txt` (dominio), `public/_redirects` (1 riga aggiunta a mano), diverse pagine in `src/content/pages/` (title/seo/immagini), `esercizi-bicipiti-guida.mdx`, `prova-passion-fitness.mdx`.
 
 Rimossi: `src/components/ui/ServiceCard.astro`, `src/content/pages/home.mdx`, collection `team`/`services` da `content.config.ts`.
 

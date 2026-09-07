@@ -19,8 +19,10 @@ Cose emerse dagli audit ma non ancora risolte — ognuna richiede una decisione 
 
 ## Redirect vecchio sito → nuovo sito
 
-- [ ] **Confermare 3 redirect**: `/i-love-my-trainer/` → `/personal-training/` (alta confidenza, da confermare); `/crossfit/` → dove? (pagina WP esistita, mai migrata); `/pilates/` → dove? (idem).
-- [ ] **Serve l'export Google Search Console → Copertura** (o una sitemap.xml salvata prima della migrazione) per completare il confronto vecchie-URL/nuove-URL e generare il resto dei redirect 301 in `public/_redirects`. Attualmente ci sono solo i 53 redirect reali già impostati sul sito WP (plugin Redirection) — mancano le URL indicizzate che non avevano già un redirect.
+- [x] ~~`/i-love-my-trainer/` → `/personal-training/`~~ → confermato dalla page-sitemap.xml reale (Yoast) fornita il 2026-09-07, redirect aggiunto a mano in `public/_redirects`.
+- [x] ~~Confronto dei 78 URL blog da `post-sitemap.xml`~~ → fatto (lista fornita dal cliente il 2026-09-07). 74 su 78 hanno lo stesso slug identico sul sito nuovo: nessun redirect necessario, risolvono già da soli. I 4 rimasti sono l'unico punto aperto, sotto.
+- [x] ~~Crossfit: pagina + 4 articoli del blog senza corrispettivo~~ → confermato dal cliente il 2026-09-07 (in palestra non si fanno più corsi di Crossfit): `/crossfit/`, `/che-cosa-e-il-crossfit/`, `/crossfit-roma/`, `/crossfit-roma-comunita/`, `/differenza-crossfit-allenamento-funzionale/` rediretti tutti a `/hyrox/` in `public/_redirects`.
+- [ ] **`/pilates/`** (in `scripts/migration/lib/slug-map.js`, pagina WP esistita ma mai migrata) resta senza chiarimento — il cliente ha confermato solo il caso Crossfit finora. Serve una decisione: redirect (verso dove — `/pilates-reformer/`?) o si lascia cadere.
 
 ## Compatibilità cross-browser
 

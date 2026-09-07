@@ -1,5 +1,5 @@
 # Generato da scripts/migration/05-generate-redirects.js dai redirect 301 reali del sito WP.
-# Non modificare a mano: rilanciare lo script se i redirect di origine cambiano.
+# Non modificare a mano le righe qui sotto: rilanciare lo script se i redirect di origine cambiano.
 /come-ballare-la-bachata/  /lezioni-di-bachata/  301
 /tonificazione-la-parola-dordine-per-dimagrire-bene/  /esercizi-per-tonificare/  301
 /corso-di-olit-training-olistico-sinergia-tra-mente-e-corpo/  /olit-training-olistico/  301
@@ -51,3 +51,18 @@
 /5-modi-sorprendenti-in-cui-la-pistola-massaggiante-puo-migliorare-le-tue-prestazioni-sportive/  /pistola-massaggiante-benefici/  301
 /stretching-gambe-gli-esercizi-di-allungamento-muscolare/  /stretching-gambe/  301
 /porta-un-amico/?utm_source=referral&utm_medium=manifesto_qr&utm_campaign=porta_un_amico  https://automazione.n8ndevelop.it/form/eac6fd61-9d61-4fcb-b7f5-4f42ab56ba86  301
+
+# Aggiunti a mano (non da script): pagine rinominate DOPO la migrazione, quindi
+# senza un redirect corrispondente nel plugin Redirection del sito WP di origine.
+# Confrontato con l'elenco reale delle 9 pagine indicizzate (page-sitemap.xml di
+# Yoast) fornito dal cliente il 2026-09-07.
+/i-love-my-trainer/  /personal-training/  301
+
+# Crossfit: in palestra non si fanno piu' quei corsi (confermato dal cliente
+# il 2026-09-07). Pagina e articoli del vecchio sito dedicati al Crossfit
+# rediretti alla disciplina piu' vicina oggi offerta.
+/crossfit/  /hyrox/  301
+/che-cosa-e-il-crossfit/  /hyrox/  301
+/crossfit-roma/  /hyrox/  301
+/crossfit-roma-comunita/  /hyrox/  301
+/differenza-crossfit-allenamento-funzionale/  /hyrox/  301
