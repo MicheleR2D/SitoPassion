@@ -256,6 +256,20 @@ const telefonoLeggibile = data?.phone
     padding-block: var(--space-lg) var(--space-md);
   }
 
+  /* Il footer occupa la larghezza intera, mentre il resto del sito sta dentro
+     i 76rem del contenitore. Non e' un'incoerenza: il fondo scuro arriva
+     comunque da bordo a bordo, e con il contenuto fermo al centro su uno
+     schermo largo restavano due fasce nere vuote ai lati piu' larghe delle
+     colonne stesse — il footer sembrava un riquadro appoggiato su una pagina
+     piu' grande.
+     `:global` perche' `.container` non e' una classe di questo file: gli stili
+     con ambito di Astro appenderebbero l'attributo di scope al selettore e non
+     troverebbero il `div` che arriva da global.css. I margini laterali restano
+     quelli di tutto il sito, cosi' il testo non tocca il vetro. */
+  .site-footer :global(.container) {
+    max-width: none;
+  }
+
   .brand {
     display: inline-flex;
   }
