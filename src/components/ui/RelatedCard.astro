@@ -6,7 +6,9 @@
 interface Props {
   title: string;
   href: string;
-  image: string;
+  // Opzionale: i post del blog possono non avere copertina, e senza questo
+  // finiva un src="undefined" nel markup.
+  image?: string;
   alt?: string;
 }
 
@@ -15,7 +17,9 @@ const { title, href, image, alt = '' } = Astro.props;
 
 <a class="related-card" href={href}>
   <div class="related-card__media">
-    <img src={image} alt={alt} loading="lazy" />
+    {image
+      ? <img src={image} alt={alt} loading="lazy" />
+      : <span class="related-card__placeholder" />}
   </div>
   <div class="related-card__bar">
     <span class="related-card__title">{title}</span>
@@ -39,6 +43,12 @@ const { title, href, image, alt = '' } = Astro.props;
     flex: 1;
     min-height: 12rem;
     overflow: hidden;
+  }
+  /* Riempie il riquadro quando manca la copertina: meglio di un buco. */
+  .related-card__placeholder {
+    position: absolute;
+    inset: 0;
+    background: var(--bg-light);
   }
   .related-card__media img {
     position: absolute;

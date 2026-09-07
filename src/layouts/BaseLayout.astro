@@ -111,8 +111,13 @@ const { title, description, ogImage, noindex } = Astro.props;
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    const items = Array.from(media).map((el) => ({ el, img: el.querySelector('img') }))
-      .filter((item) => item.img);
+    // Il filtro scarta i riquadri senza immagine (es. quelli col video):
+    // `flatMap` invece di `map`+`filter` perche' cosi' il tipo di `img` resta
+    // non nullo anche dopo il filtro.
+    const items = Array.from(media).flatMap((el) => {
+      const img = el.querySelector('img');
+      return img ? [{ el, img }] : [];
+    });
     if (!items.length) return;
 
     let queued = false;

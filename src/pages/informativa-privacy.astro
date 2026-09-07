@@ -1,9 +1,8 @@
 ---
-import { getEntry, render } from 'astro:content';
 import PageLayout from '../layouts/PageLayout.astro';
+import { loadPage } from '../lib/page.ts';
 
-const page = await getEntry('pages', 'informativa-privacy');
-const { Content } = await render(page);
+const { page, Content } = await loadPage('informativa-privacy');
 ---
 
 <PageLayout page={page}>

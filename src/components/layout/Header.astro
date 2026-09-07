@@ -31,7 +31,7 @@ import Nav from './Nav.astro';
   updateHeaderState();
   window.addEventListener('scroll', updateHeaderState, { passive: true });
 
-  const scrollToHash = (hash, behavior) => {
+  const scrollToHash = (hash: string, behavior: ScrollBehavior) => {
     const target = document.getElementById(decodeURIComponent(hash.slice(1)));
     if (!target) return false;
     // scrollIntoView e non un offset a mano: rispetta lo scroll-margin-top
@@ -44,13 +44,13 @@ import Nav from './Nav.astro';
   // Sulle ancore della pagina corrente questo lo rendeva inservibile (il
   // pannello copre lo schermo, lo scroll avviene dietro e sembra che il tocco
   // non abbia fatto niente).
-  const toggle = /** @type {HTMLInputElement | null} */ (document.getElementById('nav-toggle'));
+  const toggle = document.getElementById('nav-toggle') as HTMLInputElement | null;
   document.querySelector('.nav-panel')?.addEventListener('click', (event) => {
-    const link = /** @type {HTMLElement} */ (event.target)?.closest?.('a[href]');
+    const link = (event.target as Element | null)?.closest?.('a[href]') as HTMLAnchorElement | null;
     if (!link) return;
     if (toggle) toggle.checked = false;
 
-    const url = new URL(/** @type {HTMLAnchorElement} */ (link).href, location.href);
+    const url = new URL(link.href, location.href);
     const samePage = url.pathname === location.pathname && url.search === location.search;
     if (!samePage || !url.hash) return;
 

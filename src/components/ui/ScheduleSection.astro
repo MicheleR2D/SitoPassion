@@ -100,14 +100,14 @@ const { title, text, days, id, tone = 'plain' } = Astro.props;
   // Un solo script per tutti gli orari della pagina (Astro lo raggruppa una
   // volta sola): ogni sezione tiene il proprio giorno attivo.
   document.querySelectorAll('[data-schedule]').forEach((root) => {
-    const tabs = Array.from(root.querySelectorAll('.schedule__tab'));
-    const days = Array.from(root.querySelectorAll('.schedule__day'));
+    const tabs = Array.from(root.querySelectorAll<HTMLElement>('.schedule__tab'));
+    const days = Array.from(root.querySelectorAll<HTMLElement>('.schedule__day'));
     const label = root.querySelector('.schedule__nav-label');
     if (days.length === 0) return;
 
     let current = 0;
 
-    const show = (next) => {
+    const show = (next: number) => {
       // Modulo con offset: dalle frecce si passa da sabato a lunedi' e
       // viceversa senza vicoli ciechi.
       current = (next + days.length) % days.length;
@@ -116,11 +116,11 @@ const { title, text, days, id, tone = 'plain' } = Astro.props;
         tab.setAttribute('aria-pressed', String(i === current));
       });
       days.forEach((day, i) => day.classList.toggle('is-active', i === current));
-      if (label) label.textContent = days[current].dataset.label ?? '';
+      if (label) label.textContent = days[current]?.dataset.label ?? '';
     };
 
     tabs.forEach((tab, i) => tab.addEventListener('click', () => show(i)));
-    root.querySelectorAll('.schedule__nav-btn').forEach((btn) => {
+    root.querySelectorAll<HTMLElement>('.schedule__nav-btn').forEach((btn) => {
       btn.addEventListener('click', () => show(current + Number(btn.dataset.dir)));
     });
   });

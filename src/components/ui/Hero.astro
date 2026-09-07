@@ -44,7 +44,7 @@ const { title, image, video, videoEndBuffer = 3, eyebrow } = Astro.props;
 
 {video && (
   <script>
-    document.querySelectorAll('.hero-media video').forEach((videoEl) => {
+    document.querySelectorAll<HTMLVideoElement>('.hero-media video').forEach((videoEl) => {
       const endBuffer = Number(videoEl.dataset.endBuffer ?? '3');
       videoEl.addEventListener('timeupdate', () => {
         if (videoEl.duration && videoEl.currentTime >= videoEl.duration - endBuffer) {

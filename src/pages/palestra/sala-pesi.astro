@@ -1,10 +1,9 @@
 ---
-import { getEntry, render } from 'astro:content';
 import PageLayout from '../../layouts/PageLayout.astro';
+import { loadPage } from '../../lib/page.ts';
 
 // URL reale gerarchico (post_parent = palestra): /palestra/sala-pesi/, vedi slug-map.js
-const page = await getEntry('pages', 'palestra/sala-pesi');
-const { Content } = await render(page);
+const { page, Content } = await loadPage('palestra/sala-pesi');
 ---
 
 <PageLayout page={page}>
