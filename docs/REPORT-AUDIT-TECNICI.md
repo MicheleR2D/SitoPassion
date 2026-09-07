@@ -168,11 +168,93 @@ Ultimo aggiornamento: 2026-09-07.
 
 ---
 
-## Riepilogo file toccati (cumulativo, tutti e 6 gli audit)
+## 7. Audit compatibilità cross-browser (solo analisi, nessuna modifica al codice)
+
+**Obiettivo**: individuare rischi di resa diversa tra browser/dispositivi (Safari iOS in particolare) — a differenza degli audit precedenti, qui **non ho applicato fix**: il compito era segnalare i rischi, i test su dispositivo reale li fai tu.
+
+### Cosa non c'è (verificato)
+
+- **Nessun `browserslist`/target di build esplicito**: Astro/Vite usa il default (browser con supporto nativo ai moduli ES — Chrome 61+, Firefox 60+, Safari 11+, Edge 16+), nessun polyfill, nessuna transpilazione per browser legacy (niente IE11).
+- **JS conservativo**: nessuna API recente a rischio (`Array.from`, `flatMap`, optional chaining — tutte supportate da anni). Nessun uso di `Object.hasOwn`, `Array.prototype.at`, `structuredClone`.
+- **Video**: tutti MP4 (H.264), formato universalmente supportato da Safari. `autoplay muted playsinline` già presente ovunque — combinazione corretta per l'autoplay su iOS Safari.
+- **CSS moderno rischioso** (`@container`, `backdrop-filter`, nesting nativo `&`, `color-mix()`, `text-wrap`): **non usato da nessuna parte** sul sito.
+- **`dvh`**: usato 10 volte, con fallback `vh` dichiarato prima in quasi tutti i casi (eccezione sotto).
+
+### Rischi trovati (in `TODO.md`, non corretti in questo audit)
+
+- 🔴 **`:has()` diffuso in `Hero.astro`** (13 occorrenze su un totale di 27 nel sito) controlla l'intero layout dell'hero — colonna rossa, colori testo, gradiente — su **ogni pagina del sito**. Supportato da Safari 15.4+/Chrome 105+, ma **Firefox solo da dicembre 2023**: su un browser senza supporto l'hero perde silenziosamente la colonna rossa e i colori, senza errori in console. È l'uso di `:has()` più critico (altri usi in `Header.astro`, `Collapsible.astro`, `ContentRow.astro`, `FeatureShowcase.astro`, `PostBody.astro` sono solo estetici/di rifinitura, degradano senza rompere nulla).
+- 🟠 **`dvh` senza fallback** in `Header.astro:196` (altezza del pannello menu mobile) — unico caso su 10 senza un `vh` dichiarato prima. Su browser senza supporto `dvh` il pannello potrebbe non riempire correttamente lo schermo.
+- 🟡 **Iframe cross-origin del form "Porta un Amico"** (`n8ndevelop.it` dentro `passionfitness.it`): Safari (ITP) blocca in modo aggressivo cookie/storage di terze parti nei frame cross-origin — se il form se ne appoggia per il proprio stato interno, potrebbe comportarsi diversamente su Safari. **Da testare compilando davvero il form su un iPhone/Mac.**
+
+### Dipendenze hover-only: controllate tutte, un solo caso reale
+
+Ho passato in rassegna ogni `:hover` sul sito (13 file). Quasi tutti sono effetti puramente decorativi (inversione colore, zoom immagine, spostamento freccia) — mai contenuto o link nascosti, degradano bene su touch.
+
+- **Un solo caso di contenuto nascosto**: in `HighlightCards.astro` (i "tre box" sotto l'hero) il paragrafo descrittivo è visibile solo in `:hover`, **anche su mobile — scelta esplicita tua**, confermata durante la sessione. Verificato via browser: il link/CTA della card resta però **sempre visibile e cliccabile** (`opacity:1`, `pointer-events:auto`) indipendentemente dall'hover — quindi nessuna funzionalità è bloccata, solo il testo persuasivo potrebbe non comparire su un touch device che non simula l'hover al tocco. Rischio basso, ma è l'unico punto del sito dove vale la pena un test reale su smartphone per vedere se quel testo si vede mai.
+- Il menu mobile (flip delle card Palestra/Discipline/Orari/Abbonamenti) usa già `:hover` **insieme a** `:focus-within` su un `<button>` reale — il tocco dà focus al bottone e fa scattare il giro anche senza hover. Già testato in una sessione precedente con click reali in browser: funziona.
+- `ScheduleSection.astro`: l'hover sui box orari è disattivato su mobile a favore di `:active` per il feedback al tocco — già gestito correttamente.
+
+### Dove testare manualmente (per te)
+
+1. **Safari desktop/iOS** su una qualunque pagina con hero fotografico (es. `/hyrox/`) — se la colonna rossa e i colori sono a posto, `:has()` funziona lì; il rischio reale è più su Firefox datato che su Safari.
+2. **Firefox** (se rilevante per il pubblico del sito) sulla home e su una pagina con hero — verificare che la colonna rossa dell'hero non sparisca.
+3. **iPhone reale**, menu mobile aperto — controllare che il pannello riempia tutto lo schermo (rischio `dvh` senza fallback).
+4. **iPhone/Mac reale**, form "Porta un Amico" — compilarlo davvero fino in fondo per verificare che l'iframe cross-origin funzioni sotto ITP.
+5. **Un box dei "tre box" in home su smartphone** — toccare/tenere premuto per vedere se il paragrafo descrittivo compare mai (comportamento dipendente dal browser mobile).
+
+---
+
+## 8. Audit tracciamento (Google Analytics/GTM) e coerenza col consenso CookieYes
+
+**Obiettivo**: verificare che GA/GTM sia configurato correttamente e coerente col consenso CookieYes. Nessuna modifica al codice in questo audit (solo analisi + un test dal vivo sul sito attuale).
+
+### Trovato
+
+- **Google Analytics/GTM non esiste nel codice del sito nuovo**: ricerca esaustiva (`gtag(`, `dataLayer`, `googletagmanager.com`, ID `G-…`/`GTM-…`/`UA-…`) — zero risultati in `src/`. L'unica menzione di GA è testuale, nella pagina legale dell'informativa cookie (vedi sotto), non nel codice. Di conseguenza: nessun tracking ID da verificare, nessun ordine di caricamento da controllare, nessun Google Consent Mode configurato — tutti i controlli richiesti dal task non sono applicabili perché manca il presupposto (GA/GTM stesso).
+- **Il tracker realmente presente è il Meta Pixel** (ID `3335065516761738`, fornito da te in una richiesta precedente — trattato come confermato, non toccato). Verificato: **caricato dopo CookieYes** nell'head (`BaseLayout.astro`, CookieYes riga 47, Pixel riga 66) — ordine corretto.
+- **Il Pixel non ha alcun blocco del consenso nel proprio codice**: parte con `fbq('track', 'PageView')` non appena la pagina carica, incondizionatamente. L'ordine di caricamento garantisce solo che il *banner* compaia prima, non che il tracker resti bloccato — quello dipende da un'eventuale configurazione di auto-blocking sul pannello CookieYes (esterna al codice, non verificabile da qui).
+- **Test dal vivo sul sito attuale** (`passionfitness.it`, stesso account CookieYes): senza cliccare Accetta/Rifiuta, **nessuna richiesta parte** verso `google-analytics.com` o `facebook.net` — il blocco funziona lì. Non è però verificabile se lo stesso avverrà sul sito nuovo: **CookieYes rifiuta di inizializzarsi su qualunque dominio diverso da quello registrato** (errore "website URL has changed", visto ripetutamente su localhost e GitHub Pages) — quindi il test di consenso reale è possibile solo a sito nuovo online sul dominio vero.
+- **Solo evento `PageView`**: nessun evento di conversione (`Lead`, click sui "Prova Ora") — coerente col fatto che tutti i form sono esterni (l'utente lascia il sito al click, niente "submit" da intercettare), ma manca comunque un evento pre-uscita se si vuole ottimizzare le campagne Meta sulle conversioni.
+- **L'informativa estesa sui cookie contiene una tabella obsoleta**: elenca cookie del vecchio sito WordPress (Google Analytics, Google Tag Manager, live chat Zopim, Hotjar, sessioni WordPress, Contact Form 7) — nessuno di questi esiste sul sito nuovo. Sembra la scansione CookieYes fatta sul vecchio sito, migrata come testo statico senza essere aggiornata: la pagina descrive tracker assenti e non descrive quello davvero presente (il Meta Pixel).
+
+### Da fare (in `TODO.md`)
+
+- Decidere se aggiungere GA/GTM (serve l'ID da te).
+- **Verificare dal vivo, appena il sito nuovo è online sul dominio reale**: Network tab in incognito, senza toccare il banner, controllare che non parta nulla verso `facebook.net`/`facebook.com/tr`.
+- Se serve tracciare le conversioni: aggiungere un evento `Lead` sui CTA principali prima della navigazione in uscita.
+- Rigenerare l'informativa estesa sui cookie con una nuova scansione CookieYes sul sito nuovo.
+
+---
+
+## 9. Audit sitemap.xml e dominio di produzione
+
+**Obiettivo**: verificare che la sitemap sia completa, corretta ed escluda le pagine giuste, pronta per Google Search Console.
+
+### Trovato e corretto — bug di dominio confermato dal vivo
+
+- **`astro.config.mjs` dichiarava `site: 'https://www.passionfitness.it'` (con www)**, ma **il dominio reale di produzione è quello senza www**: verificato con una richiesta diretta, `https://www.passionfitness.it/` risponde con **301 Moved Permanently** verso `https://passionfitness.it/`. Confermato anche dalla sitemap del sito WordPress attuale, che usa coerentemente il dominio senza www in ogni URL.
+- Da `site:` derivano *tutte* le URL della sitemap, ogni `<link rel="canonical">`, `og:url` e gli URL del `BreadcrumbList` (JSON-LD) — con www, il sito avrebbe generato un'intera sitemap di URL che rediriggono verso quelle vere, invece di elencare direttamente le URL finali (contro le linee guida di Google: "non includere in sitemap URL che rediriggono"), e avrebbe reso ambigua la verifica proprietà su Search Console (www e non-www sono property distinte, salvo usare una Domain property).
+- **Confermato con te prima di modificare** (decisione di dominio/infrastruttura, non un bug di codice puro) → corretto in `astro.config.mjs` (1 riga, cascata automatica) e in `public/robots.txt` (riferimento statico alla sitemap, non derivato dalla config, aggiornato a mano). Verificato dopo il fix: dominio coerente in sitemap, canonical, `og:url`, JSON-LD e `robots.txt` su tutte le pagine controllate.
+- Nessun altro riferimento hardcoded al dominio con www nel codice (unico risultato residuo: dentro un PDF — *Termini e Condizioni* — non toccato, è un documento legale).
+
+### Verificato, tutto corretto
+
+- **Completezza**: 95 URL nella sitemap = 95 pagine reali pubblicate (build totale 96, la differenza è `404.html`, correttamente escluso).
+- **Esclusioni**: nessuna traccia di `404`, `admin`, `test` o `staging` nella sitemap. `/admin/` (pannello Decap CMS) non è nemmeno una route generata da Astro — è un file statico copiato da `public/`, quindi non entra mai nel sistema di sitemap.
+- **XML valido**: dichiarazione `<?xml ...?>` presente, 95 tag `<url>` aperti e 95 chiusi.
+- **`robots.txt`**: presente, `Disallow: /admin/`, riferimento alla sitemap corretto (ora con lo stesso dominio).
+
+### Trovato per caso (aggiornato in TODO.md)
+
+- Il PDF del **"MOG e Codice di Condotta"** (già segnalato come link rotto verso il vecchio dominio) **è già stato migrato** come asset: `public/documents/2025/01/3-CODICE-DI-CONDOTTA_MOG-...pdf`. Il link nel footer va semplicemente aggiornato per puntare lì invece che al vecchio sito — non serve più recuperare il documento, ce l'ho già individuato.
+
+---
+
+## Riepilogo file toccati (cumulativo, tutti e 7 gli audit)
 
 Nuovi: `src/lib/page.ts`, `src/lib/summary.ts`, `src/pages/404.astro`, `public/robots.txt`, `TODO.md`, questo report.
 
-Modificati (principali): `src/content.config.ts`, `src/layouts/{BaseLayout,PageLayout,BlogPostLayout}.astro`, `src/components/layout/SEO.astro`, `src/components/ui/{Hero,HighlightCards,RelatedCard}.astro`, `src/components/blog/PostCard.astro`, `src/pages/{index,blog/[...page]}.astro`, `public/admin/index.html`, diverse pagine in `src/content/pages/` (title/seo/immagini), `esercizi-bicipiti-guida.mdx`, `prova-passion-fitness.mdx`.
+Modificati (principali): `astro.config.mjs` (dominio), `src/content.config.ts`, `src/layouts/{BaseLayout,PageLayout,BlogPostLayout}.astro`, `src/components/layout/SEO.astro`, `src/components/ui/{Hero,HighlightCards,RelatedCard}.astro`, `src/components/blog/PostCard.astro`, `src/pages/{index,blog/[...page]}.astro`, `public/admin/index.html`, `public/robots.txt` (dominio), diverse pagine in `src/content/pages/` (title/seo/immagini), `esercizi-bicipiti-guida.mdx`, `prova-passion-fitness.mdx`.
 
 Rimossi: `src/components/ui/ServiceCard.astro`, `src/content/pages/home.mdx`, collection `team`/`services` da `content.config.ts`.
 
