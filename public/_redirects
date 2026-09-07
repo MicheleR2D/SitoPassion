@@ -66,3 +66,7 @@
 /crossfit-roma/  /hyrox/  301
 /crossfit-roma-comunita/  /hyrox/  301
 /differenza-crossfit-allenamento-funzionale/  /hyrox/  301
+
+# Pilates: pagina WP esistita ma mai migrata (slug-map.js), confermato dal
+# cliente il 2026-09-07 - rediretta alla disciplina piu' vicina oggi offerta.
+/pilates/  /pilates-reformer/  301

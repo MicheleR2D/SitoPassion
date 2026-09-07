@@ -17,13 +17,6 @@ Cose emerse dagli audit ma non ancora risolte — ognuna richiede una decisione 
 - [ ] **Link "MOG e Codice di Condotta"** nel footer (`src/components/layout/Footer.astro`) punta ancora al vecchio dominio (`passionfitness.it/3-codice-di-condotta_mog...`). **Il PDF è già stato migrato** — esiste in `public/documents/2025/01/3-CODICE-DI-CONDOTTA_MOG-DETERMINA-MODULO-SEGNALAZIONE-TUSCOLANA-S.S.D.-ARL-.pdf` — basta aggiornare l'`href` per puntare lì.
 - [ ] **UTM stale**: un parametro su `/prova-passion-fitness/` dice ancora `GAds_btn_ILMT` ("I Love My Trainer", il vecchio nome della pagina Personal Training). Solo cosmetico/analytics, non rompe nulla.
 
-## Redirect vecchio sito → nuovo sito
-
-- [x] ~~`/i-love-my-trainer/` → `/personal-training/`~~ → confermato dalla page-sitemap.xml reale (Yoast) fornita il 2026-09-07, redirect aggiunto a mano in `public/_redirects`.
-- [x] ~~Confronto dei 78 URL blog da `post-sitemap.xml`~~ → fatto (lista fornita dal cliente il 2026-09-07). 74 su 78 hanno lo stesso slug identico sul sito nuovo: nessun redirect necessario, risolvono già da soli. I 4 rimasti sono l'unico punto aperto, sotto.
-- [x] ~~Crossfit: pagina + 4 articoli del blog senza corrispettivo~~ → confermato dal cliente il 2026-09-07 (in palestra non si fanno più corsi di Crossfit): `/crossfit/`, `/che-cosa-e-il-crossfit/`, `/crossfit-roma/`, `/crossfit-roma-comunita/`, `/differenza-crossfit-allenamento-funzionale/` rediretti tutti a `/hyrox/` in `public/_redirects`.
-- [ ] **`/pilates/`** (in `scripts/migration/lib/slug-map.js`, pagina WP esistita ma mai migrata) resta senza chiarimento — il cliente ha confermato solo il caso Crossfit finora. Serve una decisione: redirect (verso dove — `/pilates-reformer/`?) o si lascia cadere.
-
 ## Compatibilità cross-browser
 
 - [ ] **`:has()` diffuso in `Hero.astro`** (13 occorrenze) controlla l'intero layout dell'hero su ogni pagina (colonna rossa, colori del testo, gradiente). Supportato da Safari 15.4+, Chrome/Edge 105+, ma **Firefox solo da dicembre 2023 (v121)** — su un browser senza supporto l'hero perderebbe la colonna rossa e i colori del testo, senza errori visibili. Nessun fallback presente. Testare su Firefox non recentissimo, se rilevante per il pubblico del sito.

@@ -324,7 +324,11 @@ Il cliente ha fornito l'elenco reale (78 URL, non 79 — un URL in meno di quant
 
 Confermato dal cliente: **in palestra non si fanno più corsi di Crossfit**. Aggiunti 5 redirect a mano in `public/_redirects` (stessa sezione manuale di `/i-love-my-trainer/`) verso `/hyrox/`, la disciplina più vicina oggi offerta: `/crossfit/` (la pagina), `/che-cosa-e-il-crossfit/`, `/crossfit-roma/`, `/crossfit-roma-comunita/`, `/differenza-crossfit-allenamento-funzionale/`. Verificato: nessuna catena (`/hyrox/` non è a sua volta origine di un redirect), destinazione reale, build verde.
 
-**`/pilates/` resta non chiarito** — il cliente ha confermato solo il caso Crossfit; `/pilates/` (stessa origine, `slug-map.js`) è ancora in `TODO.md` in attesa di una decisione.
+### Aggiornamento — Pilates chiarito, mappatura completa al 100% (2026-09-07, stesso giorno)
+
+Confermato dal cliente: `/pilates/` (pagina WP esistita ma mai migrata, stessa origine di `slug-map.js` del caso Crossfit) reindirizza a `/pilates-reformer/`, la disciplina più vicina oggi offerta. Aggiunto a mano in `public/_redirects`, stessa sezione manuale. Verificato: nessuna catena (`/pilates-reformer/` non è a sua volta origine di un altro redirect), destinazione reale, build e typecheck verdi.
+
+**Con questo, tutte le URL fornite dal cliente hanno un esito definito**: delle 87 URL indicizzate confermate (9 pagine + 78 articoli — una in meno delle 79 dichiarate, non significativo), 82 hanno slug identico sul sito nuovo (nessuna azione, risolvono già da sole) e 5 avevano bisogno di un redirect nuovo (`/i-love-my-trainer/` + i 4 articoli Crossfit). A queste si aggiungono, fuori dal conteggio delle 87 (non erano più nemmeno indicizzate sul vecchio sito, solo referenziate storicamente in `slug-map.js`), le pagine `/crossfit/` e `/pilates/`, chiarite comunque su richiesta esplicita del cliente. **7 redirect aggiunti a mano in totale**, tutti verificati senza catene e con destinazione reale. Zero destinazioni inventate, zero URL rimaste senza una decisione esplicita del cliente. **Mappatura redirect vecchio sito → nuovo sito completa.**
 
 ---
 
