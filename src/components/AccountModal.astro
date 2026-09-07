@@ -1,0 +1,245 @@
+---
+/**
+ * Il pannello «Il tuo club»: quello che serve a chi è già iscritto.
+ *
+ * Sta dietro l'omino nell'header, ed è l'altra metà del sito rispetto alla
+ * Prova Passion. Il sito parla quasi solo a chi non è ancora socio — prova,
+ * abbonamenti, cosa c'è dentro — e chi lo è cercava il portale nel menu, dove
+ * non c'era: le quattro cose che gli servono davvero (entrare, prenotare,
+ * guardare gli orari) erano sparse fra un link nel footer e l'app sullo store.
+ *
+ * Quattro voci in due blocchi, perché sono due gesti diversi: **entrare** nel
+ * proprio account, e **prenotare**. Il primo link è pieno perché è quello che
+ * cerca la maggioranza; gli altri hanno lo stesso peso fra loro.
+ *
+ * Lo apre qualunque comando con `data-acct-open` — l'omino dell'header, la
+ * voce nel menu mobile, il pulsante nell'hero della home. La delega è sul
+ * documento e non sui singoli pulsanti: così vale anche per i comandi che un
+ * domani compariranno in altre pagine.
+ */
+import { REGISTRAZIONE } from '../data/prova';
+
+/* Il portale, una volta sola: `REGISTRAZIONE` in `data/prova.ts` punta alla
+   registrazione, qui servono il login e le lezioni. Stessa base, tre code. */
+const PORTALE = REGISTRAZIONE.replace('#/Registration', '');
+
+const BLOCCHI = [
+  {
+    eyebrow: 'Il tuo account',
+    voci: [
+      { label: 'Accedi al portale', href: `${PORTALE}#/Login`, pieno: true },
+      /* Il link OneLink smista da sé fra App Store e Play Store: un solo
+         indirizzo per i due negozi, e nessun ramo da tenere qui. */
+      { label: 'Accedi dall’app', href: 'https://onelink.to/cttj8z' },
+    ],
+  },
+  {
+    eyebrow: 'Prenotazioni',
+    voci: [
+      { label: 'Prenota una lezione', href: `${PORTALE}#/Classes/1/List` },
+      { label: 'Orari e planning', href: '/orari-corsi/' },
+    ],
+  },
+];
+---
+
+<div class="acct" id="acct-modal" aria-hidden="true">
+  <div class="acct__backdrop" data-acct-close></div>
+  <div class="acct__panel" role="dialog" aria-modal="true" aria-labelledby="acct-titolo">
+    <button type="button" class="acct__close" data-acct-close aria-label="Chiudi">×</button>
+
+    <span class="acct__eyebrow">Sei già dei nostri</span>
+    <h2 class="acct__title" id="acct-titolo" tabindex="-1">Il tuo club.</h2>
+    <p class="acct__sub">Entra nel tuo account, prenota, guarda gli orari.</p>
+
+    {
+      BLOCCHI.map((blocco, i) => (
+        <>
+          {i > 0 && <hr class="acct__rule" />}
+          <span class="acct__eyebrow acct__eyebrow--blocco">{blocco.eyebrow}</span>
+          <div class="acct__row">
+            {blocco.voci.map((v) => (
+              <a class:list={['acct__btn', { 'acct__btn--pieno': v.pieno }]} href={v.href}>
+                {v.label}
+              </a>
+            ))}
+          </div>
+        </>
+      ))
+    }
+  </div>
+</div>
+
+<script>
+  const acct = document.getElementById('acct-modal');
+  if (acct) {
+    let ultimoComando: HTMLElement | null = null;
+
+    function chiudi() {
+      acct!.classList.remove('open');
+      acct!.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('pf-locked');
+      ultimoComando?.setAttribute('aria-expanded', 'false');
+      ultimoComando?.focus();
+    }
+
+    function apri(comando: HTMLElement) {
+      ultimoComando = comando;
+      acct!.classList.add('open');
+      acct!.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('pf-locked');
+      comando.setAttribute('aria-expanded', 'true');
+      // Il titolo raccoglie il focus, come nel form della prova: chi naviga da
+      // tastiera si ritrova dentro il pannello e non sul comando di prima.
+      acct!.querySelector<HTMLElement>('.acct__title')?.focus();
+    }
+
+    document.addEventListener('click', (e) => {
+      const comando = (e.target as HTMLElement | null)?.closest<HTMLElement>('[data-acct-open]');
+      if (!comando) return;
+      e.preventDefault();
+      apri(comando);
+    });
+
+    acct.querySelectorAll('[data-acct-close]').forEach((el) => el.addEventListener('click', chiudi));
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && acct.classList.contains('open')) chiudi();
+    });
+  }
+</script>
+
+<style>
+  /* Guscio uguale a quello del form della prova: chiuso è `visibility:
+     hidden`, così non resta nell'ordine di tabulazione. */
+  .acct {
+    position: fixed;
+    inset: 0;
+    z-index: 320;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-sm);
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    transition: opacity 0.18s ease, visibility 0s 0.18s;
+  }
+  .acct.open {
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+    transition: opacity 0.18s ease, visibility 0s;
+  }
+
+  .acct__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.72);
+  }
+
+  /* Fondo nero e non bianco come la prova, ed è una distinzione voluta: questo
+     pannello parla a chi è già socio, e a colpo d'occhio si vede che non è lo
+     stesso pannello di «prova gratis». */
+  .acct__panel {
+    position: relative;
+    width: min(26rem, 100%);
+    max-height: calc(100vh - 2 * var(--space-sm));
+    overflow-y: auto;
+    background: var(--bg-dark-surface);
+    color: var(--text-on-dark);
+    border: 4px solid var(--accent);
+    border-radius: 16px;
+    padding: clamp(1.5rem, 4vw, 2.25rem);
+  }
+
+  .acct__close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.75rem;
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: 1.75rem;
+    line-height: 1;
+    background: none;
+    border: 0;
+    color: var(--text-on-dark-muted);
+    cursor: pointer;
+  }
+  .acct__close:hover {
+    color: var(--color-white);
+  }
+
+  .acct__eyebrow {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .acct__eyebrow--blocco {
+    color: var(--text-on-dark-muted);
+    margin-bottom: var(--space-2xs);
+  }
+
+  .acct__title {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-weight: 400;
+    line-height: 0.96;
+    font-size: clamp(1.9rem, 5vw, 2.5rem);
+    margin: 0.5rem 0 0 0;
+  }
+  .acct__title:focus {
+    outline: none;
+  }
+
+  .acct__sub {
+    font-size: 0.9rem;
+    color: var(--text-on-dark-muted);
+    margin: var(--space-2xs) 0 var(--space-sm) 0;
+  }
+
+  .acct__row {
+    display: grid;
+    gap: var(--space-2xs);
+  }
+
+  .acct__btn {
+    display: block;
+    text-align: center;
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 0.82rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.9rem 1.2rem;
+    color: var(--text-on-dark);
+    border: 2px solid var(--border-on-dark);
+    border-radius: 10px;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+  .acct__btn:hover {
+    background: var(--color-white);
+    color: var(--text-on-light);
+    border-color: var(--color-white);
+  }
+  .acct__btn--pieno {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--color-white);
+  }
+  .acct__btn--pieno:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+    color: var(--color-white);
+  }
+
+  .acct__rule {
+    border: 0;
+    border-top: 1px solid var(--border-on-dark);
+    margin: var(--space-sm) 0;
+  }
+</style>

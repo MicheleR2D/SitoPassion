@@ -17,9 +17,37 @@ import Nav from './Nav.astro';
       <Nav />
     </div>
 
+    {/* I due comandi di destra in un contenitore solo, e non due elementi
+        posizionati ognuno per conto suo: la barra si appoggia a un
+        ancoraggio a due terzi della larghezza, e con due `calc` separati il
+        secondo andava tenuto in pari col primo a mano — finiva addosso al
+        menu appena la finestra si stringeva. Un contenitore, un ancoraggio,
+        e la distanza fra i due la decide il `gap`.
+
+        L'omino apre `AccountModal`, che sta nel BaseLayout. E' un pulsante e
+        non un link perche' non porta a una pagina — apre un pannello — e su
+        una barra dove tutto il resto naviga, la differenza si sente col
+        lettore di schermo. */}
+    <div class="header-azioni">
+    <button
+      class="account-btn"
+      type="button"
+      data-acct-open
+      aria-label="Il tuo club"
+      aria-haspopup="dialog"
+      aria-expanded="false"
+    >
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+        <circle cx="12" cy="7" r="4" />
+      </svg>
+    </button>
+
     <a class="prova-gratis" href="https://automazione.n8ndevelop.it/form/8ce36c5e-0cc4-4813-9a0f-2da2a7605fb0?source=SitoWeb&medium=Btn_Header">
       Prova Ora <span aria-hidden="true">→</span>
     </a>
+    </div>
   </div>
 </header>
 
@@ -84,9 +112,15 @@ import Nav from './Nav.astro';
     background: var(--bg-dark);
     border-bottom-color: var(--border-on-dark);
   }
-  .site-header.is-scrolled .prova-gratis {
+  .site-header.is-scrolled .prova-gratis,
+  .site-header.is-scrolled .account-btn {
     color: var(--color-red);
     border-color: var(--color-red);
+  }
+  .site-header.is-scrolled .account-btn:hover {
+    background: var(--color-red);
+    color: var(--color-white);
+    border-color: var(--color-red-hover);
   }
   .site-header.is-scrolled .prova-gratis:hover {
     background: var(--color-red);
@@ -111,11 +145,40 @@ import Nav from './Nav.astro';
     width: auto;
   }
 
-  .prova-gratis {
+  /* L'ancoraggio dei comandi di destra: due terzi della larghezza piu' il
+     margine del contenitore, com'era prima per il solo «Prova Ora». Ora lo
+     porta il contenitore, e l'omino gli sta dentro. */
+  .header-azioni {
     position: absolute;
     top: 50%;
-    left: calc(66.6667% + clamp(1.25rem, 4vw, 2.5rem));
+    left: calc(66.6667% + var(--container-gutter));
     transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .account-btn {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.85rem;
+    height: 2.85rem;
+    cursor: pointer;
+    background: transparent;
+    color: var(--color-white);
+    border: 3px solid var(--color-white);
+    border-radius: 10px;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+  .account-btn:hover {
+    background: var(--color-white);
+    color: var(--text-on-light);
+    border-color: var(--color-white);
+  }
+
+  .prova-gratis {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
@@ -155,23 +218,52 @@ import Nav from './Nav.astro';
     background: var(--text-on-dark);
   }
 
-  @media (max-width: 900px) {
+  /* + totem: vedi «Il totem verticale del club» in styles/global.css */
+  @media (max-width: 900px),
+    (min-width: 900px) and (min-height: 1200px) and (max-aspect-ratio: 7/10) {
     .site-header__inner {
       flex-wrap: wrap;
       padding-block: var(--space-2xs);
       row-gap: 0;
+      /* Il `gap` di 2rem di desktop, tenuto anche qui, faceva sforare la riga
+         di due pixel — logo 80 + 32 + hamburger 32 + 32 + comandi 161 = 337
+         contro i 335 disponibili a 375px — e l'hamburger finiva a capo da
+         solo. La colonna si stringe: il `row-gap: 0` sopra resta, perche' la
+         riga che va a capo e' il pannello del menu e non deve staccarsi
+         dalla barra. */
+      column-gap: var(--space-2xs);
     }
     .brand img {
       height: 2.1rem;
     }
-    .prova-gratis {
+    /* Su telefono i comandi rientrano nel flusso e si appoggiano a destra. */
+    .header-azioni {
       position: static;
       transform: none;
-      margin-left: auto;
+      order: 1;
+      margin-inline: auto;
+      gap: 0.4rem;
+    }
+    .account-btn {
+      width: 2.1rem;
+      height: 2.1rem;
+      border-width: 2px;
+    }
+    .account-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+    .prova-gratis {
       font-size: 0.68rem;
       padding: 0.5rem 0.85rem;
       border-width: 2px;
     }
+    /* L'hamburger all'estremita' destra della barra, e i due comandi al centro
+       fra lui e il logo: `order` li mette in fila — logo, comandi, hamburger —
+       e il `margin-inline: auto` sui comandi si mangia lo spazio che resta da
+       entrambi i lati. E' un centraggio nello spazio libero, non nel viewport:
+       logo e hamburger hanno larghezze diverse, quindi il gruppo non cade
+       esattamente a meta' schermo. */
     .nav-toggle {
       display: flex;
       order: 2;

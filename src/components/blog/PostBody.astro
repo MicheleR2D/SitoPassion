@@ -24,7 +24,7 @@
 
 <style>
   .post-body {
-    --gutter: clamp(1.25rem, 4vw, 2.5rem);
+    --gutter: var(--container-gutter);
     display: grid;
     grid-template-columns:
       1fr
@@ -230,9 +230,21 @@
     border-radius: 12px;
   }
 
-  /* --- Tabelle --- */
+  /* --- Tabelle ---
+     `display: block` piu' `overflow-x: auto`: una tabella markdown non ha un
+     contenitore intorno a cui appendere lo scorrimento, e senza questo su un
+     telefono sfonda la pagina — l'informativa privacy ha una tabella di tre
+     colonne che a 375px misura due pixel piu' della finestra, e a sfondare
+     non e' la tabella ma il `body`, che comincia a scorrere in orizzontale
+     tutto intero. Cosi' invece scorre solo lei, dentro il suo spazio.
+
+     Il prezzo di `display: block` e' che la larghezza non si distribuisce
+     piu' fra le colonne da sola: da qui `min-width` sulle celle, che le
+     tiene leggibili invece di comprimere il testo a una parola per riga. */
   .post-body > :global(table) {
-    width: 100%;
+    display: block;
+    overflow-x: auto;
+    max-width: 100%;
     border-collapse: collapse;
     font-size: 0.95rem;
   }
@@ -241,6 +253,7 @@
     border: 1px solid var(--border-on-light);
     padding: var(--space-xs) var(--space-sm);
     text-align: left;
+    min-width: 8rem;
   }
   .post-body > :global(table) :global(th) {
     background: var(--bg-light-soft);
@@ -257,5 +270,21 @@
     padding-inline-start: var(--space-sm);
     color: var(--text-on-light-muted);
     font-style: italic;
+  }
+
+  /* Le tabelle su telefono: meno respiro e testo piu' piccolo, cosi' di una
+     tabella a quattro colonne se ne vede tre invece di due e lo scorrimento
+     laterale diventa un ritocco e non il modo obbligatorio di leggerla. La
+     `min-width` scende ma non sparisce: a zero le colonne si comprimerebbero
+     a una parola per riga, che si legge peggio dello scorrere. */
+  @media (max-width: 640px) {
+    .post-body > :global(table) {
+      font-size: 0.84rem;
+    }
+    .post-body > :global(table) :global(th),
+    .post-body > :global(table) :global(td) {
+      padding: 0.5rem 0.6rem;
+      min-width: 6rem;
+    }
   }
 </style>

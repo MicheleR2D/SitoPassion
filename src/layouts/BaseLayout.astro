@@ -2,6 +2,8 @@
 import SEO, { type Breadcrumb } from '../components/layout/SEO.astro';
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
+import ProvaModal from '../components/ProvaModal.astro';
+import AccountModal from '../components/AccountModal.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -152,6 +154,15 @@ const { title, description, ogImage, noindex, breadcrumbs, ogTitle } = Astro.pro
       <slot />
     </main>
     <Footer />
+
+    {/* Il form della prova: presente su ogni pagina perche' le CTA che lo
+        aprono sono su ogni pagina — header compreso. Sta in fondo al body e
+        non nell'header cosi' il suo markup non entra nel primo schermo. */}
+    <ProvaModal />
+
+    {/* L'altra meta' del sito: quello che serve a chi e' gia' socio. Lo apre
+        l'omino nell'header e il pulsante nell'hero della home. */}
+    <AccountModal />
   </body>
 </html>
 
@@ -231,4 +242,30 @@ const { title, description, ogImage, noindex, breadcrumbs, ogTitle } = Astro.pro
   }
 
   initParallax();
+
+  // Link esterni in una scheda nuova.
+  //
+  // Fatto qui e non sui singoli `href` perche' la maggior parte dei link
+  // esterni del sito nasce dal markdown delle pagine in `content/pages`, dove
+  // non si possono mettere attributi: PerfectGym, le mappe, i loghi dei
+  // consorzi, i PDF ospitati altrove. Un giro solo sul documento li copre
+  // tutti, comprese le pagine che verranno.
+  //
+  // `rel` accanto a `target`: senza `noopener` la pagina aperta puo' toccare
+  // `window.opener`, e con `_blank` e' una vulnerabilita', non un dettaglio.
+  // Chi ha gia' un `target` scritto a mano resta com'e'.
+  function initLinkEsterni() {
+    document.querySelectorAll('a[href]').forEach((a) => {
+      const link = a as HTMLAnchorElement;
+      if (link.target) return;
+      // `mailto:`, `tel:`, `#ancora` e i percorsi interni hanno tutti lo
+      // stesso host della pagina o un protocollo che non e' http(s).
+      if (link.protocol !== 'http:' && link.protocol !== 'https:') return;
+      if (link.host === location.host) return;
+      link.target = '_blank';
+      link.rel = link.rel ? link.rel + ' noopener noreferrer' : 'noopener noreferrer';
+    });
+  }
+
+  initLinkEsterni();
 </script>

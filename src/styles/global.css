@@ -47,6 +47,13 @@
   --font-body: -apple-system, "Helvetica Neue", Arial, sans-serif;
 
   --container-max-width: 76rem;
+  /* Il margine laterale del contenitore. E' una variabile e non un `clamp`
+     ripetuto perche' sette regole in giro per il progetto lo rispecchiano —
+     titoli a fascia piena che escono dal contenitore con un margine
+     negativo pari a questo. Sul totem il valore cambia (vedi in fondo al
+     file), e finche' erano sette copie cambiava solo in una: la fascia rossa
+     del planning sporgeva di sedici pixel per lato. */
+  --container-gutter: clamp(1.25rem, 4vw, 2.5rem);
   --header-height: 4.5rem;
   --space-3xs: 0.25rem;
   --space-2xs: 0.5rem;
@@ -125,7 +132,7 @@ p { margin: 0; }
 .container {
   max-width: var(--container-max-width);
   margin-inline: auto;
-  padding-inline: clamp(1.25rem, 4vw, 2.5rem);
+  padding-inline: var(--container-gutter);
 }
 
 /* Le CTA dell'hero. Regole globali: valgono per la home (markup inline) e
@@ -166,5 +173,115 @@ p { margin: 0; }
     justify-content: center;
     font-size: 0.95rem;
     padding: 1.15rem 2rem;
+  }
+}
+
+/* ---- Il totem verticale del club — REGOLA DI PROGETTO --------------------
+   Uno schermo da 27" in verticale, 9:16, appeso in reception: si guarda da un
+   metro e mezzo e si usa col dito.
+
+   Non e' un telefono — e' largo come un desktop, 1080px CSS — e non e' un
+   desktop, perche' non c'e' un mouse. E soprattutto: **non si riconosce dal
+   tocco**. Il browser di quella macchina si presenta come un computer col
+   mouse (`pointer: fine`, `hover: hover`), quindi una regola basata su
+   `(pointer: coarse)` non scatterebbe e il totem si prenderebbe la barra
+   desktop coi menu ad hover, da usare col dito. Si riconosce dalla forma
+   dello schermo:
+
+     · `min-width: 900px`       non e' un telefono;
+     · `min-height: 1200px`     e' un pannello grande, non una finestra alta;
+     · `max-aspect-ratio: 7/10` 9:16 fa 0,5625 e passa; un tablet 3:4 fa 0,75 e no.
+
+   Tutte e tre insieme: da sole, un telefono verticale o un iPad finirebbero
+   qui dentro.
+
+   Perche' 7/10 e non 5/8, che e' la proporzione vera di un 9:16: sul totem il
+   browser non e' a schermo intero, e fra barra degli indirizzi e barra di
+   sistema il viewport reale sta intorno a 0,62 — dentro 0,625 per pochi
+   millesimi. Basterebbe una barra dei preferiti aperta e la modalita' si
+   spegnerebbe tutta. A 0,7 c'e' margine per duecento pixel di cornice in
+   piu', e un iPad verticale resta comunque fuori.
+
+   **La radice e' in `vw` e non in px, e non e' un vezzo.** Il pannello e'
+   fisico e non cambia: quello che cambia e' quanti pixel CSS Windows dichiara
+   — 1080 al 100%, 1440 con la scalatura al 150%. Con la radice in `vw` la
+   stessa regola da' la stessa dimensione *in millimetri* nei due casi: 2,5vw
+   fa 27px su 1080 e 36px su 1440, e in entrambi il corpo del testo misura
+   circa 8 mm sul vetro.
+
+   Perche' 8 mm e non 10. La regola della cartellonistica — altezza del
+   carattere ≈ distanza / 150 — darebbe 10 mm per un metro e mezzo. Ma la
+   larghezza utile e' 1080px meno i margini, e a 32px una colonna da mezzo
+   pannello sono venti caratteri per riga: la colonna si allunga a fisarmonica
+   e i titoli escono dalle card. Gli 8 mm sono i 10 mm a 1,2 m invece che a
+   1,5 — la distanza a cui una persona si ferma davvero davanti al totem,
+   mentre il metro e mezzo e' la distanza da cui lo *nota*, e a quella parlano
+   i titoli, che restano enormi perche' sono in `rem` sopra questa radice.
+
+   **L'altra meta' della correzione non e' tipografica: e' l'impaginazione.**
+   Il totem eredita i layout che il sito usa sotto i 900px, non quelli del
+   desktop, perche' a scala doppia due colonne di desktop diventano due
+   colonne di venti caratteri. In giro per il progetto le media query che
+   contano portano anche queste tre condizioni, con un commento «+ totem»
+   sopra. In particolare **prende la barra e il menu del telefono**: i menu a
+   tendina del desktop si aprono in hover, e col dito non si aprono affatto.
+
+   Lo spazio invece **non** cresce come il testo: le sezioni sono in `rem` e a
+   scala doppia la home diventerebbe un chilometro di scorrimento. Le
+   variabili qui sotto lo riportano a una misura umana.
+
+   Chi tocca questo blocco: verifica su un viewport 1080×1920, non su una
+   finestra desktop rimpicciolita — il rapporto conta piu' della larghezza. */
+@media (min-width: 900px) and (min-height: 1200px) and (max-aspect-ratio: 7/10) {
+  :root {
+    font-size: 2.5vw;
+
+    /* Le spaziature tornano a una scala da desktop: in `rem` sopra una radice
+       raddoppiata diventerebbero il doppio, e fra due sezioni ci starebbe
+       mezzo pannello vuoto. */
+    --space-3xs: 0.12rem;
+    --space-2xs: 0.25rem;
+    --space-xs: 0.4rem;
+    --space-sm: 0.65rem;
+    --space-md: 1rem;
+    --space-lg: 1.7rem;
+    --space-xl: 2.6rem;
+
+    /* La barra del totem e' quella del telefono, piu' bassa di quella
+       desktop: `main` si stacca di conseguenza, altrimenti sotto l'header
+       resterebbe una fascia vuota alta come l'header stesso. */
+    --header-height: 3.2rem;
+
+    /* Il margine laterale: il `clamp` del desktop darebbe 43px su 1080, un
+       filo su uno schermo grande visto da lontano. Cambiandolo qui cambia
+       anche nelle regole che lo rispecchiano col segno meno. */
+    --container-gutter: 1rem;
+  }
+
+  /* Margini laterali proporzionati al pannello: il `clamp` del desktop
+     darebbe 43px su 1080, un filo su uno schermo grande visto da lontano. */
+  .container {
+    padding-inline: var(--container-gutter);
+  }
+
+  /* Un dito copre circa 9 mm di vetro: un comando sotto i 60px si sbaglia, e
+     a un metro di distanza si punta a occhio, senza il riscontro che sul
+     telefono da' il dito appoggiato sul vetro. */
+  .button {
+    min-height: 2rem;
+    font-size: 0.72rem;
+    padding: 0.7rem 1.2rem;
+  }
+
+  /* Le CTA dell'hero restano due — c'e' larghezza per entrambe, a differenza
+     del telefono — ma non prendono lo `scale` in hover: su un pannello senza
+     mouse l'hover non arriva mai, e quando arriva per un tocco fa sobbalzare
+     il comando sotto il dito. */
+  .hero-ctas > a.button {
+    font-size: 0.78rem;
+    padding: 0.8rem 1.4rem;
+  }
+  .hero-ctas > a.button:hover {
+    transform: none;
   }
 }

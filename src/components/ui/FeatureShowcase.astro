@@ -71,8 +71,12 @@ const { title, images, features } = Astro.props;
     grid-column: 1 / -1;
   }
 
-  /* --- Desktop: gallery a sinistra su due righe, elenco e CTA a destra --- */
-  @media (min-width: 861px) {
+  /* --- Desktop: gallery a sinistra su due righe, elenco e CTA a destra ---
+     `min-aspect-ratio: 7/10` lascia fuori il totem: e' largo 1080px e questa
+     regola scatterebbe, rimettendo le due colonne che il blocco del telefono
+     qui sotto ha appena tolto — e vincerebbe, perche' viene dopo. La soglia
+     e' la stessa con cui il totem si riconosce in global.css. */
+  @media (min-width: 861px) and (min-aspect-ratio: 7/10) {
     /* Le due righe insieme (elenco + CTA) devono stare in una schermata. */
     .showcase {
       grid-template-columns: 1fr 1fr;
@@ -131,7 +135,9 @@ const { title, images, features } = Astro.props;
     }
   }
 
-  @media (max-width: 860px) {
+  /* + totem: vedi «Il totem verticale del club» in styles/global.css */
+  @media (max-width: 860px),
+    (min-width: 900px) and (min-height: 1200px) and (max-aspect-ratio: 7/10) {
     /* Su mobile questa sezione deve coprire un'intera schermata. Non con
        padding fissi (dipenderebbero da quanto testo ha la pagina: con 8
        punti elenco invece di 4 si sforava di oltre 150px), ma spartendo
@@ -246,7 +252,9 @@ const { title, images, features } = Astro.props;
     font-weight: 700;
   }
 
-  @media (max-width: 860px) {
+  /* + totem: vedi «Il totem verticale del club» in styles/global.css */
+  @media (max-width: 860px),
+    (min-width: 900px) and (min-height: 1200px) and (max-aspect-ratio: 7/10) {
     .showcase {
       grid-template-columns: 1fr;
       grid-template-rows: none;
@@ -256,7 +264,7 @@ const { title, images, features } = Astro.props;
     .showcase__features {
       order: 1;
       /* Spaziatura compatta: elenco + CTA devono stare in una schermata. */
-      padding: var(--space-xs) clamp(1.25rem, 4vw, 2.5rem);
+      padding: var(--space-xs) var(--container-gutter);
       gap: var(--space-2xs);
     }
     .showcase .showcase__features ul {

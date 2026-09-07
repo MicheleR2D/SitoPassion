@@ -104,6 +104,12 @@ const footerSettings = defineCollection({
     registryNumber: z.string().optional(),
     phone: z.string().optional(),
     email: z.string().optional(),
+    /* Il numero su cui c'e' WhatsApp, in cifre e col prefisso internazionale
+       ma senza il `+`: e' la forma che vuole `wa.me`. Oggi e' lo stesso fisso
+       della reception, che ha WhatsApp Business, ma resta un campo suo — il
+       giorno in cui il club prende un cellulare dedicato si cambia qui e non
+       in tre posti. */
+    whatsapp: z.string().optional(),
     careersUrl: z.string().optional(),
     openingHours: z
       .array(

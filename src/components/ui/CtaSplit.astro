@@ -104,7 +104,9 @@ const {
     object-fit: cover;
   }
 
-  @media (max-width: 860px) {
+  /* + totem: vedi «Il totem verticale del club» in styles/global.css */
+  @media (max-width: 860px),
+    (min-width: 900px) and (min-height: 1200px) and (max-aspect-ratio: 7/10) {
     /* Solo testo: sulla larghezza di un telefono l'immagine ruberebbe
        spazio al messaggio e alla CTA senza aggiungere informazione. Senza
        immagine da riempire, la fascia si dimensiona sul contenuto. */

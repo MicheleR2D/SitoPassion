@@ -1,0 +1,540 @@
+---
+/**
+ * Il form «Prova Passion», dentro al sito.
+ *
+ * Prima la prova era un form ospitato da n8n, aperto in una scheda nuova: la
+ * persona usciva dal sito, e quello che tornava indietro era una schermata di
+ * conferma senza il resto delle pagine intorno. Ora il percorso resta qui.
+ *
+ * Sta nel BaseLayout, quindi e' presente su ogni pagina, e lo aprono **le CTA
+ * che il sito ha gia'**: lo script intercetta ogni link che punta al vecchio
+ * form n8n o al Typeform della prova, cosi' i venticinque `href` sparsi fra
+ * `.mdx`, `Header.astro` e i layout non vanno toccati uno per uno — e restano
+ * come ripiego per chi ha JavaScript disattivato, che finisce sul form di
+ * sempre. Le CTA nuove possono usare `data-cta="trial"`.
+ *
+ * Il sito non parla mai con PerfectGym ne' con Airtable: manda due POST a n8n,
+ * la verifica mentre la persona compila e il lead completo alla fine. Nessuna
+ * chiave nel browser, nessuna route server, il sito resta statico.
+ */
+import { PROVA, PASSI_ATTIVAZIONE as PASSI, REGISTRAZIONE, CODICE } from '../data/prova';
+import CampoTelefono from './CampoTelefono.astro';
+
+/* L'email del club con oggetto e testo gia' impostati. Composta qui e non
+   scritta a mano nell'href perche' i due parametri vanno codificati: senza
+   `encodeURIComponent` uno spazio o un accento nel testo troncano il corpo
+   del messaggio in alcuni client. */
+const CONTATTO_EMAIL = 'info@passionfitness.it';
+const CONTATTO_OGGETTO = encodeURIComponent('Prova Passion non attivabile — quale abbonamento?');
+const CONTATTO_TESTO = encodeURIComponent(
+  'Ciao! Dal sito mi risulta che la Prova Passion non e\' attivabile per me. ' +
+    'Potete consigliarmi la formula piu\' adatta?'
+);
+const CONTATTO_HREF = `mailto:${CONTATTO_EMAIL}?subject=${CONTATTO_OGGETTO}&body=${CONTATTO_TESTO}`;
+---
+
+<div class="pf" id="prova-modal" aria-hidden="true">
+  <div class="pf__backdrop" data-pf-close></div>
+  <div class="pf__panel" role="dialog" aria-modal="true" aria-labelledby="pf-titolo-corrente">
+    <button type="button" class="pf__close" data-pf-close aria-label="Chiudi">×</button>
+
+    {/* ── 1. L'email ─────────────────────────────────────────────────── */}
+    <section class="pf__step" id="pf-step-email">
+      <span class="pf__eyebrow">Prova Passion · {PROVA.giorni} giorni · {PROVA.prezzo} €</span>
+      <h3 class="pf__title" id="pf-titolo-corrente" tabindex="-1" data-pf-fuoco>Prova Passion.</h3>
+      <p class="pf__claim">Senza impegno, senza rinnovo automatico: provi, poi decidi.</p>
+      <p class="pf__lead">
+        Una settimana all inclusive a {PROVA.prezzo} €. Iniziamo dalla tua email: controlliamo che la
+        prova sia attivabile.
+      </p>
+
+      <ul class="pf__incluso">
+        {PROVA.incluso.map((voce) => <li>{voce}</li>)}
+      </ul>
+
+      <label class="pf__label" for="pf-email">La tua email</label>
+      <input
+        class="pf__input"
+        id="pf-email"
+        type="email"
+        inputmode="email"
+        autocomplete="email"
+        placeholder="mario.rossi@email.it"
+      />
+
+      <p class="pf__errore" data-pf-errore hidden></p>
+
+      <button type="button" class="pf__btn" data-pf-verifica>
+        <span class="pf__btn-testo">Continua</span>
+        <span class="pf__spinner" aria-hidden="true"></span>
+      </button>
+    </section>
+
+    {/* ── 2a. La prova non si attiva, ma provare si puo' ───────────────
+
+        Questa schermata non e' un diniego: l'unica cosa che non si attiva e'
+        **questa** prova, perche' e' riservata a chi non ci ha mai provato.
+        Quindi si nomina subito l'alternativa concreta invece di rimandare a
+        una pagina da studiare. */}
+    <section class="pf__step" id="pf-step-blocco" hidden>
+      <span class="pf__eyebrow">La prova no, ma allenarsi sì</span>
+      <h3 class="pf__title" tabindex="-1" data-pf-fuoco>Ci rivediamo.</h3>
+      <p class="pf__lead">
+        La Prova Passion è riservata a chi non ha mai avuto un abbonamento o un pass da noi, e a te
+        risulta già un tesseramento: quella non possiamo attivarla. Per tornare ad allenarti scegli{' '}
+        <strong>uno dei nostri abbonamenti</strong> — e se non sai quale, scrivici: ti diciamo qual è
+        la formula giusta per come ti alleni.
+      </p>
+      <div class="pf__azioni">
+        <a class="pf__btn pf__btn--link" href="/abbonamenti/">Vedi gli abbonamenti →</a>
+        {/* `mailto:` e non un rimando a /contatti: da qui la persona ha una
+            domanda precisa — «quale formula per me, visto che la prova non
+            posso farla» — e mandarla su una pagina di contatti le fa
+            ricominciare da capo. Oggetto e prima riga sono gia' scritti, e
+            l'oggetto dice al desk da dove arriva. */}
+        <a class="pf__link" href={CONTATTO_HREF}>Scrivici un'email</a>
+      </div>
+    </section>
+
+    {/* ── 2b. I dati ─────────────────────────────────────────────────── */}
+    <section class="pf__step" id="pf-step-dati" hidden>
+      <span class="pf__eyebrow">Ci siamo quasi</span>
+      <h3 class="pf__title" tabindex="-1" data-pf-fuoco>I tuoi dati.</h3>
+      <p class="pf__lead">Servono per intestare la prova e per mandarti le istruzioni.</p>
+
+      <div class="pf__coppia">
+        <div>
+          <label class="pf__label" for="pf-nome">Nome</label>
+          <input class="pf__input" id="pf-nome" type="text" autocomplete="given-name" placeholder="Mario" />
+        </div>
+        <div>
+          <label class="pf__label" for="pf-cognome">Cognome</label>
+          <input class="pf__input" id="pf-cognome" type="text" autocomplete="family-name" placeholder="Rossi" />
+        </div>
+      </div>
+
+      <label class="pf__label" for="pf-cellulare">Cellulare</label>
+      <CampoTelefono id="pf-cellulare" classe="pf__input" />
+
+      <label class="pf__consenso" for="pf-privacy">
+        <input type="checkbox" id="pf-privacy" />
+        <span>
+          Acconsento al trattamento dei miei dati da parte di Tuscolana SSD Arl per essere
+          ricontattato e ricevere comunicazioni su prodotti e servizi. Posso revocare quando voglio.{' '}
+          <a href="/informativa-privacy" target="_blank" rel="noopener noreferrer">Informativa privacy</a>.
+        </span>
+      </label>
+
+      <p class="pf__errore" data-pf-errore hidden></p>
+
+      <button type="button" class="pf__btn" data-pf-invia>
+        <span class="pf__btn-testo">Richiedi la Prova Passion</span>
+        <span class="pf__spinner" aria-hidden="true"></span>
+      </button>
+    </section>
+
+    {/* ── 3. Il codice ───────────────────────────────────────────────── */}
+    <section class="pf__step" id="pf-step-esito" hidden>
+      <span class="pf__eyebrow">La tua Prova Passion</span>
+      <h3 class="pf__title" tabindex="-1" data-pf-fuoco>Ecco il codice.</h3>
+      <p class="pf__lead">
+        Copialo, poi apri il portale: si incolla in fase di iscrizione e sblocca i {PROVA.giorni}{' '}
+        giorni all inclusive a {PROVA.prezzo} €.
+      </p>
+
+      <button type="button" class="pf__codice" data-copy-code={CODICE}>Codice: {CODICE} · copia</button>
+
+      <ol class="pf__passi">
+        {PASSI.map((passo) => <li set:html={passo} />)}
+      </ol>
+
+      <a class="pf__btn pf__btn--link" href={REGISTRAZIONE} target="_blank" rel="noopener noreferrer">
+        Vai all'iscrizione →
+      </a>
+
+      <p class="pf__nota">
+        Ti abbiamo mandato le stesse istruzioni via email. Se qualcosa non torna, chiamaci in
+        reception: la attiviamo insieme.
+      </p>
+    </section>
+  </div>
+</div>
+
+<script>
+  import { initProvaForm } from '../lib/provaForm.client.js';
+
+  const modal = document.getElementById('prova-modal');
+  if (modal) {
+    let ultimoComando: HTMLElement | null = null;
+
+    const form = initProvaForm(modal, {
+      prefix: 'pf',
+      onReset: () => chiudi(),
+    });
+
+    function chiudi() {
+      modal!.classList.remove('open');
+      modal!.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('pf-locked');
+      ultimoComando?.focus();
+    }
+
+    /**
+     * Da dove arriva la richiesta, per la colonna Fonte di Airtable.
+     *
+     * Le CTA vecchie lo dicevano nell'URL del form ospitato — `medium=Btn_Header`
+     * per il form n8n, `utm_medium=GAds_btn_hero` per il Typeform — e quel
+     * valore e' esattamente quello che il desk vede oggi nel CRM. Si continua
+     * a leggerlo da li' invece di inventare una nomenclatura nuova, cosi' i
+     * dati prima e dopo questo cambio restano confrontabili.
+     */
+    function origineDa(cta: HTMLElement) {
+      if (cta.dataset.ctaSource) return cta.dataset.ctaSource;
+      const href = cta.getAttribute('href') || '';
+      try {
+        const url = new URL(href, location.origin);
+        return url.searchParams.get('medium') || url.searchParams.get('utm_medium') || '';
+      } catch {
+        return '';
+      }
+    }
+
+    function apri(cta: HTMLElement) {
+      ultimoComando = cta;
+      modal!.classList.add('open');
+      modal!.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('pf-locked');
+      form.open(origineDa(cta), cta.textContent?.trim() || '');
+    }
+
+    /* I comandi della prova sono di tre specie: le CTA nuove con
+       `data-cta="trial"`, i link al form ospitato da n8n (riconosciuti
+       dall'id del form, che e' unico) e i link al Typeform della prova.
+       L'ascolto e' delegato al documento e non attaccato a ogni pulsante:
+       diversi di questi link nascono da stringhe HTML nei `.mdx` e da
+       componenti che li generano, e la delega li prende comunque. */
+    const SELETTORE = [
+      '[data-cta="trial"]',
+      'a[href*="8ce36c5e-0cc4-4813-9a0f-2da2a7605fb0"]',
+      'a[href*="typeform.com/PassionFitness"]',
+    ].join(',');
+
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement | null;
+      const cta = target?.closest<HTMLElement>(SELETTORE);
+      if (!cta) return;
+      e.preventDefault();
+      apri(cta);
+    });
+
+    modal.querySelectorAll('[data-pf-close]').forEach((el) => el.addEventListener('click', chiudi));
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('open')) chiudi();
+    });
+  }
+</script>
+
+<style is:global>
+  /* Lo scroll bloccato mentre il pannello e' aperto. Globale perche' tocca
+     `body`, che sta fuori dal componente. */
+  body.pf-locked {
+    overflow: hidden;
+  }
+</style>
+
+<style>
+  /* Chiuso e' `visibility: hidden` e non solo trasparente, cosi' non resta
+     nell'ordine di tabulazione. */
+  .pf {
+    position: fixed;
+    inset: 0;
+    z-index: 320;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-sm);
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    transition: opacity 0.18s ease, visibility 0s 0.18s;
+  }
+  .pf.open {
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+    transition: opacity 0.18s ease, visibility 0s;
+  }
+
+  .pf__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.72);
+  }
+
+  .pf__panel {
+    position: relative;
+    width: min(34rem, 100%);
+    max-height: calc(100vh - 2 * var(--space-sm));
+    overflow-y: auto;
+    background: var(--bg-light);
+    color: var(--text-on-light);
+    border: 4px solid var(--accent);
+    border-radius: 16px;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .pf__close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.75rem;
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: 1.75rem;
+    line-height: 1;
+    background: none;
+    border: 0;
+    color: var(--text-on-light-muted);
+    cursor: pointer;
+  }
+  .pf__close:hover {
+    color: var(--accent);
+  }
+
+  .pf__step {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+  /* `display: flex` qui sopra batte il `display: none` che il browser da' a
+     `[hidden]`, e lo script nasconde i passi proprio con quell'attributo:
+     senza questa riga le quattro schermate si vedrebbero tutte insieme. */
+  .pf__step[hidden] {
+    display: none;
+  }
+
+  .pf__eyebrow {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .pf__title {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-weight: 400;
+    line-height: 0.96;
+    font-size: clamp(2rem, 5vw, 2.75rem);
+    margin: 0;
+  }
+  /* Il titolo prende il focus via script (`tabindex="-1"`): senza questo il
+     browser gli disegna intorno il suo anello anche quando il focus e'
+     programmatico e non un gesto della persona. */
+  .pf__title:focus {
+    outline: none;
+  }
+
+  .pf__claim {
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+  .pf__lead {
+    font-size: 0.95rem;
+    color: var(--text-on-light-muted);
+  }
+
+  .pf__incluso {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.35rem;
+    font-size: 0.9rem;
+  }
+  .pf__incluso li {
+    padding-left: 1.4rem;
+    position: relative;
+  }
+  .pf__incluso li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .pf__label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-top: var(--space-2xs);
+  }
+
+  /* `:global` e non `.pf__input`: il campo del cellulare vive dentro
+     `CampoTelefono.astro`, e una regola con l'ambito di questo file non
+     arriverebbe mai al suo `select` e al suo `input` — resterebbero nudi. La
+     classe e' comunque solo di questo pannello, quindi globale non collide. */
+  :global(.pf__input) {
+    width: 100%;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    padding: 0.8rem 1rem;
+    color: var(--text-on-light);
+    background: var(--bg-light-soft);
+    border: 2px solid var(--border-on-light);
+    border-radius: 10px;
+  }
+  :global(.pf__input:focus) {
+    outline: none;
+    border-color: var(--accent);
+  }
+  :global(.pf__input--errore) {
+    border-color: var(--accent);
+    background: var(--color-white);
+  }
+
+  .pf__coppia {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xs);
+  }
+  @media (max-width: 480px) {
+    .pf__coppia {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .pf__consenso {
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+    font-size: 0.78rem;
+    line-height: 1.45;
+    color: var(--text-on-light-muted);
+    margin-top: var(--space-2xs);
+  }
+  .pf__consenso input {
+    margin-top: 0.2rem;
+    width: 1.1rem;
+    height: 1.1rem;
+    accent-color: var(--accent);
+    flex-shrink: 0;
+  }
+  .pf__consenso a {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+  .pf__errore {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  /* Il bottone e' quello di `Button.astro` — bordo 4px, angoli 12px, rosso
+     che si riempie in hover — riscritto qui perche' questo e' un `<button>` e
+     quel componente e' un `<a>`. Le due varianti restano allineate a mano; il
+     giorno in cui diventano tre conviene estrarre le regole in global.css. */
+  .pf__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    width: 100%;
+    margin-top: var(--space-2xs);
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 1rem 1.6rem;
+    cursor: pointer;
+    color: var(--color-white);
+    background: var(--accent);
+    border: 4px solid var(--accent);
+    border-radius: 12px;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+  .pf__btn:hover {
+    background: var(--color-black);
+    border-color: var(--color-black);
+  }
+  .pf__btn[disabled] {
+    cursor: progress;
+    opacity: 0.75;
+  }
+
+  .pf__spinner {
+    display: none;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-top-color: var(--color-white);
+    border-radius: 50%;
+    animation: pf-gira 0.7s linear infinite;
+  }
+  .pf__btn--attesa .pf__spinner {
+    display: inline-block;
+  }
+  @keyframes pf-gira {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pf__spinner {
+      animation-duration: 2s;
+    }
+  }
+
+  .pf__azioni {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+    align-items: center;
+  }
+  .pf__link {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+  /* Il codice e' un bottone e non un testo da selezionare a mano: e' il gesto
+     centrale di questa schermata, e su un telefono selezionare sei caratteri
+     dentro un paragrafo e' esattamente il punto in cui una prova si perde. */
+  .pf__codice {
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 4vw, 1.9rem);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.9rem 1.2rem;
+    cursor: pointer;
+    color: var(--color-white);
+    background: var(--color-black);
+    border: 4px dashed var(--accent);
+    border-radius: 12px;
+  }
+  .pf__codice.copied {
+    border-style: solid;
+    background: var(--accent);
+  }
+
+  .pf__passi {
+    margin: 0;
+    padding-left: 1.3rem;
+    display: grid;
+    gap: 0.35rem;
+    font-size: 0.88rem;
+    color: var(--text-on-light-muted);
+  }
+
+  .pf__nota {
+    font-size: 0.78rem;
+    color: var(--text-on-light-muted);
+  }
+</style>

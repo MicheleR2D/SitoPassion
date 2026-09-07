@@ -196,7 +196,9 @@ const { title, image, video, alt = '' } = Astro.props;
     font-weight: 600;
   }
 
-  @media (max-width: 860px) {
+  /* + totem: vedi «Il totem verticale del club» in styles/global.css */
+  @media (max-width: 860px),
+    (min-width: 900px) and (min-height: 1200px) and (max-aspect-ratio: 7/10) {
     .content-row,
     .content-row:nth-child(even) {
       grid-template-columns: 1fr;
@@ -218,7 +220,7 @@ const { title, image, video, alt = '' } = Astro.props;
       margin: 0;
       background: var(--accent);
       color: var(--color-white);
-      padding: var(--space-sm) clamp(1.25rem, 4vw, 2.5rem);
+      padding: var(--space-sm) var(--container-gutter);
       /* Fascia a piena larghezza: l'ingresso laterale la farebbe sforare
          dal viewport (e la pagina scorrerebbe in orizzontale). Solo fade. */
       transform: none;
@@ -259,7 +261,7 @@ const { title, image, video, alt = '' } = Astro.props;
     .content-row:nth-child(even) .content-row__text {
       order: 3;
       background: var(--bg-light-soft);
-      padding: var(--space-md) clamp(1.25rem, 4vw, 2.5rem);
+      padding: var(--space-md) var(--container-gutter);
     }
   }
 </style>

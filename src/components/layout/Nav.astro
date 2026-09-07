@@ -134,159 +134,146 @@ import { NAV_ITEMS } from '../../data/nav.ts';
   }
 
   /* --- Menu mobile ---
-     Non una lista di link ma una griglia 2x2 di riquadri rossi (Palestra,
-     Discipline, Orari Corsi, Abbonamenti): bersagli grandi da toccare col
-     pollice. I riquadri con sotto-pagine mostrano solo il titolo e si
-     girano in hover, rivelando sul retro i nomi delle pagine. Le voci
-     marcate `standalone` (Blog) restano fuori dalla griglia, in una fascia
-     nera a piena larghezza sotto. */
-  @media (max-width: 900px) {
-    /* Il menu riempie la schermata: il pannello ha un'altezza definita
-       (vedi Header) e qui la griglia la eredita, cosi' le due righe di
-       riquadri si dividono lo spazio disponibile. */
-    .site-nav {
-      height: 100%;
-    }
+     Un elenco per gruppi, tutto a vista. Prima era una griglia 2x2 di
+     riquadri rossi che si **giravano** in hover per rivelare sul retro le
+     sotto-pagine: su un telefono l'hover non esiste, il giro partiva col
+     focus al tocco, e quindi per sapere cosa c'era sotto «Palestra»
+     bisognava toccarla e scoprirlo. Quattro quinti del menu erano nascosti
+     dietro un gesto che nessuno sapeva di dover fare.
+
+     Adesso non c'e' niente da scoprire: ogni gruppo mostra il suo nome e
+     sotto tutte le sue voci, come pastiglie affiancate. Si scorre, e con
+     l'occhio si vede l'intero menu in due schermate invece di dover
+     interagire per vederlo. */
+  /* + totem: vedi «Il totem verticale del club» in styles/global.css */
+  @media (max-width: 900px),
+    (min-width: 900px) and (min-height: 1200px) and (max-aspect-ratio: 7/10) {
+    /* Niente `height: 100%`: l'elenco e' alto quanto il suo contenuto e il
+       pannello dell'header lo fa scorrere. Prima serviva perche' la griglia
+       doveva spartirsi la schermata in due righe uguali. */
     .site-nav > ul {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      /* Due righe di riquadri che si spartiscono l'altezza + la fascia
-         finale (Blog) alta quanto il suo contenuto. */
-      grid-template-rows: 1fr 1fr auto;
-      gap: 2px;
-      height: 100%;
-      padding: 2px 0 0;
-    }
-    /* Il riquadro e' il contenitore della prospettiva: il piano che ruota
-       e' .site-nav__card al suo interno. */
-    .site-nav__item {
-      position: relative;
-      border: 2px solid var(--color-black);
-      background: var(--accent);
-      perspective: 60rem;
-    }
-    .site-nav__card {
-      display: block;
-      position: absolute;
-      inset: 0;
-      transform-style: preserve-3d;
-      transition: transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
-    }
-    /* Le due facce occupano lo stesso spazio, contenuto centrato; il retro
-       parte girato di 180deg, cosi' ruotando la card diventa fronte. */
-    .site-nav__title,
-    .site-nav__dropdown {
-      position: absolute;
-      inset: 0;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      gap: var(--space-2xs);
-      padding: var(--space-sm);
-      backface-visibility: hidden;
+      gap: 0;
+      padding: 0;
     }
+
+    /* Un filetto fra i gruppi invece di riquadri con un bordo per lato: a
+       schermo il primo si legge come una lista, il secondo come una
+       scacchiera in cui ogni cosa ha lo stesso peso. */
+    .site-nav__item {
+      border-top: 1px solid var(--border-on-dark);
+      padding: var(--space-sm) var(--container-gutter);
+    }
+    .site-nav__item:first-child {
+      border-top: none;
+    }
+
+    .site-nav__card {
+      display: block;
+      position: static;
+      inset: auto;
+      /* Via la prospettiva e la transizione: non c'e' piu' niente che gira. */
+      transform: none;
+      transition: none;
+    }
+
+    /* Il nome del gruppo. Per le voci che hanno sotto-pagine e' un
+       `<button>` — cosi' e' scritto nel markup, perche' su desktop apre il
+       dropdown — e qui non deve sembrare toccabile: le destinazioni vere
+       sono le pastiglie sotto, e un titolo che al tocco non fa niente e'
+       peggio di un titolo che non invita a toccare. */
     .site-nav__title {
-      padding-block: var(--space-sm);
-      gap: var(--space-2xs);
+      position: static;
+      inset: auto;
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 0;
       font-family: var(--font-display);
-      font-size: clamp(1.5rem, 7vw, 2.2rem);
+      font-size: 1.5rem;
       font-weight: 400;
       letter-spacing: -0.01em;
       line-height: 1;
+      text-transform: uppercase;
       color: var(--color-white);
       border-bottom: none;
+      backface-visibility: visible;
     }
-    /* Dice cosa c'e' dietro la card, cosi' il riquadro non e' solo un nome. */
-    .site-nav__tagline {
-      display: block;
-      font-family: var(--font-body);
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      line-height: 1.25;
-      color: var(--color-white);
-      opacity: 0.75;
+    .site-nav__item.has-children .site-nav__title {
+      cursor: default;
     }
-    /* La freccetta del dropdown non serve: il retro si rivela girando. */
+    /* La freccetta del dropdown: qui non c'e' nessun dropdown da aprire. */
     .site-nav__item.has-children .site-nav__title::after {
       display: none;
     }
-    /* Retro: inversione dei colori del fronte (rosso su bianco), cosi' i
-       nomi in rosso richiesti restano leggibili. */
-    .site-nav__dropdown {
-      opacity: 1;
-      visibility: visible;
-      min-width: 0;
-      margin: 0;
-      background: var(--color-white);
-      border: none;
-      transform: rotateY(180deg);
-    }
-    /* Le voci del retro sono bersagli da toccare: piu' grandi e piu'
-       distanziate, cosi' non si sbaglia link col pollice. */
-    .site-nav__dropdown {
-      gap: var(--space-xs);
-    }
-    /* Invito in cima al retro, in nero sul fondo bianco della card. */
-    .site-nav .site-nav__dropdown-title {
+
+    .site-nav__tagline {
       display: block;
-      margin-bottom: var(--space-2xs);
+      margin-top: 0.35rem;
       font-family: var(--font-body);
       font-size: 0.72rem;
       font-weight: 600;
       letter-spacing: 0.04em;
       text-transform: uppercase;
       line-height: 1.25;
-      color: var(--color-black);
+      color: var(--text-on-dark-muted);
     }
-    .site-nav__dropdown a {
-      padding: 0.35rem 0;
-      font-family: var(--font-display);
-      text-transform: uppercase;
-      font-size: clamp(1.2rem, 5vw, 1.7rem);
-      line-height: 1.05;
-      color: var(--color-red);
-    }
-    .site-nav__dropdown a:hover {
-      background: transparent;
-      color: var(--color-black);
-    }
-    /* Il giro: hover col mouse, focus-within da tastiera/tap. */
-    .site-nav__item.has-children:hover .site-nav__card,
-    .site-nav__item.has-children:focus-within .site-nav__card {
-      transform: rotateY(180deg);
-    }
-    /* Il retro deve restare girato di 180deg anche in hover: la regola
-       desktop del dropdown (translateY(0), piu' specifica di una classe
-       sola) altrimenti vince e lo raddrizza, e con backface-visibility
-       nascosta il retro non si vedrebbe mai - si vedrebbe solo il rosso
-       del riquadro sotto. */
-    .site-nav__item.has-children:hover .site-nav__dropdown,
-    .site-nav__item.has-children:focus-within .site-nav__dropdown {
-      transform: rotateY(180deg);
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .site-nav__card {
-        transition: none;
-      }
-    }
-    /* Fascia a se': fondo nero come il pannello, quindi il bordo nero
-       sparirebbe. Bordo rosso per farla leggere come area toccabile. */
-    .site-nav__item--standalone {
-      grid-column: 1 / -1;
-      background: var(--color-black);
-      border-color: var(--color-red);
-    }
-    /* La fascia Blog e' alta quanto il suo contenuto (riga `auto` della
-       griglia): con la faccia in position:absolute non avrebbe altezza, qui
-       torna nel flusso (non deve girarsi, non ha sotto-pagine). */
-    .site-nav__item--standalone .site-nav__card,
-    .site-nav__item--standalone .site-nav__title {
+
+    /* Le sotto-pagine: pastiglie affiancate che vanno a capo da sole. In
+       colonna sarebbero diciotto righe identiche e il menu diventerebbe tre
+       schermate; affiancate ne bastano due, e ogni pastiglia resta un
+       bersaglio da pollice — 44px di altezza minima, che e' la misura sotto
+       la quale si sbaglia link. */
+    .site-nav__dropdown {
       position: static;
       inset: auto;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      min-width: 0;
+      margin: var(--space-xs) 0 0;
+      padding: 0;
+      background: none;
+      border: none;
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+      backface-visibility: visible;
+    }
+    .site-nav__dropdown a {
+      display: flex;
+      align-items: center;
+      min-height: 2.75rem;
+      padding: 0.5rem 1rem;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      line-height: 1.2;
+      color: var(--color-white);
+      background: transparent;
+      border: 2px solid var(--accent);
+      border-radius: 10px;
+    }
+    .site-nav__dropdown a:hover,
+    .site-nav__dropdown a:active {
+      background: var(--accent);
+      color: var(--color-white);
+    }
+    /* L'invito serviva sul retro della card, dove il titolo non si vedeva
+       piu'. Ora titolo e voci sono nella stessa schermata e ripeterlo
+       sarebbe la stessa frase due volte a due centimetri di distanza. */
+    .site-nav .site-nav__dropdown-title {
+      display: none;
+    }
+
+    /* Le voci senza sotto-pagine (Blog) sono il titolo stesso, e quello e'
+       un link: qui torna a essere un bersaglio, non solo un'intestazione. */
+    .site-nav__item--standalone .site-nav__title {
+      color: var(--accent);
     }
   }
 </style>
