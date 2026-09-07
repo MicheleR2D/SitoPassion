@@ -1,5 +1,5 @@
 ---
-import SEO from '../components/layout/SEO.astro';
+import SEO, { type Breadcrumb } from '../components/layout/SEO.astro';
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
 import '../styles/global.css';
@@ -9,9 +9,11 @@ interface Props {
   description?: string;
   ogImage?: string;
   noindex?: boolean;
+  breadcrumbs?: Breadcrumb[];
+  ogTitle?: string;
 }
 
-const { title, description, ogImage, noindex } = Astro.props;
+const { title, description, ogImage, noindex, breadcrumbs, ogTitle } = Astro.props;
 ---
 
 <html lang="it">
@@ -37,7 +39,7 @@ const { title, description, ogImage, noindex } = Astro.props;
     <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="generator" content={Astro.generator} />
-    <SEO title={title} description={description} ogImage={ogImage} noindex={noindex} />
+    <SEO title={title} description={description} ogImage={ogImage} noindex={noindex} breadcrumbs={breadcrumbs} ogTitle={ogTitle} />
 
     <!-- Meta Pixel Code -->
     {/* is:inline: lo snippet di terze parti resta esattamente com'e' (script

@@ -26,7 +26,7 @@ const { items } = Astro.props;
         <div class="highlights__bg" style={`background-image: url(${item.image})`}></div>
         <div class="highlights__overlay"></div>
         <div class="highlights__content">
-          <h3>{item.title}</h3>
+          <h2>{item.title}</h2>
           <p class="highlights__body">{item.body}</p>
           {item.href && item.cta && (
             <a class="highlights__cta" href={item.href}>
@@ -93,7 +93,7 @@ const { items } = Astro.props;
     padding: var(--space-lg) var(--space-md);
     max-width: 26rem;
   }
-  .highlights__content h3 {
+  .highlights__content h2 {
     color: var(--color-white);
     font-size: clamp(1.6rem, 2.6vw, 2.2rem);
   }

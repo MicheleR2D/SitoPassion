@@ -7,7 +7,7 @@ import PostBody from '../components/blog/PostBody.astro';
 import CtaSplit from '../components/ui/CtaSplit.astro';
 import RelatedSection from '../components/ui/RelatedSection.astro';
 import RelatedCard from '../components/ui/RelatedCard.astro';
-import { summaryFromBody } from '../lib/summary.ts';
+import { seoTitle, summaryFromBody } from '../lib/summary.ts';
 
 interface Props {
   post: CollectionEntry<'blog'>;
@@ -27,12 +27,19 @@ const relatedPosts = (await getCollection('blog', ({ data }) => !data.draft))
 // Nessun articolo migrato da WordPress ha `excerpt`: in mancanza si usa il
 // primo paragrafo del testo.
 const description = seo?.description || excerpt || summaryFromBody(post.body);
+
+const breadcrumbs = [
+  { name: 'Blog', url: '/blog/' },
+  { name: title, url: `/${slug}/` },
+];
 ---
 
 <BaseLayout
-  title={seo?.title || title}
+  title={seo?.title || seoTitle(title)}
+  ogTitle={seo?.title || title}
   description={description}
   ogImage={seo?.ogImage || coverImage}
+  breadcrumbs={breadcrumbs}
 >
   <Hero title={title} image={coverImage} eyebrow={categories[0]} />
   <PostBody>

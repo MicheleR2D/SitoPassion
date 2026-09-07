@@ -1,10 +1,11 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { getEntry } from 'astro:content';
 import BaseLayout from './BaseLayout.astro';
 import Hero from '../components/ui/Hero.astro';
 import Button from '../components/ui/Button.astro';
 import PostBody from '../components/blog/PostBody.astro';
-import { summaryFromBody, textFromHtml } from '../lib/summary.ts';
+import { pageDescription, seoTitle } from '../lib/summary.ts';
 
 interface Props {
   page: CollectionEntry<'pages'>;
@@ -14,15 +15,29 @@ const { page } = Astro.props;
 const { title, heroImage, heroVideo, heroEyebrow, heroText, heroCtas, seo } = page.data;
 
 // Nessuna pagina compila `seo.description`: in mancanza si usa il testo
-// dell'hero e, se non c'e' nemmeno quello, il primo paragrafo del corpo.
-const description = seo?.description || textFromHtml(heroText) || summaryFromBody(page.body);
+// dell'hero (allungato col primo paragrafo del corpo se troppo corto).
+const description = seo?.description || pageDescription(heroText, page.body);
+
+// Breadcrumb: per le pagine annidate (slug "palestra/sala-pesi") risale
+// alla pagina padre e ne usa il titolo reale, invece di ripeterlo a mano
+// (rischierebbe di disallinearsi se "Fitness" cambiasse nome un domani).
+const slugParts = page.data.slug.split('/');
+const breadcrumbs = [];
+if (slugParts.length > 1) {
+  const parentSlug = slugParts.slice(0, -1).join('/');
+  const parent = await getEntry('pages', parentSlug);
+  if (parent) breadcrumbs.push({ name: parent.data.title, url: `/${parentSlug}/` });
+}
+breadcrumbs.push({ name: title, url: `/${page.data.slug}/` });
 ---
 
 <BaseLayout
-  title={seo?.title || title}
+  title={seo?.title || seoTitle(title)}
+  ogTitle={seo?.title || title}
   description={description}
   ogImage={seo?.ogImage}
   noindex={seo?.noindex}
+  breadcrumbs={breadcrumbs}
 >
   <Hero title={title} image={heroImage} video={heroVideo} eyebrow={heroEyebrow}>
     {heroText && <p set:html={heroText} />}

@@ -1,13 +1,87 @@
 ---
+import { getEntry } from 'astro:content';
+
+// Dati reali del business, non inventati: stessi usati in Footer.astro.
+const footer = await getEntry('footerSettings', 'footer');
+const site = await getEntry('siteSettings', 'site');
+const data = footer?.data;
+const socials = Object.values(site?.data.socials ?? {});
+
+export interface Breadcrumb {
+  name: string;
+  url: string;
+}
+
 interface Props {
   title: string;
   description?: string;
   ogImage?: string;
   noindex?: boolean;
+  // Es. [{ name: 'Palestra', url: '/palestra/' }, { name: 'Sala Pesi', url: '/palestra/sala-pesi/' }]
+  // "Home" e' aggiunta automaticamente come primo elemento: non va ripetuta.
+  breadcrumbs?: Breadcrumb[];
+  // `title` puo' essere gia' accorciato per il tag <title> (budget 60
+  // caratteri per il SERP): Facebook/Twitter non hanno quel limite, quindi
+  // og:title/twitter:title usano il titolo per esteso quando e' diverso.
+  ogTitle?: string;
 }
 
-const { title, description, ogImage, noindex = false } = Astro.props;
+const { title, description, ogImage, noindex = false, breadcrumbs, ogTitle } = Astro.props;
+const shareTitle = ogTitle || title;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+// Nessuna pagina ha un'immagine propria per gli share sui social: il logo e'
+// un fallback sicuro (sempre pertinente, mai un placeholder generico).
+const shareImage = new URL(ogImage || '/images/logo-passion-mark.png', Astro.site);
+
+const localBusiness = {
+  '@context': 'https://schema.org',
+  '@type': 'HealthClub',
+  name: site?.data.siteName || 'Passion Fitness',
+  url: new URL('/', Astro.site).toString(),
+  logo: new URL('/images/logo-passion-mark.png', Astro.site).toString(),
+  image: new URL('/images/logo-passion-mark.png', Astro.site).toString(),
+  ...(data?.description && { description: data.description }),
+  ...(data?.address && {
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: data.address.split(',')[0]?.trim(),
+      addressLocality: 'Roma',
+      addressRegion: 'RM',
+      addressCountry: 'IT',
+    },
+  }),
+  ...(data?.phone && { telephone: `+39${data.phone}` }),
+  ...(data?.email && { email: data.email }),
+  // "Dal Lunedì alla Domenica 05:00 - 24:00" -> Mo-Su 05:00-24:00 (formato schema.org).
+  ...(data?.openingHours?.[0] && {
+    openingHoursSpecification: {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: [
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday',
+        'Sunday',
+      ],
+      opens: data.openingHours[0].hours.split('-')[0]?.trim(),
+      closes: data.openingHours[0].hours.split('-')[1]?.trim(),
+    },
+  }),
+  ...(socials.length > 0 && { sameAs: socials }),
+};
+
+const breadcrumbList = breadcrumbs && breadcrumbs.length > 0 && {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [{ name: 'Home', url: '/' }, ...breadcrumbs].map((item, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: item.name,
+    item: new URL(item.url, Astro.site).toString(),
+  })),
+};
 ---
 
 <title>{title} | Passion Fitness</title>
@@ -16,8 +90,17 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 {noindex && <meta name="robots" content="noindex, nofollow" />}
 
 <meta property="og:type" content="website" />
-<meta property="og:title" content={title} />
+<meta property="og:site_name" content="Passion Fitness" />
+<meta property="og:title" content={shareTitle} />
 {description && <meta property="og:description" content={description} />}
 <meta property="og:url" content={canonicalURL} />
-{ogImage && <meta property="og:image" content={new URL(ogImage, Astro.site)} />}
+<meta property="og:image" content={shareImage} />
+<meta property="og:locale" content="it_IT" />
+
 <meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={shareTitle} />
+{description && <meta name="twitter:description" content={description} />}
+<meta name="twitter:image" content={shareImage} />
+
+<script type="application/ld+json" set:html={JSON.stringify(localBusiness)} />
+{breadcrumbList && <script type="application/ld+json" set:html={JSON.stringify(breadcrumbList)} />}

@@ -17,11 +17,11 @@ const summary = excerpt || summaryFromBody(post.body);
 <article class="post-card">
   <a href={`/${slug}/`} class="post-card__link">
     <div class="post-card__media">
-      {coverImage ? <img src={coverImage} alt="" loading="lazy" /> : <span class="post-card__placeholder" />}
+      {coverImage ? <img src={coverImage} alt={title} loading="lazy" /> : <span class="post-card__placeholder" />}
     </div>
     <div class="post-card__body">
       {categories[0] && <p class="eyebrow post-card__category">{categories[0]}</p>}
-      <h3 class="post-card__title">{title}</h3>
+      <h2 class="post-card__title">{title}</h2>
       {summary && <p class="post-card__excerpt">{summary}</p>}
       <time class="post-card__date" datetime={publishedAt.toISOString()}>
         {publishedAt.toLocaleDateString('it-IT')}

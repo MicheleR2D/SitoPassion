@@ -24,9 +24,19 @@ interface Props {
 }
 
 const { page } = Astro.props;
+
+// Le pagine 2+ dell'archivio avevano title/description identici alla prima:
+// Google le tratta come contenuto duplicato. Il template con il numero di
+// pagina le rende uniche restando un titolo pertinente (e' quello che c'e'
+// davvero su quella pagina: altri 12 articoli).
+const pageTitle = page.currentPage > 1 ? `Blog – Pagina ${page.currentPage}` : 'Blog';
+const pageDescription =
+  page.currentPage > 1
+    ? `Altri articoli e consigli su fitness, allenamento e benessere: guide pratiche e approfondimenti scritti dai trainer di Passion Fitness — pagina ${page.currentPage} di ${page.lastPage}.`
+    : 'Articoli e consigli su fitness, allenamento e benessere: guide pratiche, schede di allenamento e approfondimenti scritti dai trainer di Passion Fitness.';
 ---
 
-<BaseLayout title="Blog" description="Articoli e consigli su fitness, allenamento e benessere.">
+<BaseLayout title={pageTitle} description={pageDescription} breadcrumbs={[{ name: 'Blog', url: '/blog/' }]}>
   <Hero
     title="Blog"
     image="/images/uploads/2024/11/MRZ01857-scaled.jpeg"

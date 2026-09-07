@@ -2,12 +2,16 @@
 interface Props {
   title: string;
   image?: string;
+  // Testo alternativo della foto (non del video, che e' gia' decorativo di
+  // suo). Di norma non serve passarlo: l'immagine illustra la pagina, quindi
+  // il titolo della pagina la descrive gia' bene.
+  imageAlt?: string;
   video?: string;
   videoEndBuffer?: number;
   eyebrow?: string;
 }
 
-const { title, image, video, videoEndBuffer = 3, eyebrow } = Astro.props;
+const { title, image, imageAlt = title, video, videoEndBuffer = 3, eyebrow } = Astro.props;
 ---
 
 <div class="hero">
@@ -26,7 +30,7 @@ const { title, image, video, videoEndBuffer = 3, eyebrow } = Astro.props;
   )}
   {!video && image && (
     <div class="hero-photo">
-      <img src={image} alt="" />
+      <img src={image} alt={imageAlt} />
     </div>
   )}
   <div class="container hero-inner" class:list={{ "hero-inner--with-photo": image || video }}>
