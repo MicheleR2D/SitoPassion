@@ -3,13 +3,19 @@
 // diventa rosso in hover, titolo sempre visibile, paragrafo e CTA rivelati
 // in hover. E' la sezione dei "tre box" usata sotto l'hero.
 //
-//   <HighlightCards items={[{ title, body, image, href, cta }, ...]} />
+//   <HighlightCards items={[{ title, body, image, href, cta, focalY }, ...]} />
+//
+// `focalY` (opzionale, es. "20%"): punto verticale su cui centrare il
+// ritaglio, per le foto verticali strette che il riquadro (molto piu' largo
+// che alto) taglierebbe altrimenti a meta' del soggetto scegliendo da solo
+// il centro esatto della foto.
 interface Item {
   title: string;
   body: string;
   image: string;
   href?: string;
   cta?: string;
+  focalY?: string;
 }
 
 interface Props {
@@ -23,7 +29,10 @@ const { items } = Astro.props;
   <div class="highlights__grid" style={`--cols: ${items.length}`}>
     {items.map((item) => (
       <article class="highlights__card">
-        <div class="highlights__bg" style={`background-image: url(${item.image})`}></div>
+        <div
+          class="highlights__bg"
+          style={`background-image: url(${item.image}); background-position: center ${item.focalY ?? '50%'};`}
+        ></div>
         <div class="highlights__overlay"></div>
         <div class="highlights__content">
           <h2>{item.title}</h2>

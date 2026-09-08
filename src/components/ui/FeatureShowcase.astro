@@ -23,6 +23,10 @@
 interface ImageItem {
   src: string;
   alt?: string;
+  // Punto verticale su cui centrare il ritaglio (es. "20%"): serve per le
+  // foto verticali strette, che nella cella quadrata/larga della gallery
+  // verrebbero tagliate al centro esatto scelto in automatico dal browser.
+  focalY?: string;
 }
 
 interface Props {
@@ -39,7 +43,12 @@ const { title, images, features } = Astro.props;
     <div class="showcase__gallery">
       {images.map((img) => (
         <div class="showcase__gallery-item">
-          <img src={img.src} alt={img.alt ?? ''} loading="lazy" />
+          <img
+            src={img.src}
+            alt={img.alt ?? ''}
+            loading="lazy"
+            style={img.focalY ? `object-position: center ${img.focalY};` : undefined}
+          />
         </div>
       ))}
     </div>
