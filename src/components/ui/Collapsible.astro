@@ -8,7 +8,10 @@
 // e' slottato: dentro ci vanno altre fasce (es. PricingGroup), che restano a
 // piena larghezza perche' qui non c'e' padding orizzontale.
 //
-//   <Collapsible title="Abbonamenti Under 25">
+// Mutua esclusione: quando se ne apre uno, tutti gli altri `.collapsible`
+// della pagina si richiudono da soli (vedi lo script sotto).
+//
+//   <Collapsible title="Abbonamenti Under 25" variant="accent">
 //     <PricingGroup ... />
 //   </Collapsible>
 interface Props {
@@ -16,12 +19,15 @@ interface Props {
   open?: boolean;
   // Ancora per i link diretti alla fascia (usata dal menu mobile).
   id?: string;
+  // "accent": barra rossa invece che nera, per farlo risaltare come offerta
+  // a se stante rispetto agli altri Collapsible della pagina (es. Under 25).
+  variant?: 'default' | 'accent';
 }
 
-const { title, open = false, id } = Astro.props;
+const { title, open = false, id, variant = 'default' } = Astro.props;
 ---
 
-<details class="collapsible" id={id} open={open}>
+<details class:list={['collapsible', { 'collapsible--accent': variant === 'accent' }]} id={id} open={open}>
   <summary class="collapsible__bar">
     {/* .container: il titolo si incolonna con quelli delle altre sezioni e
         con le celle dei blocchi prezzi, che stanno nel container. */}
@@ -36,6 +42,20 @@ const { title, open = false, id } = Astro.props;
     <slot />
   </div>
 </details>
+
+<script>
+  // Un solo accordion aperto alla volta: all'apertura di uno, tutti gli altri
+  // `.collapsible` della pagina si richiudono. Astro deduplica questo script
+  // per pagina anche se il componente e' usato piu' volte.
+  document.querySelectorAll('details.collapsible').forEach((el) => {
+    el.addEventListener('toggle', () => {
+      if (!(el instanceof HTMLDetailsElement) || !el.open) return;
+      document.querySelectorAll('details.collapsible').forEach((other) => {
+        if (other !== el) (other as HTMLDetailsElement).open = false;
+      });
+    });
+  });
+</script>
 
 <style>
   .collapsible {
@@ -103,5 +123,27 @@ const { title, open = false, id } = Astro.props;
     /* Filetto di stacco tra la barra e il contenuto: le fasce interne hanno
        un bordo proprio, quindi qui non serve altro. */
     border-top: 2px solid var(--color-black);
+  }
+
+  /* Variante "accent": barra e bordo rossi invece che neri, testo/icona
+     bianchi (il rosso su rosso sparirebbe) - completamente diversa dalle
+     altre fasce nere, per segnalare che Under 25 e' un'offerta a parte. */
+  .collapsible--accent {
+    border-color: var(--color-red);
+    background: var(--color-red);
+  }
+  .collapsible--accent .collapsible__bar {
+    background: var(--color-red);
+  }
+  .collapsible--accent .collapsible__title,
+  .collapsible--accent .collapsible__icon {
+    color: var(--color-white);
+  }
+  .collapsible--accent .collapsible__bar:hover .collapsible__title,
+  .collapsible--accent .collapsible__bar:hover .collapsible__icon {
+    color: var(--color-black);
+  }
+  .collapsible--accent[open] .collapsible__body {
+    border-top-color: var(--color-white);
   }
 </style>
