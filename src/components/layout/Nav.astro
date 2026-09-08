@@ -15,18 +15,14 @@ import { NAV_ITEMS } from '../../data/nav.ts';
             ruota: su desktop e' display:contents, quindi il layout della
             barra e del dropdown resta esattamente quello di prima. */}
         <div class="site-nav__card">
-          {item.children ? (
-            /* Le voci con sotto-pagine non portano da nessuna parte: il
-               titolo apre il dropdown (desktop) o gira la card (mobile).
-               <button> e non <span> perche' e' focalizzabile: al tocco
-               riceve il focus e :focus-within fa scattare il giro. */
-            <button class="site-nav__title" type="button">
-              {item.label}
-              {item.tagline && <span class="site-nav__tagline">{item.tagline}</span>}
-            </button>
-          ) : (
-            <a class="site-nav__title" href={item.href}>{item.label}</a>
-          )}
+          {/* Sempre un link vero, anche per le voci con sotto-pagine: il
+              dropdown (desktop, via :hover/:focus-within) e le pastiglie
+              (mobile) sono scorciatoie in piu', non l'unico modo per
+              arrivarci — il titolo stesso porta alla sua pagina. */}
+          <a class="site-nav__title" href={item.href}>
+            {item.label}
+            {item.tagline && <span class="site-nav__tagline">{item.tagline}</span>}
+          </a>
           {item.children && (
             <ul class="site-nav__dropdown">
               {/* Ripete l'invito del fronte anche sul retro: girata la card,
@@ -62,8 +58,6 @@ import { NAV_ITEMS } from '../../data/nav.ts';
   .site-nav__item {
     position: relative;
   }
-  /* Il titolo e' un <a> (voci senza figli) o un <button> (voci con figli):
-     qui si azzera lo stile nativo del bottone, cosi' i due sono identici. */
   .site-nav__title {
     display: inline-block;
     appearance: none;
@@ -109,8 +103,12 @@ import { NAV_ITEMS } from '../../data/nav.ts';
     border: 1px solid var(--border-on-dark);
     opacity: 0;
     visibility: hidden;
-    transform: translateY(-4px);
-    transition: opacity 0.12s ease, transform 0.12s ease;
+    /* Leggermente piu' di corsa (era -4px/120ms, quasi uno scatto) e la
+       stessa curva delle altre rivelazioni del sito, per una discesa che si
+       vede invece di un cambio istantaneo. */
+    transform: translateY(-8px);
+    transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
+      visibility 0.25s;
     z-index: 20;
   }
   .site-nav__item.has-children:hover .site-nav__dropdown,
@@ -127,10 +125,17 @@ import { NAV_ITEMS } from '../../data/nav.ts';
     letter-spacing: 0.02em;
     text-transform: none;
     color: var(--text-on-dark);
+    transition: background-color 0.15s ease, color 0.15s ease;
   }
   .site-nav__dropdown a:hover {
     background: var(--bg-dark);
     color: var(--color-red);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .site-nav__dropdown {
+      transition: opacity 0.12s ease, visibility 0.12s;
+      transform: none;
+    }
   }
 
   /* --- Menu mobile ---
@@ -178,11 +183,9 @@ import { NAV_ITEMS } from '../../data/nav.ts';
       transition: none;
     }
 
-    /* Il nome del gruppo. Per le voci che hanno sotto-pagine e' un
-       `<button>` — cosi' e' scritto nel markup, perche' su desktop apre il
-       dropdown — e qui non deve sembrare toccabile: le destinazioni vere
-       sono le pastiglie sotto, e un titolo che al tocco non fa niente e'
-       peggio di un titolo che non invita a toccare. */
+    /* Il nome del gruppo: e' un link vero anche qui, porta alla pagina del
+       gruppo (es. "Palestra" -> /palestra/). Le pastiglie sotto restano
+       scorciatoie dirette alle sotto-pagine, non l'unico modo di navigare. */
     .site-nav__title {
       position: static;
       inset: auto;
@@ -199,9 +202,6 @@ import { NAV_ITEMS } from '../../data/nav.ts';
       color: var(--color-white);
       border-bottom: none;
       backface-visibility: visible;
-    }
-    .site-nav__item.has-children .site-nav__title {
-      cursor: default;
     }
     /* La freccetta del dropdown: qui non c'e' nessun dropdown da aprire. */
     .site-nav__item.has-children .site-nav__title::after {
