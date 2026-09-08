@@ -117,11 +117,21 @@ const {
     background-position: center;
     z-index: 0;
   }
+  /* Sfumatura invece di velo piatto: si scurisce quasi al nero pieno sopra e
+     sotto, cosi' il taglio tra la foto di una categoria e quella della
+     categoria successiva (o la fascia nera/rossa sotto) sparisce in un unico
+     bordo scuro invece di un cambio di immagine brusco. */
   .pricing__bg::after {
     content: "";
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.65);
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.92) 0%,
+      rgba(0, 0, 0, 0.55) 15%,
+      rgba(0, 0, 0, 0.55) 85%,
+      rgba(0, 0, 0, 0.92) 100%
+    );
   }
   .pricing--has-bg {
     /* Spazio in piu' sopra/sotto: sulla sola griglia nera il padding stretto
@@ -136,6 +146,12 @@ const {
      griglia si fonderebbe visivamente col velo scuro della foto. */
   .pricing--has-bg .pricing__grid {
     box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  }
+  /* Se una fascia Collapsible segue subito una categoria con sfondo foto (es.
+     Under 25 dopo "Sala Pesi"), niente margine tra le due: altrimenti ci
+     spunta in mezzo lo sfondo chiaro della pagina. */
+  .pricing--has-bg + :global(.collapsible) {
+    margin-top: 0;
   }
   .pricing__grid {
     display: grid;

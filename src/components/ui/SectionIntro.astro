@@ -8,16 +8,18 @@
 //   <SectionIntro
 //     title="Abbonamenti e lezioni"
 //     text="Paragrafo introduttivo. Accetta <strong> per il grassetto rosso."
+//     variant="dark"                  (opzionale: sfondo nero invece che chiaro)
 //   />
 interface Props {
   title: string;
   text?: string;
+  variant?: 'default' | 'dark';
 }
 
-const { title, text } = Astro.props;
+const { title, text, variant = 'default' } = Astro.props;
 ---
 
-<section class="section-intro">
+<section class:list={['section-intro', { 'section-intro--dark': variant === 'dark' }]}>
   <div class="container">
     <h2 class="section-intro__title">{title}</h2>
     {text && <p class="section-intro__text" set:html={text} />}
@@ -40,6 +42,28 @@ const { title, text } = Astro.props;
   .section-intro__text :global(strong) {
     color: var(--color-red);
     font-weight: 700;
+  }
+
+  /* Variante scura: usata dove la sezione segue/precede fasce nere (es.
+     Abbonamenti), cosi' la pagina non torna al chiaro solo per il titolo. */
+  .section-intro--dark {
+    background: var(--color-black);
+  }
+  .section-intro--dark .section-intro__title {
+    color: var(--color-white);
+  }
+  .section-intro--dark .section-intro__text {
+    color: var(--text-on-dark-muted);
+  }
+  /* Nessuno spazio chiaro tra la variante scura e i Collapsible vicini (es.
+     "Altri servizi" tra Under 25 e Accessi e pacchetti): senza queste due
+     regole il margine verticale del Collapsible (fondo pagina, non nero)
+     spunterebbe sopra e sotto la fascia scura. */
+  :global(.collapsible):has(+ .section-intro--dark) {
+    margin-bottom: 0;
+  }
+  .section-intro--dark + :global(.collapsible) {
+    margin-top: 0;
   }
 
   /* + totem: vedi «Il totem verticale del club» in styles/global.css */

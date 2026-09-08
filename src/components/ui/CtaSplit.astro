@@ -8,6 +8,9 @@
 //     buttonLabel="Prova Ora"
 //     buttonHref="..."
 //     image="/images/..."
+//     compact                (opzionale: mezza schermata invece di una intera,
+//                              per le pagine dove la fascia segue gia' molto
+//                              contenuto ed e' l'ultima cosa prima del footer)
 //   />
 import Button from './Button.astro';
 
@@ -19,6 +22,7 @@ interface Props {
   buttonVariant?: 'primary' | 'white' | 'dark-red' | 'invert-red' | 'ghost-dark' | 'ghost-light';
   image: string;
   alt?: string;
+  compact?: boolean;
 }
 
 const {
@@ -29,10 +33,11 @@ const {
   buttonVariant = 'dark-red',
   image,
   alt = '',
+  compact = false,
 } = Astro.props;
 ---
 
-<section class="cta-split" data-reveal>
+<section class:list={['cta-split', { 'cta-split--compact': compact }]} data-reveal>
   <div class="cta-split__copy">
     <h2>{heading}</h2>
     {text && <p>{text}</p>}
@@ -52,6 +57,9 @@ const {
     height: 100vh;
     background: var(--accent);
     border-block: 2px solid var(--color-black);
+  }
+  .cta-split--compact {
+    height: 50vh;
   }
   .cta-split__copy {
     display: flex;
