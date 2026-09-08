@@ -34,8 +34,11 @@ const { items } = Astro.props;
 <style>
   /* Fascia a piena larghezza col contenuto nel container del sito: allineata
      alle altre sezioni invece di stare nella colonna di lettura. */
+  /* Stesso valore del padding-top di SectionIntro (--space-xl) che la
+     precede: cosi' lo spazio sopra "Domande frequenti" e quello sotto
+     l'ultima risposta, prima della fascia rossa finale, sono identici. */
   .faq {
-    padding-bottom: var(--space-lg);
+    padding-bottom: var(--space-xl);
   }
   .faq > .container > .faq__item:first-child {
     border-top: 2px solid var(--color-black);
@@ -91,5 +94,15 @@ const { items } = Astro.props;
     text-decoration: underline;
     text-underline-offset: 0.15em;
     font-weight: 600;
+  }
+
+  /* + totem: vedi «Il totem verticale del club» in styles/global.css */
+  @media (max-width: 860px),
+    (min-width: 900px) and (min-height: 1200px) and (max-aspect-ratio: 7/10) {
+    /* Stesso valore del padding-top di SectionIntro a questa larghezza
+       (--space-md), per restare simmetrico anche su mobile. */
+    .faq {
+      padding-bottom: var(--space-md);
+    }
   }
 </style>
