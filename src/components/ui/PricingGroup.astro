@@ -24,6 +24,9 @@
 //     priceSuffix="al mese"                            (opzionale, default "al mese")
 //     buttonLabel="Iscriviti Ora"                      (opzionale)
 //     note="Quota di attivazione una tantum 60€. ..."  (opzionale, va nella cella nera)
+//     image="/images/..."     (opzionale: sfondo a tutta larghezza dietro la
+//                               sezione, con velo scuro e ombra sotto la
+//                               griglia per farla risaltare sopra la foto)
 //   />
 interface Plan {
   duration: string;
@@ -41,6 +44,7 @@ interface Props {
   note?: string;
   // Ancora per i link diretti al gruppo (usata dal menu mobile).
   id?: string;
+  image?: string;
 }
 
 const {
@@ -52,10 +56,14 @@ const {
   buttonLabel = 'Iscriviti Ora',
   note,
   id,
+  image,
 } = Astro.props;
 ---
 
-<section class="pricing" id={id}>
+<section class:list={['pricing', { 'pricing--has-bg': !!image }]} id={id}>
+  {image && (
+    <div class="pricing__bg" style={`background-image: url(${image})`} aria-hidden="true"></div>
+  )}
   <div class="container">
     <div class="pricing__grid">
       <div class="pricing__head">
@@ -96,6 +104,38 @@ const {
      pagina diventa un muro di riquadri. */
   .pricing {
     padding-block: var(--space-md);
+    position: relative;
+  }
+  /* Sfondo a tutta larghezza della sezione (solo con `image`): copre da bordo
+     a bordo perche' la sezione stessa non e' contenuta in un .container, solo
+     il suo contenuto lo e'. Velo nero fisso per leggibilita' del testo sopra,
+     indipendentemente da quanto e' chiara la foto. */
+  .pricing__bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
+  }
+  .pricing__bg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+  }
+  .pricing--has-bg {
+    /* Spazio in piu' sopra/sotto: sulla sola griglia nera il padding stretto
+       va bene, ma qui deve respirare anche la foto che la circonda. */
+    padding-block: var(--space-xl);
+  }
+  .pricing--has-bg .container {
+    position: relative;
+    z-index: 1;
+  }
+  /* Rilievo della griglia sopra la foto di sfondo: senza ombra il nero della
+     griglia si fonderebbe visivamente col velo scuro della foto. */
+  .pricing--has-bg .pricing__grid {
+    box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.06);
   }
   .pricing__grid {
     display: grid;
