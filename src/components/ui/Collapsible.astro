@@ -27,6 +27,28 @@ interface Props {
 const { title, open = false, id, variant = 'default' } = Astro.props;
 ---
 
+{/* Script PRIMA del <details>, non dopo: Astro lo deduplica (un solo
+    <script> per pagina anche con piu' Collapsible) e lo inserisce nel punto
+    del primo utilizzo - dopo avrebbe spezzato l'adiacenza diretta tra questo
+    <details> e l'elemento successivo, su cui contano le regole CSS che
+    azzerano i margini tra fasce che si toccano (Collapsible+Collapsible,
+    PricingGroup con sfondo+Collapsible, SectionIntro scura+Collapsible). Un
+    modulo e' comunque deferito di suo, quindi eseguirlo prima nel markup non
+    cambia il momento in cui gira (dopo il parsing di tutta la pagina). */}
+<script>
+  // Un solo accordion aperto alla volta: all'apertura di uno, tutti gli altri
+  // `.collapsible` della pagina si richiudono. Astro deduplica questo script
+  // per pagina anche se il componente e' usato piu' volte.
+  document.querySelectorAll('details.collapsible').forEach((el) => {
+    el.addEventListener('toggle', () => {
+      if (!(el instanceof HTMLDetailsElement) || !el.open) return;
+      document.querySelectorAll('details.collapsible').forEach((other) => {
+        if (other !== el) (other as HTMLDetailsElement).open = false;
+      });
+    });
+  });
+</script>
+
 <details class:list={['collapsible', { 'collapsible--accent': variant === 'accent' }]} id={id} open={open}>
   <summary class="collapsible__bar">
     {/* .container: il titolo si incolonna con quelli delle altre sezioni e
@@ -42,20 +64,6 @@ const { title, open = false, id, variant = 'default' } = Astro.props;
     <slot />
   </div>
 </details>
-
-<script>
-  // Un solo accordion aperto alla volta: all'apertura di uno, tutti gli altri
-  // `.collapsible` della pagina si richiudono. Astro deduplica questo script
-  // per pagina anche se il componente e' usato piu' volte.
-  document.querySelectorAll('details.collapsible').forEach((el) => {
-    el.addEventListener('toggle', () => {
-      if (!(el instanceof HTMLDetailsElement) || !el.open) return;
-      document.querySelectorAll('details.collapsible').forEach((other) => {
-        if (other !== el) (other as HTMLDetailsElement).open = false;
-      });
-    });
-  });
-</script>
 
 <style>
   .collapsible {
