@@ -268,4 +268,28 @@ const { title, description, ogImage, noindex, breadcrumbs, ogTitle } = Astro.pro
   }
 
   initLinkEsterni();
+
+  // Un solo accordion Collapsible aperto alla volta (es. pagina Abbonamenti):
+  // all'apertura di uno, tutti gli altri `.collapsible` della pagina si
+  // richiudono. Vive qui e non nel componente Collapsible stesso perche' uno
+  // <script> di modulo dentro un componente ripetuto viene deduplicato da
+  // Astro ma resta comunque inserito come fratello nel DOM al punto del primo
+  // utilizzo, spezzando l'adiacenza diretta tra quel Collapsible e gli
+  // elementi vicini su cui contano le regole CSS che azzerano i margini tra
+  // fasce che si toccano. Qui invece e' fuori dal flusso delle sezioni.
+  function initAccordionEsclusivo() {
+    const items = document.querySelectorAll('details.collapsible');
+    if (!items.length) return;
+
+    items.forEach((el) => {
+      el.addEventListener('toggle', () => {
+        if (!(el instanceof HTMLDetailsElement) || !el.open) return;
+        items.forEach((other) => {
+          if (other !== el) (other as HTMLDetailsElement).open = false;
+        });
+      });
+    });
+  }
+
+  initAccordionEsclusivo();
 </script>
