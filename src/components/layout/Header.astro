@@ -285,10 +285,22 @@ import Nav from './Nav.astro';
       top: 100%;
       left: 0;
       right: 0;
-      height: calc(100dvh - 100%);
+      /* `vh` come ripiego per i browser senza `dvh` (pre-2022), `dvh` per
+         tutti gli altri. Il ripiego NON e' scritto come doppia
+         dichiarazione (`height: ...vh` seguita da `height: ...dvh`, lo
+         schema di Hero.astro): dentro un `calc()` lightningcss riconosce
+         le due righe come la stessa proprieta' e in build tiene solo
+         l'ultima, quindi il ripiego sparirebbe dal CSS servito. Con
+         `@supports` sono due regole distinte e sopravvivono entrambe. */
+      height: calc(100vh - 100%);
       max-height: none;
       overflow-y: auto;
       background: var(--bg-dark);
+    }
+    @supports (height: 100dvh) {
+      .nav-toggle-input:checked ~ .nav-panel {
+        height: calc(100dvh - 100%);
+      }
     }
     /* Il layout interno del menu aperto (griglia di riquadri) e' definito
        in Nav.astro: qui l'header si occupa solo di aprire e chiudere il

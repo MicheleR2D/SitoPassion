@@ -70,3 +70,14 @@
 # Pilates: pagina WP esistita ma mai migrata (slug-map.js), confermato dal
 # cliente il 2026-09-07 - rediretta alla disciplina piu' vicina oggi offerta.
 /pilates/  /pilates-reformer/  301
+
+# Vecchio custom post type dei corsi (dt_workouts) e pagina /functional-training/:
+# non erano nella slug-map della migrazione (che copre solo le pagine WP), quindi
+# non avevano un redirect. Restano pero' linkati da 4 articoli del blog migrati
+# (cross-training, reggaeton, e due link a /functional-training/): finche' il
+# vecchio sito e' online quei link funzionano, dal passaggio al sito nuovo
+# diventerebbero 404 sul nostro dominio. Rediretti alla pagina dei corsi, che e'
+# il contenuto piu' vicino oggi disponibile. Lo splat copre l'intero CPT, quindi
+# vale anche per gli indirizzi ancora presenti nell'indice di Google.
+/functional-training/  /palestra/corsi-fitness/  301
+/dt_workouts/*  /palestra/corsi-fitness/  301

@@ -1,0 +1,323 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "trailingSlash": true,
+  "redirects": [
+    {
+      "source": "/porta-un-amico/",
+      "has": [
+        {
+          "type": "query",
+          "key": "utm_source",
+          "value": "referral"
+        },
+        {
+          "type": "query",
+          "key": "utm_medium",
+          "value": "manifesto_qr"
+        },
+        {
+          "type": "query",
+          "key": "utm_campaign",
+          "value": "porta_un_amico"
+        }
+      ],
+      "destination": "https://automazione.n8ndevelop.it/form/eac6fd61-9d61-4fcb-b7f5-4f42ab56ba86",
+      "permanent": true
+    },
+    {
+      "source": "/come-ballare-la-bachata/",
+      "destination": "/lezioni-di-bachata/",
+      "permanent": true
+    },
+    {
+      "source": "/tonificazione-la-parola-dordine-per-dimagrire-bene/",
+      "destination": "/esercizi-per-tonificare/",
+      "permanent": true
+    },
+    {
+      "source": "/corso-di-olit-training-olistico-sinergia-tra-mente-e-corpo/",
+      "destination": "/olit-training-olistico/",
+      "permanent": true
+    },
+    {
+      "source": "/ginseng-e-attivita-sportiva-quali-i-vantaggi/",
+      "destination": "/proprieta-del-ginseng/",
+      "permanent": true
+    },
+    {
+      "source": "/pole-dance-il-fitness-incontra-la-femminilita/",
+      "destination": "/pole-dance-roma/",
+      "permanent": true
+    },
+    {
+      "source": "/allenamento-palestra-per-la-tonificazione-muscolare/",
+      "destination": "/tonificazione-muscolare/",
+      "permanent": true
+    },
+    {
+      "source": "/allenamento-boxe-in-palestra-corsi-di-tendenza/",
+      "destination": "/allenamento-boxe/",
+      "permanent": true
+    },
+    {
+      "source": "/cose-lo-zumba-fitness-scoprine-i-benefici/",
+      "destination": "/zumba-fitness-benefici/",
+      "permanent": true
+    },
+    {
+      "source": "/allenamento-per-ipertesi/",
+      "destination": "/ipertensione-e-attivita-fisica/",
+      "permanent": true
+    },
+    {
+      "source": "/come-far-crescere-le-braccia-con-i-pesi/",
+      "destination": "/allenamento-braccia-con-pesi/",
+      "permanent": true
+    },
+    {
+      "source": "/allenamento-funzionale-trx-e-bft-scopri-le-discipline-del-functional-training/",
+      "destination": "/allenamento-funzionale-trx-bft/",
+      "permanent": true
+    },
+    {
+      "source": "/esercizi-a-corpo-libero-bruciare-grasso-e-snellire/",
+      "destination": "/esercizi-a-corpo-libero/",
+      "permanent": true
+    },
+    {
+      "source": "/yogilates-la-sintesi-perfetta-tra-yoga-e-pilates/",
+      "destination": "/yogilates/",
+      "permanent": true
+    },
+    {
+      "source": "/mobilita-articolare-quanto-e-importante-migliorare-la-flessibilita/",
+      "destination": "/mobilita-articolare/",
+      "permanent": true
+    },
+    {
+      "source": "/guida-e-consigli-alla-scelta-di-una-palestra-vicino-a-me/",
+      "destination": "/scelta-palestra-vicino-a-me/",
+      "permanent": true
+    },
+    {
+      "source": "/functional-training-alla-scoperta-del-corpo-e-delle-sue-capacita/",
+      "destination": "/caratteristiche_della_tecnica_functional_training/",
+      "permanent": true
+    },
+    {
+      "source": "/heat-program-il-trekking-direttamente-in-palestra/",
+      "destination": "/heat-program-trekking-palestra/",
+      "permanent": true
+    },
+    {
+      "source": "/esercizi-bicipiti-con-manubri-strategie-per-massimizzare-la-crescita-muscolare/",
+      "destination": "/esercizi-bicipiti/",
+      "permanent": true
+    },
+    {
+      "source": "/come-diventare-un-personal-trainer-qualificato/",
+      "destination": "/come-diventare-un-personal-trainer/",
+      "permanent": true
+    },
+    {
+      "source": "/bootcamp-un-allenamento-militare-per-la-forma-fisica/",
+      "destination": "/bootcamp-allenamento-militare-per-forma-fisica/",
+      "permanent": true
+    },
+    {
+      "source": "/limportanza-dello-stretching-nellallenamento/",
+      "destination": "/importanza-stretching-allenamento/",
+      "permanent": true
+    },
+    {
+      "source": "/esercizi-kettlebell-dimagrire-ed-allenarsi-con-i-pesi/",
+      "destination": "/esercizi-kettlebell/",
+      "permanent": true
+    },
+    {
+      "source": "/allenamento-bicipiti-gli-esercizi-in-palestra/",
+      "destination": "/allenamento-bicipiti-palestra/",
+      "permanent": true
+    },
+    {
+      "source": "/yoga-la-disciplina-per-corpo-e-mente/",
+      "destination": "/yoga-roma/",
+      "permanent": true
+    },
+    {
+      "source": "/https-passionfitness-it-perche-praticare-yoga-i-sorprendenti-benefici-che-forse-non-conosci/",
+      "destination": "/perche-praticare-yoga-i-sorprendenti-benefici-che-forse-non-conosci/",
+      "permanent": true
+    },
+    {
+      "source": "/quanto-e-importante-labbigliamento-in-palestra/",
+      "destination": "/importanza-abbigliamento-in-palestra/",
+      "permanent": true
+    },
+    {
+      "source": "/quali-sono-i-benefici-del-nuoto/",
+      "destination": "/benefici-del-nuoto/",
+      "permanent": true
+    },
+    {
+      "source": "/come-prevenire-e-curare-gli-infortuni-in-palestra/",
+      "destination": "/curare-infortuni-in-palestra/",
+      "permanent": true
+    },
+    {
+      "source": "/donne-e-dimagrimento-scopri-un-altro-punto-di-vista/",
+      "destination": "/dimagrire-in-palestra-donne/",
+      "permanent": true
+    },
+    {
+      "source": "/allenamento-funzionale-esercizi-e-workout/",
+      "destination": "/allenamento-funzionale-esercizi/",
+      "permanent": true
+    },
+    {
+      "source": "/come-creare-un-piano-alimentare-efficace-per-laumento-della-massa-muscolare/",
+      "destination": "/piano-alimentare-massa-muscolare/",
+      "permanent": true
+    },
+    {
+      "source": "/il-neofita-in-palestra/",
+      "destination": "/consigli-palestra/",
+      "permanent": true
+    },
+    {
+      "source": "/zumba-fitness-lallenamento-vincente/",
+      "destination": "/zumba_fitness_allenamento_intermittente/",
+      "permanent": true
+    },
+    {
+      "source": "/cosa-mangiare-prima-di-allenarsi-suggerimenti-per-una-nutrizione-efficace/",
+      "destination": "/cosa-mangiare-prima-di-allenarsi/",
+      "permanent": true
+    },
+    {
+      "source": "/esercizi-addominali-quando-lestetica-incontra-la-forma-fisica/",
+      "destination": "/esercizi-addominali/",
+      "permanent": true
+    },
+    {
+      "source": "/hiit-allenamento-ad-alta-intensita-per-dimagrire/",
+      "destination": "/allenamento-hiit/",
+      "permanent": true
+    },
+    {
+      "source": "/allenamento-e-alimentazione-cosa-mangiare-prima-della-palestra-e-dopo/",
+      "destination": "/cosa-mangiare-prima-della-palestra/",
+      "permanent": true
+    },
+    {
+      "source": "/esercizi-di-stretching-e-allenamento-palestra/",
+      "destination": "/esercizi-di-stretching/",
+      "permanent": true
+    },
+    {
+      "source": "/esercizi-di-ginnastica-posturale-per-la-corretta-postura/",
+      "destination": "/esercizi-di-ginnastica-posturale/",
+      "permanent": true
+    },
+    {
+      "source": "/pilates-principi-e-benefici/",
+      "destination": "/pilates-benefici/",
+      "permanent": true
+    },
+    {
+      "source": "/voglia-di-neve-preparati-con-la-ginnastica-presciistica/",
+      "destination": "/ginnastica-presciistica/",
+      "permanent": true
+    },
+    {
+      "source": "/esercizi-di-pilates-per-il-benessere-e-la-postura/",
+      "destination": "/pilates-benessere-postura/",
+      "permanent": true
+    },
+    {
+      "source": "/integratori-e-sport-a-cosa-servono-e-a-chi/",
+      "destination": "/integratori-sport-cosa-servono/",
+      "permanent": true
+    },
+    {
+      "source": "/alimentazione-palestra-cibo-e-allenamento/",
+      "destination": "/alimentazione-palestra/",
+      "permanent": true
+    },
+    {
+      "source": "/gli-esercizi-di-reformer-pilates-rinforza-tonifica-allunga/",
+      "destination": "/esercizi-reformer-pilates/",
+      "permanent": true
+    },
+    {
+      "source": "/5381-2/",
+      "destination": "/sport-in-gravidanza/",
+      "permanent": true
+    },
+    {
+      "source": "/allenamento-hiit-come-trasformare-la-tua-routine-di-fitness-in-soli-30-minuti/",
+      "destination": "/segreti-allenamento-hiit/",
+      "permanent": true
+    },
+    {
+      "source": "/i-10-esercizi-con-fitball-per-mantenersi-in-forma/",
+      "destination": "/esercizi-con-fitball/",
+      "permanent": true
+    },
+    {
+      "source": "/5-modi-sorprendenti-in-cui-la-pistola-massaggiante-puo-migliorare-le-tue-prestazioni-sportive/",
+      "destination": "/pistola-massaggiante-benefici/",
+      "permanent": true
+    },
+    {
+      "source": "/stretching-gambe-gli-esercizi-di-allungamento-muscolare/",
+      "destination": "/stretching-gambe/",
+      "permanent": true
+    },
+    {
+      "source": "/i-love-my-trainer/",
+      "destination": "/personal-training/",
+      "permanent": true
+    },
+    {
+      "source": "/crossfit/",
+      "destination": "/hyrox/",
+      "permanent": true
+    },
+    {
+      "source": "/che-cosa-e-il-crossfit/",
+      "destination": "/hyrox/",
+      "permanent": true
+    },
+    {
+      "source": "/crossfit-roma/",
+      "destination": "/hyrox/",
+      "permanent": true
+    },
+    {
+      "source": "/crossfit-roma-comunita/",
+      "destination": "/hyrox/",
+      "permanent": true
+    },
+    {
+      "source": "/differenza-crossfit-allenamento-funzionale/",
+      "destination": "/hyrox/",
+      "permanent": true
+    },
+    {
+      "source": "/pilates/",
+      "destination": "/pilates-reformer/",
+      "permanent": true
+    },
+    {
+      "source": "/functional-training/",
+      "destination": "/palestra/corsi-fitness/",
+      "permanent": true
+    },
+    {
+      "source": "/dt_workouts/:resto*",
+      "destination": "/palestra/corsi-fitness/",
+      "permanent": true
+    }
+  ]
+}
