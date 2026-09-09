@@ -17,12 +17,28 @@ interface Props {
 }
 
 const { title, image, video, alt = '' } = Astro.props;
+
+// Fermo immagine del video, per convenzione in /images/poster/ con lo stesso
+// nome del file video. Serve perche' il video non parte piu' al caricamento
+// (vedi lo script in fondo): senza, il riquadro resterebbe vuoto finche' non
+// lo si raggiunge scorrendo. Generati con `scripts/genera-poster.sh`.
+const poster = video
+  ? `/images/poster/${video.split('/').pop().replace(/\.[^.]+$/, '')}.webp`
+  : undefined;
 ---
 
 <article class="content-row">
   <div class="content-row__media" data-parallax={!video}>
     {video
-      ? <video src={video} autoplay muted loop playsinline />
+      ? <video
+          src={video}
+          poster={poster}
+          preload="none"
+          muted
+          loop
+          playsinline
+          data-video-differito
+        />
       : <img src={image} alt={alt} loading="lazy" />}
   </div>
   <div class="content-row__copy">
@@ -265,3 +281,58 @@ const { title, image, video, alt = '' } = Astro.props;
     }
   }
 </style>
+
+<script>
+  /* Perche' non `autoplay`: con `autoplay muted` il browser scarica il video
+     per poterlo far partire, e lo fa per TUTTI i video della pagina appena
+     questa carica — anche per quelli che stanno sotto la piega e che molti
+     visitatori non raggiungono mai. Sulla home erano quattro video scaricati
+     in blocco al primo caricamento.
+
+     Con `preload="none"` non viene chiesto un byte finche' non si chiama
+     play(), e play() lo chiamiamo quando il riquadro entra davvero nello
+     schermo. Fuori dallo schermo mettiamo in pausa: un video in loop che
+     nessuno vede consuma CPU e batteria.
+
+     Il poster (attributo `poster`) copre l'attesa fra "entra nello schermo" e
+     "il video ha abbastanza dati per partire", ed e' anche cio' che resta
+     visibile se JavaScript non gira. */
+  const video = document.querySelectorAll('video[data-video-differito]');
+
+  if (video.length) {
+    // Senza IntersectionObserver (browser molto vecchi) si torna al
+    // comportamento di prima: partono tutti subito. Meglio pesante che vuoto.
+    if (!('IntersectionObserver' in window)) {
+      video.forEach((v) => {
+        v.preload = 'auto';
+        v.muted = true;
+        v.play().catch(() => {});
+      });
+    } else {
+      const osservatore = new IntersectionObserver(
+        (voci) => {
+          voci.forEach((voce) => {
+            const v = voce.target;
+            if (voce.isIntersecting) {
+              // `muted` anche da JS: Safari guarda la proprieta', non solo
+              // l'attributo, per decidere se una riproduzione automatica e'
+              // ammessa senza un gesto dell'utente.
+              v.muted = true;
+              v.play().catch(() => {});
+            } else {
+              v.pause();
+            }
+          });
+        },
+        // Un quarto di schermo di margine: il video comincia a caricare poco
+        // prima di entrare in vista, cosi' all'arrivo e' gia' in movimento,
+        // ma non cosi' presto da tirarne giu' tre in una volta (con mezzo
+        // schermo di margine le righe, essendo adiacenti, partivano a
+        // gruppi). Nell'attesa il riquadro mostra il poster, quindi anticipare
+        // troppo non serve.
+        { rootMargin: '25% 0px' },
+      );
+      video.forEach((v) => osservatore.observe(v));
+    }
+  }
+</script>

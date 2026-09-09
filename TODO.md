@@ -4,24 +4,16 @@ Cose emerse dagli audit ma non ancora risolte — ognuna richiede una decisione 
 
 ## Immagini
 
-- [ ] **PRIORITÀ — Peso dei media sulle pagine principali.** Misurato sul build del 2026-09-09 sommando ogni `src`/`poster`/`url()` per pagina:
+- [x] ~~**PRIORITÀ — Peso dei media sulle pagine principali**~~ → **fatto per la home** (2026-09-09). Misurato con Chromium headless su `astro preview`, viewport 1440×900: al primo caricamento la home trasferiva **47,6 MB**, ora ne trasferisce **4,93 MB**. Due interventi distinti:
 
-  | Pagina | Media referenziati |
-  |---|---|
-  | `/` | **47,6 MB** |
-  | `/palestra/corsi-fitness/` | **28,3 MB** |
-  | `/pilates-reformer/` | 20,5 MB |
-  | `/personal-training/` | 17,1 MB |
-  | `/palestra/sala-pesi/` | 14,2 MB |
+  1. **I video non partono più al caricamento.** `ContentRow.astro` usava `<video autoplay>`: con `autoplay muted` il browser scarica il file per poterlo far partire, e lo faceva per tutti e quattro i video della home, compresi i tre sotto la piega. Ora sono `preload="none"` e partono via IntersectionObserver quando entrano in vista (margine 25% di schermo), con pausa quando escono. Nell'attesa si vede un poster (`/images/poster/`, generato da `scripts/genera-poster.sh`), che è anche ciò che resta se JavaScript non gira. **Questo vale anche per `/prova-passion-fitness/`**, l'altra pagina che usa ContentRow con video.
+  2. **Rieencodati i 5 video della home**: 44,7 → 25,7 MB (-43%), a risoluzione invariata. Tutti avevano una traccia audio da 189 kb/s pur essendo riprodotti `muted` — rimossa. CRF 26 come regola, CRF 28 su `Metcon-2` (a 26 rendeva solo il 9%: clip ad alto movimento), CRF 22 sull'hero (è l'elemento più visibile e la sorgente è già morbida). Qualità verificata con SSIM: da 0.9885 a 0.9926, cioè visivamente trasparente. Aggiunto `+faststart` a tutti.
 
-  Due cause distinte, con rimedi diversi:
+  Immagini della home: 1,90 → 1,16 MB (-39%) ricomprimendo in mozjpeg q82 solo dove il guadagno superava il 10% (SSIM 0.982–0.997), più `personaltrainer.png` (foto opaca salvata in PNG, 432 KB) convertita in WebP q88 → 168 KB; i suoi 9 riferimenti sono stati aggiornati.
 
-  1. **Video in `autoplay` senza `preload`.** La home ne ha 4 (`hero-provvisorio.mp4` 6,7 MB, `Sala-Pesi_Passion-Fitness.mp4` 7,8 MB, `Metcon-2.mp4` 9,7 MB, `I-love-my-trainer-2.mp4` 5,6 MB ≈ **40 MB**). Con `autoplay muted` il browser scarica per poter partire, e partono tutti e quattro al caricamento — anche quelli sotto la piega. Su rete mobile è il costo maggiore della pagina. Rimedio: far partire i video non-hero solo quando entrano nel viewport (IntersectionObserver che assegna `src` al momento giusto), lasciando l'`autoplay` immediato al solo hero. È una modifica al componente, va fatta con calma e provata.
-  2. **Immagini a risoluzione di macchina fotografica servite così come sono.** La peggiore: `public/images/nuove/fitness.jpeg`, **4672 × 7008 px, 8,7 MB**, usata come `background-image` di una card in `HighlightCards` su `/palestra/corsi-fitness/` — e un background CSS **non** rispetta `loading="lazy"`, quindi si scarica sempre. Poi `fitness3.jpg` (4240 × 2384, 5,6 MB) e `boxing.jpg` (2048 × 1365, 2,1 MB), entrambe sulla stessa pagina. Rimedio immediato senza toccare il codice: ridimensionare questi tre file a ~2000 px di lato lungo e ricomprimerli — da soli valgono ~16 dei 28 MB di quella pagina.
+  **Non verificabile da qui**: che i video si riproducano davvero. Il Chromium di Playwright è la build open source senza codec H.264 (`canPlayType('video/mp4; codecs="avc1..."')` restituisce stringa vuota) e fallisce allo stesso modo sui file originali presi da git, quindi non è un problema dei file nuovi — che infatti decodificano senza errori con ffmpeg. **Va guardata la home in un browser vero prima di andare online**, scorrendo fino ai video.
 
-  Le due cose sopra sono indipendenti dal punto qui sotto: valgono anche restando su `public/`, e sono molto più veloci da fare.
-
-  Contesto sul totale: `public/images/` pesa **1,7 GB** sul repo, ma solo 181 asset (≈112 MB) sono davvero referenziati dal sito — il resto è materiale caricato e mai usato.
+- [ ] **Stesso trattamento per `/palestra/corsi-fitness/`, ora la pagina più pesante (28 MB).** Fuori dallo scopo della richiesta (era "nella home"), ma è materiale già identificato: `fitness.jpeg` è **4672 × 7008 px, 8,7 MB** usata come `background-image` di una card — e un background CSS non rispetta `loading="lazy"`, quindi si scarica sempre; più `fitness3.jpg` (5,6 MB) e il video hero `corsi-fitness.mp4` (7,5 MB). Con lo stesso procedimento si scende sotto i 10 MB. Anche `/personal-training/` (16,9 MB) ha un hero da 13,8 MB non ancora rieencodato.
 
 - [ ] **Migrare a `<Image />`/`astro:assets`** (conversione automatica WebP/AVIF + `srcset` responsivo per le 153 immagini usate sul sito). Rimandato di proposito: molte immagini stock verranno probabilmente sostituite a breve, non ha senso ottimizzare la pipeline prima. Quando le immagini definitive sono pronte, è un cambio architetturale che tocca: spostamento da `public/images/` a `src/assets/` (o schema `image()` delle content collections), firma delle props di 7 componenti (Hero, ContentRow, HighlightCards, PostCard, RelatedCard, FeatureShowcase, CtaSplit), compatibilità col media picker di Decap CMS.
 
