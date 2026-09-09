@@ -4,23 +4,47 @@ Cose emerse dagli audit ma non ancora risolte — ognuna richiede una decisione 
 
 ## Immagini
 
+- [ ] **PRIORITÀ — Peso dei media sulle pagine principali.** Misurato sul build del 2026-09-09 sommando ogni `src`/`poster`/`url()` per pagina:
+
+  | Pagina | Media referenziati |
+  |---|---|
+  | `/` | **47,6 MB** |
+  | `/palestra/corsi-fitness/` | **28,3 MB** |
+  | `/pilates-reformer/` | 20,5 MB |
+  | `/personal-training/` | 17,1 MB |
+  | `/palestra/sala-pesi/` | 14,2 MB |
+
+  Due cause distinte, con rimedi diversi:
+
+  1. **Video in `autoplay` senza `preload`.** La home ne ha 4 (`hero-provvisorio.mp4` 6,7 MB, `Sala-Pesi_Passion-Fitness.mp4` 7,8 MB, `Metcon-2.mp4` 9,7 MB, `I-love-my-trainer-2.mp4` 5,6 MB ≈ **40 MB**). Con `autoplay muted` il browser scarica per poter partire, e partono tutti e quattro al caricamento — anche quelli sotto la piega. Su rete mobile è il costo maggiore della pagina. Rimedio: far partire i video non-hero solo quando entrano nel viewport (IntersectionObserver che assegna `src` al momento giusto), lasciando l'`autoplay` immediato al solo hero. È una modifica al componente, va fatta con calma e provata.
+  2. **Immagini a risoluzione di macchina fotografica servite così come sono.** La peggiore: `public/images/nuove/fitness.jpeg`, **4672 × 7008 px, 8,7 MB**, usata come `background-image` di una card in `HighlightCards` su `/palestra/corsi-fitness/` — e un background CSS **non** rispetta `loading="lazy"`, quindi si scarica sempre. Poi `fitness3.jpg` (4240 × 2384, 5,6 MB) e `boxing.jpg` (2048 × 1365, 2,1 MB), entrambe sulla stessa pagina. Rimedio immediato senza toccare il codice: ridimensionare questi tre file a ~2000 px di lato lungo e ricomprimerli — da soli valgono ~16 dei 28 MB di quella pagina.
+
+  Le due cose sopra sono indipendenti dal punto qui sotto: valgono anche restando su `public/`, e sono molto più veloci da fare.
+
+  Contesto sul totale: `public/images/` pesa **1,7 GB** sul repo, ma solo 181 asset (≈112 MB) sono davvero referenziati dal sito — il resto è materiale caricato e mai usato.
+
 - [ ] **Migrare a `<Image />`/`astro:assets`** (conversione automatica WebP/AVIF + `srcset` responsivo per le 153 immagini usate sul sito). Rimandato di proposito: molte immagini stock verranno probabilmente sostituite a breve, non ha senso ottimizzare la pipeline prima. Quando le immagini definitive sono pronte, è un cambio architetturale che tocca: spostamento da `public/images/` a `src/assets/` (o schema `image()` delle content collections), firma delle props di 7 componenti (Hero, ContentRow, HighlightCards, PostCard, RelatedCard, FeatureShowcase, CtaSplit), compatibilità col media picker di Decap CMS.
 
 ## Integrazioni / e-commerce
 
 - [ ] **PerfectGym: `productId` duplicato.** Nel pacchetto "10 sedute" di Personal Training (`src/content/pages/abbonamenti.mdx`), le varianti 60' e 30' puntano entrambe a `productId=95` — un cliente che sceglie la seduta da 30' verrebbe mandato al prodotto sbagliato. Serve il productId corretto dal pannello PerfectGym.
-- [ ] **Typeform morto su `/prova-passion-fitness/`.** I 5 CTA della pagina (link a `zgcrbhl8m6b.typeform.com/PassionFitness?...`) risolvono alla pagina generica di marketing di Typeform: il form non esiste più. La pagina non è linkata da nessuna parte del sito — sembra la landing page di una campagna Google Ads (`utm_source=GAds`), quindi se la campagna è ancora attiva sta sprecando budget pubblicitario. Serve un link Typeform aggiornato (o sostituire i CTA con il form n8n usato altrove sul sito).
+- [ ] **Typeform di `/prova-passion-fitness/` in stato trial.** Verificato sull'account Typeform (2026-09-09): il form **esiste** — "Free Week Passion", id `NEIQaRbB`, slug `PassionFitness`, `is_public: true` — ma è l'unico form Passion con **`is_trial: true`**. Gli altri form Passion attivi (`PassionContatti`, `TourPassion`, `PassionReferral`, `PassionHelp`) hanno tutti `is_trial: false`. Lo stato di trial è coerente con il sintomo osservato (l'indirizzo risolve alla pagina di marketing di Typeform invece che al form): non è un form cancellato, è un form da riattivare dal pannello.
+  **Impatto reale attenuato**: `ProvaModal.astro` intercetta i click su `a[href*="typeform.com/PassionFitness"]` con `preventDefault()` e apre il form interno, quindi cliccando normalmente il CTA funziona. Restano scoperti i casi che saltano il gestore JS: apertura in nuova scheda (ctrl/⌘-click, tasto centrale, "Apri in un'altra scheda") e JS non attivo — lì si finisce sulla pagina morta. Da decidere: riattivare il form, oppure riscrivere gli `href` dei 5 CTA sul form n8n così che anche il ripiego punti a qualcosa di vivo.
+  Nota: il link "Lavora con noi" del footer (`to/hMHz9NVx`) è stato verificato sullo stesso account ed è **attivo e pubblico** — nessun problema lì.
 
 ## Contenuti / link
 
-- [ ] **4 articoli del blog** linkano ancora al vecchio dominio live (`passionfitness.it/dt_workouts/...`, `passionfitness.it/functional-training/`) invece che a route interne — non riscritti durante la migrazione.
-- [ ] **Link "MOG e Codice di Condotta"** nel footer (`src/components/layout/Footer.astro`) punta ancora al vecchio dominio (`passionfitness.it/3-codice-di-condotta_mog...`). **Il PDF è già stato migrato** — esiste in `public/documents/2025/01/3-CODICE-DI-CONDOTTA_MOG-DETERMINA-MODULO-SEGNALAZIONE-TUSCOLANA-S.S.D.-ARL-.pdf` — basta aggiornare l'`href` per puntare lì.
+- [x] ~~**4 articoli del blog** linkano ancora al vecchio dominio live (`passionfitness.it/dt_workouts/...`, `passionfitness.it/functional-training/`)~~ → **non sono più 404 al passaggio**: aggiunti in `public/_redirects` `/functional-training/` e lo splat `/dt_workouts/*` verso `/palestra/corsi-fitness/`. Lo splat copre l'intero vecchio custom post type dei corsi, quindi vale anche per gli indirizzi ancora nell'indice di Google, non solo per questi 4 link.
+  **Resta da decidere (contenuti, non link rotti)**: due di quegli articoli promuovono corsi non più in offerta — "Inizia il **corso di cross training** con noi!" (`cross-training-cos-e-e-quali-sono-i-suoi-benefici.mdx:46`) e "prova il nostro **corso di reggaeton**" (`reggaeton-e-fitness-rimani-in-forma-al-ritmo-di-beat.mdx:34`). Ora atterrano sulla pagina dei corsi, ma la frase invita a un corso che non c'è: valutare se togliere la CTA.
+- [ ] **Link a un sottodominio nel blog**: `kick-boxing-femminile.mdx:51` punta a `http://palestratuscolana.passionfitness.it/#kick-boxing` — sottodominio (non coperto dai redirect di Netlify, che valgono solo per il dominio del sito) e per giunta in `http`. Va riscritto o rimosso a mano.
+- [x] ~~**Link "MOG e Codice di Condotta"** nel footer punta al vecchio dominio~~ → verificato il 2026-09-09: `Footer.astro:246` punta già alla route interna `/mog-e-codice-di-condotta/`. Nessun link al vecchio dominio resta nel footer.
 - [ ] **UTM stale**: un parametro su `/prova-passion-fitness/` dice ancora `GAds_btn_ILMT` ("I Love My Trainer", il vecchio nome della pagina Personal Training). Solo cosmetico/analytics, non rompe nulla.
 
 ## Compatibilità cross-browser
 
 - [ ] **`:has()` diffuso in `Hero.astro`** (13 occorrenze) controlla l'intero layout dell'hero su ogni pagina (colonna rossa, colori del testo, gradiente). Supportato da Safari 15.4+, Chrome/Edge 105+, ma **Firefox solo da dicembre 2023 (v121)** — su un browser senza supporto l'hero perderebbe la colonna rossa e i colori del testo, senza errori visibili. Nessun fallback presente. Testare su Firefox non recentissimo, se rilevante per il pubblico del sito.
-- [ ] **`dvh` senza fallback `vh`** in `Header.astro:196` (altezza del pannello menu mobile). Altrove sul sito (`Hero.astro`, `HighlightCards.astro`) c'è sempre un `height: …vh` dichiarato prima come fallback; qui manca. Su un browser senza supporto a `dvh` (pre-2022) il pannello del menu mobile potrebbe non riempire correttamente lo schermo. Fix a basso rischio quando si vuole: aggiungere `height: calc(100vh - 100%);` subito prima della riga con `dvh`.
+- [x] ~~**`dvh` senza fallback `vh`** nel pannello del menu mobile (`Header.astro`)~~ → risolto, ma **non** con la doppia dichiarazione suggerita qui. Dentro un `calc()` lightningcss riconosce `height: calc(100vh - 100%)` e `height: calc(100dvh - 100%)` come la stessa proprietà e in build tiene solo l'ultima: il ripiego sparirebbe dal CSS servito (verificato: dopo quella modifica nel build compariva solo la riga `dvh`). Riscritto con `@supports (height: 100dvh)`, che restano due regole distinte e sopravvivono entrambe alla minificazione — verificato sul build.
+  **Nota per il futuro**: la doppia dichiarazione *senza* `calc()` invece sopravvive — nel CSS servito ci sono sia `height:100vh` sia `height:100dvh`, quindi i ripieghi di `Hero.astro` e `HighlightCards.astro` funzionano davvero. La regola pratica: doppia dichiarazione con valori semplici, `@supports` quando c'è di mezzo un `calc()`.
 - [ ] **Iframe del form "Porta un Amico"** (`porta-un-amico.mdx`) è cross-origin (`automazione.n8ndevelop.it` embeddato su `passionfitness.it`): Safari (Intelligent Tracking Prevention) blocca in modo aggressivo cookie/storage di terze parti nei frame cross-origin. Se il form n8n si appoggia a quel tipo di storage per il proprio stato interno, potrebbe comportarsi diversamente su Safari rispetto a Chrome. Da verificare su un iPhone/Mac reale compilando davvero il form.
 
 ## Tracciamento / consenso
@@ -31,6 +55,12 @@ Cose emerse dagli audit ma non ancora risolte — ognuna richiede una decisione 
 - [ ] **Meta Pixel: nessun blocco del consenso nel codice.** Lo script (`BaseLayout.astro`) parte con `fbq('track', 'PageView')` non appena la pagina carica, senza controllare se l'utente ha accettato i cookie — l'ordine (CookieYes prima nell'head) garantisce solo che il banner *compaia* per primo, non che il Pixel resti bloccato finché non arriva un consenso. **Verificato dal vivo sul sito attuale** (`passionfitness.it`, prima di cliccare Accetta/Rifiuta): oggi nessuna richiesta parte verso `google-analytics.com` o `facebook.net` — il blocco funziona, ma è configurato lato pannello CookieYes (fuori dal codice), non da un controllo nello script. Stesso limite di test del punto sopra: verificabile solo a sito online sul dominio reale.
 - [ ] **Meta Pixel: traccia solo `PageView`, nessun evento di conversione.** Con tutti i form esterni (n8n/Typeform/PerfectGym, l'utente lascia il sito al click), non c'è un "submit" da intercettare lato codice — ma non c'è nemmeno un evento `Lead`/click sui bottoni "Prova Ora" prima che l'utente esca. Se serve ottimizzare le campagne Meta sulle conversioni, va aggiunto un listener sui CTA che spari `fbq('track','Lead')` prima della navigazione.
 - [ ] **Informativa estesa sui cookie contiene una tabella obsoleta**: elenca cookie del vecchio sito WordPress (Google Analytics, Google Tag Manager, live chat Zopim, Hotjar, sessioni WordPress, Contact Form 7) che non esistono più sul sito nuovo — sembra la scansione automatica di CookieYes fatta sul vecchio sito, migrata as-is. Andrebbe rigenerata con una nuova scansione una volta che il sito nuovo è online, altrimenti la pagina descrive tracker che non ci sono (e non descrive correttamente quello che c'è, cioè solo il Meta Pixel).
+
+## SEO tecnica
+
+- [x] ~~`/prenotazione/` era nella `sitemap.xml` pur essendo `noindex`~~ → risolto: aggiunto un `filter` all'integrazione sitemap in `astro.config.mjs`. La pagina è marcata `noindex` di proposito (è la prova del calendario PerfectGym, doppione di `/orari-corsi/`), ma finiva comunque nella sitemap: Search Console lo segnala come "URL inviato contrassegnato come noindex". Sitemap passata da 97 a 96 URL, verificato sul build.
+- [ ] **Nessun `netlify.toml` nel repo.** Comando di build e cartella di pubblicazione sono quindi configurati solo dal pannello Netlify. Funziona, ma prima del passaggio conviene ricontrollare lì che siano `npm run build` e `dist`, e che `BASE_PATH` **non** sia impostata (è la variabile del workflow GitHub Pages: se arrivasse anche su Netlify, tutti i percorsi assoluti verrebbero prefissati e il sito si romperebbe).
+- [ ] **Da verificare a sito online** (non verificabile da qui: l'ambiente di lavoro non ha accesso di rete verso l'esterno): che `www.passionfitness.it` faccia ancora 301 verso il dominio senza `www`, coerentemente con quanto assunto in `astro.config.mjs` per canonical, sitemap e `og:url`.
 
 ## Minori
 

@@ -19,5 +19,15 @@ export default defineConfig({
   site: 'https://passionfitness.it',
   base,
   trailingSlash: 'always',
-  integrations: [mdx(), sitemap()]
+  integrations: [
+    mdx(),
+    sitemap({
+      // /prenotazione/ e' una pagina di prova marcata noindex (vedi il
+      // commento in cima a src/pages/prenotazione.astro): tenerla nella
+      // sitemap significa proporla a Google come pagina da indicizzare e
+      // poi dirle di no nell'HTML — in Search Console diventa un errore
+      // "URL inviato contrassegnato come noindex". Fuori dalla sitemap.
+      filter: (page) => !page.includes('/prenotazione/'),
+    }),
+  ]
 });
