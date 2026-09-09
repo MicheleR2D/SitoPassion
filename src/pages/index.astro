@@ -71,22 +71,31 @@ const QUICKLINKS = [
   <HighlightCards items={QUICKLINKS} />
 
   <Section tone="dark">
-    <div class="stats">
-      <div class="stat">
-        <span class="stat__num">30+</span>
-        <span class="stat__label">Anni nel settore</span>
-      </div>
-      <div class="stat">
-        <span class="stat__num">2000</span>
-        <span class="stat__label">m² dedicati al fitness</span>
-      </div>
-      <div class="stat">
-        <span class="stat__num">1000</span>
-        <span class="stat__label">mq di sala pesi</span>
-      </div>
-      <div class="stat">
-        <span class="stat__num">2+2</span>
-        <span class="stat__label">Sale fitness e studi reformer</span>
+    <div class="stats-wrap">
+      <img
+        class="stats-logo"
+        src="/images/logo-passionfitness.png"
+        alt="Passion Fitness Club"
+        width="402"
+        height="174"
+      />
+      <div class="stats">
+        <div class="stat">
+          <span class="stat__num">30+</span>
+          <span class="stat__label">Anni nel settore</span>
+        </div>
+        <div class="stat">
+          <span class="stat__num">2000</span>
+          <span class="stat__label">m² dedicati al fitness</span>
+        </div>
+        <div class="stat">
+          <span class="stat__num">1000</span>
+          <span class="stat__label">mq di sala pesi</span>
+        </div>
+        <div class="stat">
+          <span class="stat__num">2+2</span>
+          <span class="stat__label">Sale fitness e studi reformer</span>
+        </div>
       </div>
     </div>
   </Section>
@@ -183,16 +192,36 @@ const QUICKLINKS = [
      media e testo, CTA come solo testo) vivono in ContentRow/ContentRows:
      stesso risultato su tutte le pagine, senza CSS di pagina. */
 
+  .stats-wrap {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xl);
+  }
+  .stats-logo {
+    flex-shrink: 0;
+    height: 9rem;
+    width: auto;
+  }
   .stats {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
-    gap: var(--space-md);
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md) var(--space-xl);
+    flex: 1;
   }
   /* + totem: vedi «Il totem verticale del club» in styles/global.css */
   @media (max-width: 860px),
     (min-width: 900px) and (min-height: 1200px) and (max-aspect-ratio: 7/10) {
+    .stats-wrap {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-md);
+    }
+    .stats-logo {
+      height: 4.5rem;
+    }
     .stats {
-      grid-template-columns: repeat(2, 1fr);
+      width: 100%;
+      gap: var(--space-md);
     }
   }
   .stat {
