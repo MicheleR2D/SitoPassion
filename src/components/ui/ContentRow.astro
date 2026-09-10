@@ -23,7 +23,7 @@ const { title, image, video, alt = '' } = Astro.props;
 // (vedi lo script in fondo): senza, il riquadro resterebbe vuoto finche' non
 // lo si raggiunge scorrendo. Generati con `scripts/genera-poster.sh`.
 const poster = video
-  ? `/images/poster/${video.split('/').pop().replace(/\.[^.]+$/, '')}.webp`
+  ? `/images/poster/${video.split('/').pop()!.replace(/\.[^.]+$/, '')}.webp`
   : undefined;
 ---
 
@@ -297,7 +297,7 @@ const poster = video
      Il poster (attributo `poster`) copre l'attesa fra "entra nello schermo" e
      "il video ha abbastanza dati per partire", ed e' anche cio' che resta
      visibile se JavaScript non gira. */
-  const video = document.querySelectorAll('video[data-video-differito]');
+  const video = document.querySelectorAll<HTMLVideoElement>('video[data-video-differito]');
 
   if (video.length) {
     // Senza IntersectionObserver (browser molto vecchi) si torna al
@@ -312,7 +312,7 @@ const poster = video
       const osservatore = new IntersectionObserver(
         (voci) => {
           voci.forEach((voce) => {
-            const v = voce.target;
+            const v = voce.target as HTMLVideoElement;
             if (voce.isIntersecting) {
               // `muted` anche da JS: Safari guarda la proprieta', non solo
               // l'attributo, per decidere se una riproduzione automatica e'

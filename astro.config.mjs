@@ -10,13 +10,15 @@ const base = process.env.BASE_PATH || '/';
 
 // https://astro.build/config
 export default defineConfig({
-  // Senza www: e' il dominio che risponde davvero (verificato che
-  // www.passionfitness.it fa 301 verso questo), coerente con la sitemap
-  // del sito WordPress attuale. Da qui derivano sitemap.xml, i canonical
-  // di ogni pagina, og:url e gli URL del BreadcrumbList — un valore sbagliato
-  // qui genera un'intera sitemap di URL che rediriggono, invece delle URL
-  // finali.
-  site: 'https://passionfitness.it',
+  // Con www: e' il dominio che risponde 200 su Vercel (verificato il
+  // 2026-09-10 che passionfitness.it fa 308 verso www.passionfitness.it —
+  // direzione decisa nella configurazione dei domini su Vercel, non qui).
+  // Da qui derivano sitemap.xml, i canonical di ogni pagina, og:url e gli
+  // URL del BreadcrumbList — un valore sbagliato qui genera un'intera
+  // sitemap di URL che rediriggono, invece delle URL finali.
+  // Se un domani su Vercel si rimette l'apex come dominio primario, qui e in
+  // public/robots.txt si torna a 'https://passionfitness.it'.
+  site: 'https://www.passionfitness.it',
   base,
   trailingSlash: 'always',
   integrations: [
