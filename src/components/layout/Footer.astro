@@ -246,6 +246,13 @@ const telefonoLeggibile = data?.phone
         <a href="/mog-e-codice-di-condotta/">MOG e Codice di Condotta</a>
       </span>
     </div>
+
+    <div class="footer-poweredby">
+      <span>Powered by</span>
+      <a href="https://ready2digital.it/" target="_blank" rel="noopener">
+        <img src="/images/uploads/2026/09/ready2digital-logo.png" alt="Ready2Digital" width="993" height="192" loading="lazy" />
+      </a>
+    </div>
   </div>
 </footer>
 
@@ -514,6 +521,31 @@ const telefonoLeggibile = data?.phone
   }
   .footer-bottom a:hover {
     color: var(--color-red);
+  }
+
+  /* Il logo ha testo grigio scuro: su fondo nero serve un fondo chiaro
+     proprio, non il filtro dei partner (che schiarisce, non basta qui). */
+  .footer-poweredby {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2xs);
+    margin-top: var(--space-sm);
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--border-on-dark);
+    font-size: 0.75rem;
+    color: var(--text-on-dark-muted);
+  }
+  .footer-poweredby a {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.5rem;
+    background: var(--color-white);
+    border-radius: 6px;
+  }
+  .footer-poweredby img {
+    height: 1.1rem;
+    width: auto;
   }
 
   /* Passaggio intermedio: cinque colonne stanno larghe finche' la finestra
